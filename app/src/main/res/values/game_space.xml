@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="module_scope_game_space">
+        <item>cn.zte.gamefloat</item>
+        <item>cn.nubia.gameassist</item>
+    </string-array>
+</resources>

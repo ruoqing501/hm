@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="button_cancel">取消</string>
+    <string name="button_ok">确认</string>
+    <string name="slider_dialog_message_decimal">默认: %1$d 最小: %2$d 最大: %3$d</string>
+    <string name="slider_dialog_message_float">默认: %1$.2f 最小: %2$.2f 最大: %3$.2f</string>
+    <string name="slider_dialog_message_decimal2">最小: %1$d 最大: %2$d</string>
+    <string name="slider_dialog_message_float2">最小: %1$.2f 最大: %2$.2f</string>
+    <string name="image_load_failed">加载失败</string>
+    <string name="image_cannel">下次一定</string>
+    <string name="default_value">默认</string>
+</resources>
