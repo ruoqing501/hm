@@ -1,6 +1,6 @@
 package dev.lackluster.mihelper.hook.apps.nubia
 
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.mihelper.hook.rules.packageinstaller.nubia.HidePurifySwitch
 import dev.lackluster.mihelper.hook.rules.packageinstaller.nubia.HideStoreHint
 

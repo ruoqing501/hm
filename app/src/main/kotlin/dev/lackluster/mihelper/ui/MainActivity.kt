@@ -21,7 +21,6 @@ import dev.lackluster.hyperx.compose.activity.SafeSP
 import dev.lackluster.hyperx.compose.base.HyperXApp
 import dev.lackluster.hyperx.compose.navigation.miuixComposable
 import dev.lackluster.mihelper.R
-import dev.lackluster.mihelper.ui.dialog.SearchCustomEngineDialog
 import dev.lackluster.mihelper.ui.page.AboutPage
 import dev.lackluster.mihelper.ui.page.CleanMasterPage
 import dev.lackluster.mihelper.ui.page.IconTurnerPage
@@ -162,7 +161,6 @@ class MainActivity : HyperXActivity() {
                 miuixComposable(Pages.NUBIA_ICON_TUNER) { NubiaIconTunerPage(navController, adjustPadding, mode) }
 
                 miuixComposable(Pages.DIALOG_MARKET_FILTER_TAB) { MarketFilterTabDialog(navController, adjustPadding, mode) }
-                miuixComposable(Pages.DIALOG_SEARCH_CUSTOM_ENGINE) { SearchCustomEngineDialog(navController, adjustPadding, mode) }
                 miuixComposable(Pages.DEV_UI_TEST2) { MediaActionResizePage(navController, adjustPadding, "MediaActionResizePage", mode = mode) }
             }
         )

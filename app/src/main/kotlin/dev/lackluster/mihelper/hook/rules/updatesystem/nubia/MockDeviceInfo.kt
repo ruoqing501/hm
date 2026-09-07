@@ -3,12 +3,11 @@ package dev.lackluster.mihelper.hook.rules.updatesystem.nubia
 import android.nfc.Tag
 import android.os.Build
 import android.os.PowerManager
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.factory.current
-import com.highcapable.yukihookapi.hook.factory.field
-import com.highcapable.yukihookapi.hook.log.YLog
-import de.robv.android.xposed.XposedBridge
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.factory.current
+import dev.lackluster.mihelper.hook.compat.factory.field
+import dev.lackluster.mihelper.hook.compat.log.YLog
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.utils.DexKit.dexKitBridge
 import dev.lackluster.mihelper.utils.Prefs

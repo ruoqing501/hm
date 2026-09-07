@@ -22,10 +22,10 @@ package dev.lackluster.mihelper.hook.rules.systemui.statusbar
 
 import android.view.View
 import android.widget.ImageView
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.current
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.param.HookParam
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.current
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.param.HookParam
 import dev.lackluster.mihelper.data.Pref.Key.SystemUI.IconTurner
 import dev.lackluster.mihelper.utils.factory.hasEnable
 

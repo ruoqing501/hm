@@ -1,18 +1,9 @@
 package dev.lackluster.mihelper.hook.apps
 
 import android.annotation.SuppressLint
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.log.loggerD
-import com.u9521.wooboxforredmagicos.hook.app.systemui.statusbar.StatusBarSBFontRestore
-import dev.lackluster.mihelper.hook.rules.android.AntiQues
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.mihelper.hook.rules.android.nubia.UsbDebuggingHooker
 import dev.lackluster.mihelper.hook.rules.screenshot.StatusBarBroadcastController
-import dev.lackluster.mihelper.hook.rules.shared.RemoveFreeformRestriction
-import dev.lackluster.mihelper.hook.rules.systemui.DisableSmartDark
-import dev.lackluster.mihelper.hook.rules.systemui.FuckStatusBarGestures
-import dev.lackluster.mihelper.hook.rules.systemui.MonetOverlay
-import dev.lackluster.mihelper.hook.rules.systemui.ResourcesUtils
-import dev.lackluster.mihelper.hook.rules.systemui.StatusBarActions
 import dev.lackluster.mihelper.hook.rules.systemui.batteryicon.nubia.BatteryIconAdjuster
 import dev.lackluster.mihelper.hook.rules.systemui.batteryicon.nubia.BatteryLevelColorController
 import dev.lackluster.mihelper.hook.rules.systemui.features.AOSPSingleHandModeAdjust
@@ -21,52 +12,20 @@ import dev.lackluster.mihelper.hook.rules.systemui.features.NoVibrateVolKeyLongP
 import dev.lackluster.mihelper.hook.rules.systemui.features.UnHideClipBoardOverlay
 import dev.lackluster.mihelper.hook.rules.systemui.font.NubiaFont
 import dev.lackluster.mihelper.hook.rules.systemui.screenoff.nubia.AodSecondUpdate
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.HideCarrierLabel
-import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.HideDisturbNotification
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.HideStatusBarIcon
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.IconPosition
-import dev.lackluster.mihelper.hook.rules.systemui.notif.NotifFreeform
-import dev.lackluster.mihelper.hook.rules.systemui.notif.NotifWhitelist
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.NotificationMaxNumber
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.StatusBarClock
-import dev.lackluster.mihelper.hook.rules.systemui.freeform.HideTopBar
-import dev.lackluster.mihelper.hook.rules.systemui.freeform.UnlockMultipleTask
-import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.CarrierTextView
-import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.DoubleTapToSleep
-import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.KeepNotification
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.LockScreenBatteryMsg
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.nubia.HideLockScreenStatusBar
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.nubia.LockScreenAllowAdjustVolume
-import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.nubia.LockScreenClockFont
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.nubia.LockScreenClockPeriod
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.nubia.LockScreenClockSeconds
 import dev.lackluster.mihelper.hook.rules.systemui.lockscreen.nubia.ModifyChargingAnimation
-import dev.lackluster.mihelper.hook.rules.systemui.media.CustomElement
-import dev.lackluster.mihelper.hook.rules.systemui.media.CustomLayout
-import dev.lackluster.mihelper.hook.rules.systemui.media.CustomBackground
-import dev.lackluster.mihelper.hook.rules.systemui.media.UnlockCustomAction
-import dev.lackluster.mihelper.hook.rules.systemui.notif.ExpandNotification
-import dev.lackluster.mihelper.hook.rules.systemui.notif.MiuiXExpandButton
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.BatteryIndicator
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.ControlCenterBattery
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.ElementsFontWeight
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.HideCellularIcon
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.HideWiFiIcon
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.IgnoreSysHideIcon
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.PadClockAnim
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarDoubleTapToSleep
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarClockPeriod
 import dev.lackluster.mihelper.hook.rules.systemui.nubia.StatusBarPullDownClock
 import dev.lackluster.mihelper.hook.rules.systemui.qs.nubia.QSCustom
 import dev.lackluster.mihelper.hook.rules.systemui.qs.nubia.QSHeaderShortcut
 import dev.lackluster.mihelper.hook.rules.systemui.qs.nubia.QSHeaderShowControl
-import dev.lackluster.mihelper.hook.rules.systemui.recenttasks.LandscapePortraitDetection
-import dev.lackluster.mihelper.hook.rules.systemui.recenttasks.RecentTasksHook
 import dev.lackluster.mihelper.hook.rules.systemui.screenoff.nubia.ScreenOffPeriodModifier
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.BatteryIconPercentSwapHook
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.Clock
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.DualRowsStatusBarHook
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.HideStatusBarBeforeScreenshot
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarAOSPNotify
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarClockHooker
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarFontRestoreHooker
@@ -74,15 +33,11 @@ import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarHide
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarHideStatusBarIcon
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarHideWifiActivityIcon
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarIgnoreSysHideIcon
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarKSBFontRestore
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarNetworkSpeedAdjuster
-import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarPullDownPeriod
 import dev.lackluster.mihelper.utils.DexKit
-import  dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.MobileClass
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarMaxNotificationIcons
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.StatusBarTemperatureHook
 import dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia.SunShineFeatureHooker
-import dev.lackluster.mihelper.hook.rules.systemui.test.TextViewAnalyzer
 import dev.lackluster.mihelper.hook.rules.systemui.volume.VolumeDialogHook
 
 object SystemUI : YukiBaseHooker() {
@@ -238,7 +193,7 @@ object SystemUI : YukiBaseHooker() {
         // 交换电池图标百分比和图标
 //        loadHooker(BatteryIconPercentSwapHook)
         // 这个hook的方法使用了dexkit，所以需要进行初始化
-        DexKit.initDexKit(this)
+        DexKit.initDexKit(packageParam)
         // 熄屏显示秒（调度-未实现，防止显示秒卡顿）
         loadHooker(AodSecondUpdate)
         loadHooker(StatusBarNetworkSpeedAdjuster)

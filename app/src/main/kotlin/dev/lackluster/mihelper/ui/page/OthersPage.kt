@@ -154,37 +154,6 @@ fun OthersPage(navController: NavController, adjustPadding: PaddingValues, mode:
         }
         item {
             PreferenceGroup(
-                title = stringResource(R.string.ui_title_others_search)
-            ) {
-                SwitchPreference(
-                    title = stringResource(R.string.others_search_more_search_engines),
-                    summary = stringResource(R.string.others_search_more_search_engines_tips),
-                    key = Pref.Key.Search.MORE_SEARCH_ENGINE
-                ) {
-                    spSearchMoreEngines = it
-                }
-                AnimatedVisibility(
-                    spSearchMoreEngines
-                ) {
-                    Column {
-                        TextPreference(
-                            title = stringResource(R.string.others_search_custom_search_engine),
-                            value = stringResource(
-                                if (SafeSP.getBoolean(Pref.Key.Search.CUSTOM_SEARCH_ENGINE)) {
-                                    R.string.common_on
-                                } else {
-                                    R.string.common_off
-                                }
-                            )
-                        ) {
-                            navController.navigateTo(Pages.DIALOG_SEARCH_CUSTOM_ENGINE)
-                        }
-                    }
-                }
-            }
-        }
-        item {
-            PreferenceGroup(
                 title = stringResource(R.string.ui_title_others_taplus)
             ) {
                 SwitchPreference(

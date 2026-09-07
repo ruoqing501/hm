@@ -1,9 +1,9 @@
 package dev.lackluster.mihelper.hook
 
-import com.highcapable.yukihookapi.annotation.xposed.InjectYukiHookWithXposed
-import com.highcapable.yukihookapi.hook.factory.configs
-import com.highcapable.yukihookapi.hook.factory.encase
-import com.highcapable.yukihookapi.hook.xposed.proxy.IYukiHookXposedInit
+import io.github.libxposed.api.XposedModule
+import io.github.libxposed.api.XposedModuleInterface.ModuleLoadedParam
+import io.github.libxposed.api.XposedModuleInterface.PackageReadyParam
+import io.github.libxposed.api.XposedModuleInterface.SystemServerStartingParam
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.data.Scope
 import dev.lackluster.mihelper.hook.apps.Android
@@ -14,10 +14,13 @@ import dev.lackluster.mihelper.hook.apps.nubia.NubiaGameAssist2
 import dev.lackluster.mihelper.hook.apps.nubia.NubiaGameFloat
 import dev.lackluster.mihelper.hook.apps.nubia.NubiaPackageInstaller
 import dev.lackluster.mihelper.hook.apps.nubia.NubiaSystemSettings
-import dev.lackluster.mihelper.utils.factory.hasEnable
 import dev.lackluster.mihelper.hook.apps.nubia.NubiaSystemUpdate
 import dev.lackluster.mihelper.hook.apps.nubia.NubiaThemeUpdate
 import dev.lackluster.mihelper.hook.apps.nubia.NubiaWeather
+import dev.lackluster.mihelper.hook.compat.XposedEnv
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.param.PackageParam
 import dev.lackluster.mihelper.hook.rules.doubleApp.DoubleApp
 import dev.lackluster.mihelper.hook.rules.gameheightlights.NubiaHeightLights
 import dev.lackluster.mihelper.hook.rules.gamehelpmodule.NubiaComboAttack
@@ -28,83 +31,65 @@ import dev.lackluster.mihelper.hook.rules.nfc.NfcService
 import dev.lackluster.mihelper.hook.rules.permissioncontroller.PermissionController
 import dev.lackluster.mihelper.hook.rules.screenshot.RecordScreenHook
 import dev.lackluster.mihelper.hook.rules.screenshot.ScreenshotLoggerHook
+import dev.lackluster.mihelper.utils.Prefs
 
-@InjectYukiHookWithXposed
-class HookEntry : IYukiHookXposedInit {
+class HookEntry : XposedModule() {
 
-    override fun onInit() = configs {
-        debugLog {
-            tag = "RedMagicHelper"
-        }
-        isDebug = false
+    override fun onModuleLoaded(param: ModuleLoadedParam) {
+        XposedEnv.module = this
+        Prefs.initHook(this)
     }
 
-    override fun onHook() = encase {
-        hasEnable(Pref.Key.Module.ENABLED) {
-            loadSystem(Android)
-//            loadApp(Scope.BROWSER, Browser)
-//            loadApp(Scope.DOWNLOAD, Download)
-//            loadApp(Scope.DOWNLOAD_UI, DownloadUI)
-//            loadApp(Scope.GUARD_PROVIDER, GuardProvider)
-//            loadApp(Scope.IN_CALL_UI, InCallUI)
-//            loadApp(Scope.LBE, LBE)
-//            loadApp(Scope.MARKET, Market)
-//            loadApp(Scope.MI_AI, MiAi)
-//            loadApp(Scope.MI_LINK, MiLink)
-//            loadApp(Scope.MI_SETTINGS, MiSettings)
-//            loadApp(Scope.MI_MIRROR, MiMirror)
-//            loadApp(Scope.MI_TRUST, MiTrust)
-//            loadApp(Scope.MIUI_HOME, MiuiHome)
-//            loadApp(Scope.MMS, Mms)
-//            loadApp(Scope.MUSIC, Music)
-//            loadApp(Scope.PACKAGE_INSTALLER, PackageInstaller)
-//            loadApp(Scope.PERSONAL_ASSIST, PersonalAssist)
-//            loadApp(Scope.POWER_KEEPER, PowerKeeper)
-//            loadApp(Scope.REMOTE_CONTROLLER, RemoteController)
-//            loadApp(Scope.SEARCH, Search)
-//            loadApp(Scope.SECURITY_CENTER, SecurityCenter)
-//            loadApp(Scope.SETTINGS, Settings)
-            // 添加 nubia 专有
-            loadApp(Scope.SYSTEM_UI, SystemUI)
-//            loadApp(Scope.CLOCK_COMPONENT, NubiaClockComponent)
-            loadApp(Scope.REDMAGIC_PACKAGE_INSTALLER, NubiaPackageInstaller)
-            loadApp(Scope.SYSTEM_SETTINGS, NubiaSystemSettings)
-            loadApp(Scope.SYSTEM_UPDATE,NubiaSystemUpdate)
-            loadApp(Scope.SYSTEM_THEME, NubiaThemeUpdate)
-            loadApp(Scope.SYSTEM_DESKTOP, DeskTop)
-            loadApp(Scope.SYSTEM_WEATHER, NubiaWeather)
-            // 游戏助手
-            loadApp(Scope.GAME_ASSIST, NubiaGameAssist)
-            // NFC服务
-            loadApp(Scope.NFC, NfcService)
-            // 权限控制器
-            loadApp(Scope.PERMISSION_CONTROLLER, PermissionController)
-            // 应用双开
-            loadApp(Scope.DOUBLE_APP, DoubleApp)
-            // MTP浏览
-            loadApp(Scope.NUBIA_FILE_BROWSER, MtpFileBrowser)
+    override fun onSystemServerStarting(param: SystemServerStartingParam) {
+        XposedEnv.module = this
+        if (!moduleEnabled) return
+        loadHookers(PackageParam(Scope.ANDROID, param.classLoader, null), Android)
+    }
 
-            // 截图和录屏
-            loadApp(Scope.ZTE_SCREENSHOT, ScreenshotLoggerHook)
-            loadApp(Scope.ZTE_SCREENSHOT, RecordScreenHook)
+    override fun onPackageReady(param: PackageReadyParam) {
+        XposedEnv.module = this
+        if (!param.isFirstPackage) return
+        if (!moduleEnabled) return
 
-
-
-           // 游戏空间解除各种功能限制
-            hasEnable(Pref.Key.GameSpace.GAME_FUCTION_UNFREEZE_SWITCH){
-                loadApp(Scope.GAME_ASSIST, NubiaGameAssist2)
-                loadApp(Scope.GAME_FLOAT, NubiaGameFloat)
-                loadApp(Scope.REDMAGIC_MOMENT, NubiaHeightLights)
-                loadApp(Scope.GAME_SPACE, NubiaGameSpace)
-                loadApp(Scope.GAME_SPACE, NubiaTgkHelper)
-                loadApp(Scope.COMBO_ATTACK, NubiaComboAttack)
+        val hookers = mutableListOf<YukiBaseHooker>()
+        when (param.packageName) {
+            Scope.SYSTEM_UI -> hookers += SystemUI
+            Scope.REDMAGIC_PACKAGE_INSTALLER -> hookers += NubiaPackageInstaller
+            Scope.SYSTEM_SETTINGS -> hookers += NubiaSystemSettings
+            Scope.SYSTEM_UPDATE -> hookers += NubiaSystemUpdate
+            Scope.SYSTEM_THEME -> hookers += NubiaThemeUpdate
+            Scope.SYSTEM_DESKTOP -> hookers += DeskTop
+            Scope.SYSTEM_WEATHER -> hookers += NubiaWeather
+            Scope.GAME_ASSIST -> {
+                hookers += NubiaGameAssist
+                if (gameFunctionUnfrozen) hookers += NubiaGameAssist2
             }
+            Scope.NFC -> hookers += NfcService
+            Scope.PERMISSION_CONTROLLER -> hookers += PermissionController
+            Scope.DOUBLE_APP -> hookers += DoubleApp
+            Scope.NUBIA_FILE_BROWSER -> hookers += MtpFileBrowser
+            Scope.ZTE_SCREENSHOT -> hookers += listOf(ScreenshotLoggerHook, RecordScreenHook)
+            Scope.GAME_FLOAT -> if (gameFunctionUnfrozen) hookers += NubiaGameFloat
+            Scope.REDMAGIC_MOMENT -> if (gameFunctionUnfrozen) hookers += NubiaHeightLights
+            Scope.GAME_SPACE -> if (gameFunctionUnfrozen) hookers += listOf(NubiaGameSpace, NubiaTgkHelper)
+            Scope.COMBO_ATTACK -> if (gameFunctionUnfrozen) hookers += NubiaComboAttack
+        }
+        if (hookers.isEmpty()) return
+        loadHookers(PackageParam(param.packageName, param.classLoader, param.applicationInfo), *hookers.toTypedArray())
+    }
 
-//            loadApp(Scope.TAPLUS, Taplus)
-//            loadApp(Scope.THEMES, Themes)
-//            loadApp(Scope.UPDATER, Updater)
-//            loadApp(Scope.WEATHER, Weather)
-//            loadApp(Scope.SYSTEM_UI_PLUGIN, SystemUIPlugin)
+    private val moduleEnabled: Boolean
+        get() = Prefs.getBoolean(Pref.Key.Module.ENABLED, false)
+
+    private val gameFunctionUnfrozen: Boolean
+        get() = Prefs.getBoolean(Pref.Key.GameSpace.GAME_FUCTION_UNFREEZE_SWITCH, false)
+
+    private fun loadHookers(packageParam: PackageParam, vararg hookers: YukiBaseHooker) {
+        XposedEnv.currentParam = packageParam
+        for (hooker in hookers) {
+            hooker.packageParam = packageParam
+            runCatching { hooker.onHook() }
+                .onFailure { YLog.error("Failed to load hooker ${hooker.javaClass.name}", it) }
         }
     }
 }

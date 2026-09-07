@@ -1,11 +1,11 @@
 package dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia
 
 import android.view.View
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.log.YLog
-import com.highcapable.yukihookapi.hook.type.java.BooleanType
-import com.highcapable.yukihookapi.hook.type.java.IntType
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.type.java.BooleanType
+import dev.lackluster.mihelper.hook.compat.type.java.IntType
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.utils.factory.hasEnable
 

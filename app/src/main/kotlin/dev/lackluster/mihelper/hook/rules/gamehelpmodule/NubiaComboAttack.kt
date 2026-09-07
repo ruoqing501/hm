@@ -8,16 +8,16 @@ import android.text.InputFilter
 import android.view.View
 import android.widget.EditText
 import android.widget.SeekBar
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.current
-import com.highcapable.yukihookapi.hook.factory.field
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.log.YLog
-import com.highcapable.yukihookapi.hook.type.java.BooleanType
-import com.highcapable.yukihookapi.hook.type.java.CharSequenceClass
-import com.highcapable.yukihookapi.hook.type.java.IntType
-import com.highcapable.yukihookapi.hook.type.java.StringClass
-import com.highcapable.yukihookapi.hook.type.java.UnitType
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.current
+import dev.lackluster.mihelper.hook.compat.factory.field
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.type.java.BooleanType
+import dev.lackluster.mihelper.hook.compat.type.java.CharSequenceClass
+import dev.lackluster.mihelper.hook.compat.type.java.IntType
+import dev.lackluster.mihelper.hook.compat.type.java.StringClass
+import dev.lackluster.mihelper.hook.compat.type.java.UnitType
 import dev.lackluster.mihelper.hook.rules.gameassist.NubiaGameAssistDebug
 import dev.lackluster.mihelper.hook.rules.gamespace.NubiaTgkHelper
 

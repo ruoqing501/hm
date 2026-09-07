@@ -5,18 +5,18 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.widget.ImageView
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.current
-import com.highcapable.yukihookapi.hook.factory.field
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.log.YLog
-import com.highcapable.yukihookapi.hook.type.android.ViewClass
-import com.highcapable.yukihookapi.hook.type.java.BooleanType
-import com.highcapable.yukihookapi.hook.type.java.UnitType
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.current
+import dev.lackluster.mihelper.hook.compat.factory.field
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.type.android.ViewClass
+import dev.lackluster.mihelper.hook.compat.type.java.BooleanType
+import dev.lackluster.mihelper.hook.compat.type.java.UnitType
 import androidx.core.content.edit
-import com.highcapable.yukihookapi.hook.type.android.ContextClass
-import com.highcapable.yukihookapi.hook.type.java.CharSequenceClass
-import com.highcapable.yukihookapi.hook.type.java.StringClass
+import dev.lackluster.mihelper.hook.compat.type.android.ContextClass
+import dev.lackluster.mihelper.hook.compat.type.java.CharSequenceClass
+import dev.lackluster.mihelper.hook.compat.type.java.StringClass
 
 // 包名为 cn.nubia.gamelauncher
 object NubiaGameSpace : YukiBaseHooker() {

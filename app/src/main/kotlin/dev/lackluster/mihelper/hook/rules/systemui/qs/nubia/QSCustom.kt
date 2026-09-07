@@ -1,18 +1,16 @@
 package dev.lackluster.mihelper.hook.rules.systemui.qs.nubia
 
 
-import android.app.AndroidAppHelper
 import android.content.res.Configuration
 import android.view.ViewGroup
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.factory.current
-import com.highcapable.yukihookapi.hook.factory.field
-import com.highcapable.yukihookapi.hook.log.YLog
-import com.highcapable.yukihookapi.hook.type.java.BooleanType
-import com.highcapable.yukihookapi.hook.type.java.IntType
-import com.highcapable.yukihookapi.hook.type.java.StringClass
-import de.robv.android.xposed.XposedHelpers.findField
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.factory.current
+import dev.lackluster.mihelper.hook.compat.factory.field
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.type.java.BooleanType
+import dev.lackluster.mihelper.hook.compat.type.java.IntType
+import dev.lackluster.mihelper.hook.compat.type.java.StringClass
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.utils.Prefs
 import dev.lackluster.mihelper.utils.factory.getResID
@@ -71,7 +69,7 @@ object QSCustom : YukiBaseHooker() {
                      *         或 Configuration.ORIENTATION_LANDSCAPE（横屏）。
                      */
                     val orientation =
-                        AndroidAppHelper.currentApplication().resources.configuration.orientation
+                        (appContext ?: return@before).resources.configuration.orientation
 //                    if (orientation == Configuration.ORIENTATION_PORTRAIT) {
 //                        result = mColumns
 //                    } else {
@@ -96,7 +94,7 @@ object QSCustom : YukiBaseHooker() {
                 }?.hook {
                     before {
                         val orientation =
-                            AndroidAppHelper.currentApplication().resources.configuration.orientation
+                            (appContext ?: return@before).resources.configuration.orientation
 //                        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
 //                            result = mColumnsEditor
 //                        } else {
@@ -113,7 +111,7 @@ object QSCustom : YukiBaseHooker() {
             }?.hook{
                 before {
                     val orientation =
-                        AndroidAppHelper.currentApplication().resources.configuration.orientation
+                        (appContext ?: return@before).resources.configuration.orientation
                     result = if (orientation == Configuration.ORIENTATION_PORTRAIT) mColumns else mColumnsLandscape
                 }
             }
@@ -123,7 +121,7 @@ object QSCustom : YukiBaseHooker() {
 //                param(IntType, IntType)
 //            }?.hook {
 //                before {
-//                    val orientation = AndroidAppHelper.currentApplication().resources.configuration.orientation
+//                    val orientation = (appContext ?: return@before).resources.configuration.orientation
 //                    val customColumns = if (orientation == Configuration.ORIENTATION_PORTRAIT) mColumns else mColumnsLandscape
 //                    // 强制更新缓存字段，影响本次布局计算
 //
@@ -145,7 +143,7 @@ object QSCustom : YukiBaseHooker() {
                 }?.hook {
                     before {
                         val orientation =
-                            AndroidAppHelper.currentApplication().resources.configuration.orientation
+                            (appContext ?: return@before).resources.configuration.orientation
                         result =
                             if (orientation == Configuration.ORIENTATION_PORTRAIT) mRows else mRowsLandscape
                     }
@@ -160,14 +158,14 @@ object QSCustom : YukiBaseHooker() {
                     val orientation = viewGroup.context.resources.configuration.orientation
 
                     val orimRows =
-                        mfvTileLayoutClazz.getDeclaredField("mRows").getInt(instance)
+                        mfvTileLayoutClazz.getDeclaredField("mRows").apply { isAccessible = true }.getInt(instance)
                     if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        mfvTileLayoutClazz.getDeclaredField("mRows").setInt(instance, mRows)
+                        mfvTileLayoutClazz.getDeclaredField("mRows").apply { isAccessible = true }.setInt(instance, mRows)
                         // 打印修改后的值（可选）
                         YLog.debug("$TAG: set mRows to $mRows (portrait)")
                         result = orimRows != mRows
                     } else {
-                        mfvTileLayoutClazz.getDeclaredField("mRows")
+                        mfvTileLayoutClazz.getDeclaredField("mRows").apply { isAccessible = true }
                             .setInt(instance, mRowsLandscape)
                        result = orimRows != mRowsLandscape
                     }
@@ -206,7 +204,7 @@ object QSCustom : YukiBaseHooker() {
      */
     private fun setFieldValueSafe(obj: Any, fieldName: String, value: Int, clazz: Class<*>) {
         try {
-            val field = findField(clazz, fieldName)
+            val field = clazz.getDeclaredField(fieldName)
             field.isAccessible = true
             field.setInt(obj, value)
         } catch (e: Exception) {
@@ -219,7 +217,7 @@ object QSCustom : YukiBaseHooker() {
 
             for (altName in alternativeNames) {
                 try {
-                    val altField = findField(clazz, altName)
+                    val altField = clazz.getDeclaredField(altName)
                     altField.isAccessible = true
                     altField.setInt(obj, value)
                     YLog.debug("QSCustom: Successfully set field $altName as alternative to $fieldName")

@@ -1,16 +1,16 @@
 package dev.lackluster.mihelper.hook.rules.systemui.statusbar.nubia
 
 import android.telephony.SubscriptionManager
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.constructor
-import com.highcapable.yukihookapi.hook.factory.current
-import com.highcapable.yukihookapi.hook.factory.field
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.log.YLog
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.constructor
+import dev.lackluster.mihelper.hook.compat.factory.current
+import dev.lackluster.mihelper.hook.compat.factory.field
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.log.YLog
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.utils.nubia.KotlinFlowHelper.ReadonlyStateFlow
 import dev.lackluster.mihelper.utils.Prefs
-import dev.lackluster.mihelper.utils.nubia.KotlinFlowHelper.MutableStateFlow
+import dev.lackluster.mihelper.utils.nubia.KotlinFlowHelper
 
 object StatusBarHideCellularIcon : YukiBaseHooker() {
     private const val TAG = "StatusBarHideCellularIcon"
@@ -134,7 +134,7 @@ object StatusBarHideCellularIcon : YukiBaseHooker() {
                         val field = this.instance.javaClass.getDeclaredField("isVisible")
                         field.isAccessible = true
                         val newFlow =
-                            MutableStateFlow(false)  // 或使用 KotlinFlowHelper.MutableStateFlow(false)
+                            with(KotlinFlowHelper) { with(packageParam) { MutableStateFlow(false) } }
                         field.set(this.instance, newFlow)
                     }
 
@@ -144,7 +144,7 @@ object StatusBarHideCellularIcon : YukiBaseHooker() {
                             this.instance.javaClass.getDeclaredField("networkTypeIcon")
                         fieldOut3.isAccessible = true
                         val newFlow3 =
-                            MutableStateFlow(null)  // 或使用 KotlinFlowHelper.MutableStateFlow(false)
+                            with(KotlinFlowHelper) { with(packageParam) { MutableStateFlow(null) } }
                         fieldOut3.set(this.instance, newFlow3)
 
                         YLog.debug(

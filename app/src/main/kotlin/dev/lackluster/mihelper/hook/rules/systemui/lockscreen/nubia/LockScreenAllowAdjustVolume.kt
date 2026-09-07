@@ -6,10 +6,10 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.*
-import com.highcapable.yukihookapi.hook.log.YLog
-import com.highcapable.yukihookapi.hook.param.HookParam
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.*
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.param.HookParam
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.utils.Prefs
 import java.text.SimpleDateFormat

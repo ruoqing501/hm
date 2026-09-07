@@ -22,17 +22,16 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.factory.toClass
-import com.highcapable.yukihookapi.hook.log.YLog
-import com.highcapable.yukihookapi.hook.type.java.IntType
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.factory.toClass
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.type.java.IntType
 import dev.lackluster.hyperx.compose.preference.DropDownEntry
 import dev.lackluster.mihelper.R
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.utils.Prefs
 import dev.lackluster.mihelper.utils.factory.isSystemInDarkMode
-import io.github.kyuubiran.ezxhelper.core.misc.params
 import java.lang.ref.WeakReference
 import kotlin.math.roundToInt
 
@@ -217,7 +216,7 @@ object RecentTasksHook : YukiBaseHooker() {
         "com.android.quickstep.util.RecentsOrientedState".toClass().method {
             name = "update"
             paramCount = 2
-            params(IntType, IntType)
+            param(IntType, IntType)
         }.hook {
             after {
                 val touchRotation = args[0] as Int

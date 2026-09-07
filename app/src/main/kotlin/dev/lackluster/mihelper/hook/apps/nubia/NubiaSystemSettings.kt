@@ -1,13 +1,9 @@
 package dev.lackluster.mihelper.hook.apps.nubia
 
 
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
 import com.u9521.wooboxforredmagicos.hook.app.systemui.view.textclock.TimeTitlePeriod
-import dev.lackluster.mihelper.hook.rules.packageinstaller.nubia.HidePurifySwitch
-import dev.lackluster.mihelper.hook.rules.packageinstaller.nubia.HideStoreHint
 
-import dev.lackluster.mihelper.hook.rules.packageinstaller.nubia.SkipApkScan
-import dev.lackluster.mihelper.hook.rules.packageinstaller.nubia.UseCtsActivity
 import dev.lackluster.mihelper.hook.rules.settings.nubia.DisableBatteryPercentageDisplayItem
 import dev.lackluster.mihelper.hook.rules.settings.nubia.DisableUSBInstallVerification
 import dev.lackluster.mihelper.hook.rules.settings.nubia.DisplayTimeoutHook

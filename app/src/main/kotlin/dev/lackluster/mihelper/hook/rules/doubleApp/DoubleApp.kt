@@ -1,6 +1,6 @@
 package dev.lackluster.mihelper.hook.rules.doubleApp
 
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
 
 object DoubleApp: YukiBaseHooker(){
     override fun onHook() {

@@ -5,16 +5,16 @@ import android.app.SearchManager
 import android.app.role.RoleManager
 import android.content.Context
 import android.os.Bundle
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.constructor
-import com.highcapable.yukihookapi.hook.factory.field
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.log.YLog
-import com.highcapable.yukihookapi.hook.type.android.ContextClass
-import com.highcapable.yukihookapi.hook.type.java.BooleanType
-import com.highcapable.yukihookapi.hook.type.java.IntType
-import com.highcapable.yukihookapi.hook.type.java.LongType
-import com.highcapable.yukihookapi.hook.type.java.StringClass
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.constructor
+import dev.lackluster.mihelper.hook.compat.factory.field
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.type.android.ContextClass
+import dev.lackluster.mihelper.hook.compat.type.java.BooleanType
+import dev.lackluster.mihelper.hook.compat.type.java.IntType
+import dev.lackluster.mihelper.hook.compat.type.java.LongType
+import dev.lackluster.mihelper.hook.compat.type.java.StringClass
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.utils.factory.hasEnable
 

@@ -10,13 +10,12 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.children
-import com.highcapable.yukihookapi.hook.core.annotation.LegacyResourcesHook
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.current
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.log.YLog
-import com.highcapable.yukihookapi.hook.type.java.BooleanType
-import com.highcapable.yukihookapi.hook.type.java.IntType
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.current
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.type.java.BooleanType
+import dev.lackluster.mihelper.hook.compat.type.java.IntType
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.utils.Prefs
 import dev.lackluster.mihelper.utils.factory.hasEnable
@@ -865,40 +864,6 @@ object DualRowsStatusBarHook : YukiBaseHooker() {
         YLog.debug(tag = TAG, msg = "=== 视图层级结构打印完成 ===")
     }
 
-    @OptIn(LegacyResourcesHook::class)
-    private fun statusBarHeightHook() {
-        // 执行资源注入
-        try {
-            loadApp(name = "com.android.systemui") {
-                resources().hook {
-                    injectResource {
-                        conditions {
-                            name = "status_bar_height"
-                            dimen()
-                        }
-                        replaceTo(130.0) // 修改为你想要的值
-                    }
-                    injectResource {
-                        conditions {
-                            name = "intl_status_bar_height"
-                            dimen()
-                        }
-                        replaceTo(130.0)
-                    }
-                    injectResource {
-                        conditions {
-                            name = "intl_status_bar_height_default"
-                            dimen()
-                        }
-                        replaceTo(130.0)
-                    }
-                }
-            }
-            YLog.debug(tag = TAG, msg = "Successfully injected status bar height resources")
-        } catch (e: Exception) {
-            YLog.error(tag = TAG, msg = "Failed to inject resources: ${e.message}")
-        }
-    }
 
     /**
      * 设置左侧双排布局

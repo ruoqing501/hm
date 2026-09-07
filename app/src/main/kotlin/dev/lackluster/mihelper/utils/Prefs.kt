@@ -1,51 +1,56 @@
 package dev.lackluster.mihelper.utils
 
-import de.robv.android.xposed.XSharedPreferences
-import dev.lackluster.mihelper.BuildConfig
+import android.content.Context
+import android.content.SharedPreferences
+import io.github.libxposed.api.XposedModule
 
+/**
+ * Preference access with two backends:
+ * - hooked processes: read-only remote preferences served by the Xposed framework ([initHook])
+ * - module app process: local SharedPreferences written by the settings UI ([initApp])
+ *
+ * The app side mirrors every local write into the remote preferences via
+ * [dev.lackluster.mihelper.HelperApplication], so hooked processes observe changes.
+ */
 object Prefs {
     const val NAME = "config"
-    private val xPrefs by lazy {
-        XSharedPreferences(BuildConfig.APPLICATION_ID, NAME)
+
+    @Volatile
+    private var remote: SharedPreferences? = null
+
+    @Volatile
+    private var local: SharedPreferences? = null
+
+    fun initHook(module: XposedModule) {
+        if (remote != null) return
+        remote = runCatching { module.getRemotePreferences(NAME) }.getOrNull()
     }
 
-    fun getXSP(prefName: String = NAME): XSharedPreferences {
-        return xPrefs
+    fun initApp(context: Context) {
+        if (local != null) return
+        local = context.applicationContext.getSharedPreferences(NAME, Context.MODE_PRIVATE)
     }
 
-    fun getBoolean(key: String, defValue: Boolean): Boolean {
-        if (xPrefs.hasFileChanged()) {
-            xPrefs.reload()
-        }
-        return xPrefs.getBoolean(key, defValue)
-    }
+    private fun backend(): SharedPreferences? = remote ?: local
 
-    fun getInt(key: String, defValue: Int): Int {
-        if (xPrefs.hasFileChanged()) {
-            xPrefs.reload()
-        }
-        return xPrefs.getInt(key, defValue)
-    }
+    fun getBoolean(key: String, defValue: Boolean): Boolean =
+        runCatching { backend()?.getBoolean(key, defValue) }.getOrNull() ?: defValue
 
-    fun getFloat(key: String, defValue: Float): Float {
-        if (xPrefs.hasFileChanged()) {
-            xPrefs.reload()
-        }
-        return xPrefs.getFloat(key, defValue)
-    }
+    fun getInt(key: String, defValue: Int): Int =
+        runCatching { backend()?.getInt(key, defValue) }.getOrNull() ?: defValue
 
-    fun getString(key: String, defValue: String): String? {
-        if (xPrefs.hasFileChanged()) {
-            xPrefs.reload()
-        }
-        return xPrefs.getString(key, defValue)
-    }
+    fun getFloat(key: String, defValue: Float): Float =
+        runCatching { backend()?.getFloat(key, defValue) }.getOrNull() ?: defValue
 
-    fun getStringSet(key: String, defValue: MutableSet<String>): MutableSet<String> {
-        if (xPrefs.hasFileChanged()) {
-            xPrefs.reload()
-        }
-        return xPrefs.getStringSet(key, defValue) ?: defValue
-    }
+    fun getLong(key: String, defValue: Long): Long =
+        runCatching { backend()?.getLong(key, defValue) }.getOrNull() ?: defValue
+
+    fun getString(key: String, defValue: String?): String? =
+        runCatching { backend()?.getString(key, defValue) }.getOrNull() ?: defValue
+
+    fun getStringSet(key: String, defValue: MutableSet<String>): MutableSet<String> =
+        runCatching { backend()?.getStringSet(key, defValue) }.getOrNull() ?: defValue
+
+    fun contains(key: String): Boolean =
+        runCatching { backend()?.contains(key) }.getOrNull() ?: false
 }
-

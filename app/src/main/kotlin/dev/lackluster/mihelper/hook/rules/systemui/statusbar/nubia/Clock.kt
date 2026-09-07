@@ -10,16 +10,13 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewParent
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProvider.NewInstanceFactory.Companion.instance
-import com.highcapable.kavaref.KavaRef
-import com.highcapable.kavaref.KavaRef.Companion.resolve
-import com.highcapable.kavaref.condition.type.Modifiers
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.log.YLog
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.constructor
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.type.java.IntType
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.utils.Prefs
-import org.w3c.dom.Text
 import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -144,18 +141,18 @@ class Clock: YukiBaseHooker() {
         if (!clockEnabled) return
 
         loadApp("com.android.systemui") {
-            val kavaRef = "com.android.systemui.statusbar.policy.Clock".toClass().resolve()
+            val clockClass = "com.android.systemui.statusbar.policy.Clock".toClass()
 
-            hookConstructor(kavaRef)
-            hookGetSmallTime(kavaRef)
+            hookConstructor(clockClass)
+            hookGetSmallTime(clockClass)
         }
     }
 
     /** Hook 构造函数 */
-    private fun hookConstructor(kavaRef: KavaRef.MemberScope<Any>) = kavaRef.apply {
-        firstConstructor {
-            modifiers(Modifiers.PUBLIC)
-            parameters("android.content.Context", "android.util.AttributeSet", Int::class)
+    private fun hookConstructor(clockClass: Class<*>) {
+        clockClass.constructor {
+            modifiers { isPublic }
+            param("android.content.Context", "android.util.AttributeSet", IntType)
         }.hook {
             after {
                 hookContext = args(0).cast<Context>()!!
@@ -206,11 +203,11 @@ class Clock: YukiBaseHooker() {
 
 
     /** Hook getSmallTime 方法，进行自定义格式化 */
-    private fun hookGetSmallTime(kavaRef: KavaRef.MemberScope<Any>) = kavaRef.apply {
-        firstMethod {
-            modifiers(Modifiers.PRIVATE, Modifiers.FINAL)
+    private fun hookGetSmallTime(clockClass: Class<*>) {
+        clockClass.method {
+            modifiers { isPrivate; isFinal }
             name = "getSmallTime"
-            emptyParameters()
+            emptyParam()
             returnType = "java.lang.CharSequence"
         }.hook {
             before {

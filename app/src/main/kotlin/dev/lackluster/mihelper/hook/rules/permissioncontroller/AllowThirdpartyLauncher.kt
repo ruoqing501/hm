@@ -1,7 +1,7 @@
 package dev.lackluster.mihelper.hook.rules.permissioncontroller
 
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.log.YLog
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.log.YLog
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.utils.DexKit
 import dev.lackluster.mihelper.utils.DexKit.dexKitBridge

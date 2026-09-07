@@ -1,22 +1,14 @@
 package dev.lackluster.mihelper.hook.apps
 
 import androidx.compose.remote.creation.log
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import dev.lackluster.mihelper.hook.rules.android.AllowMoreFreeform
-import dev.lackluster.mihelper.hook.rules.android.AntiQues
-import dev.lackluster.mihelper.hook.rules.android.DarkModeForAll
-import dev.lackluster.mihelper.hook.rules.android.DisableFixedOrientation
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.mihelper.hook.rules.android.DisablePinVerifyPer72h
 import dev.lackluster.mihelper.hook.rules.android.DisableThermal
-import dev.lackluster.mihelper.hook.rules.android.FontScale
-import dev.lackluster.mihelper.hook.rules.shared.RemoveFreeformRestriction
-import dev.lackluster.mihelper.hook.rules.android.WallpaperScaleRatio
 import dev.lackluster.mihelper.hook.rules.android.nubia.AirplaneMode
 import dev.lackluster.mihelper.hook.rules.android.nubia.AllowUntrustedTouches
 import dev.lackluster.mihelper.hook.rules.android.nubia.BlockScreenOnNotificationSound
 import dev.lackluster.mihelper.hook.rules.android.nubia.BlockTelemetryService
 //import dev.lackluster.mihelper.hook.rules.android.nubia.CpuFreezerHook
-import dev.lackluster.mihelper.hook.rules.android.nubia.Debugger
 import dev.lackluster.mihelper.hook.rules.android.nubia.DisableFlagSecureHooker
 import dev.lackluster.mihelper.hook.rules.android.nubia.DisableFlagSecureHookerZygoteInit
 import dev.lackluster.mihelper.hook.rules.android.nubia.LockScreenTimeoutHook
@@ -41,7 +33,7 @@ object Android : YukiBaseHooker() {
 //        loadHooker(DisableFixedOrientation)
 //        loadHooker(WallpaperScaleRatio)
         // 禁用FLAG_SECURE 启用截图
-        loadZygote(DisableFlagSecureHookerZygoteInit)
+        loadHooker(DisableFlagSecureHookerZygoteInit)
         loadHooker(DisableFlagSecureHooker)
 //        loadHooker(Debugger)
 //        loadHooker(CpuFreezerHook)

@@ -6,7 +6,6 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -46,10 +45,7 @@ android {
     androidResources {
         additionalParameters += listOf("--stable-ids", "stableIds.txt")
         additionalParameters += listOf("--allow-reserved-package-id", "--package-id", "0x60")
-
     }
-    // 资源注入 yuhihook
-//    androidResources.additionalParameters += listOf("--allow-reserved-package-id", "--package-id", "0x64")
     buildFeatures {
         buildConfig = true
         viewBinding = true
@@ -78,6 +74,9 @@ android {
         }
     }
     packaging {
+        resources {
+            merges += "META-INF/xposed/*"
+        }
         applicationVariants.all {
             outputs.all {
                 (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
@@ -93,12 +92,10 @@ dependencies {
 
     // Hook 相关API
     implementation(libs.androidx.remote.creation.core)
-    compileOnly(libs.xposed.api)
-    implementation(libs.yukihookapi.api)
-    ksp(libs.yukihookapi.ksp.xposed)
+    compileOnly(libs.libxposed.api)
+    implementation(libs.libxposed.service)
     implementation(libs.kavaref.core)
     implementation(libs.kavaref.extension)
-    implementation(libs.bundles.ezxhelper)  // 修改这一行
 
 
 

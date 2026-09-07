@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.core.content.edit
-import com.highcapable.yukihookapi.hook.log.YLog
-import com.highcapable.yukihookapi.hook.param.PackageParam
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.param.PackageParam
 import dev.lackluster.mihelper.BuildConfig
 import dev.lackluster.mihelper.data.Pref
 import org.luckypray.dexkit.DexKitBridge
@@ -40,10 +40,14 @@ object DexKit {
 
     @SuppressLint("SdCardPath")
     fun initDexKit(param: PackageParam) {
-        hostDir = param.appInfo.sourceDir
+        val appInfo = param.appInfo ?: run {
+            YLog.warn("DexKit: appInfo unavailable, skip init")
+            return
+        }
+        hostDir = appInfo.sourceDir
         if (enableCache) {
             try {
-                val userDeSP = File("${param.appInfo.dataDir.replace("/data/user/", "/data/user_de/")}/shared_prefs/${FILE_NAME}.xml")
+                val userDeSP = File("${appInfo.dataDir.replace("/data/user/", "/data/user_de/")}/shared_prefs/${FILE_NAME}.xml")
                 sp = if (userDeSP.exists()) {
                     param.systemContext
                         .createPackageContext(param.packageName, Context.CONTEXT_IGNORE_SECURITY)
@@ -85,10 +89,10 @@ object DexKit {
                 enableCache = false
             }
         } else {
-            File("${param.appInfo.dataDir}/shared_prefs/${FILE_NAME}.xml").let {
+            File("${appInfo.dataDir}/shared_prefs/${FILE_NAME}.xml").let {
                 if (it.exists()) it.delete()
             }
-            File("${param.appInfo.dataDir.replace("/data/user/", "/data/user_de/")}/shared_prefs/${FILE_NAME}.xml").let {
+            File("${appInfo.dataDir.replace("/data/user/", "/data/user_de/")}/shared_prefs/${FILE_NAME}.xml").let {
                 if (it.exists()) it.delete()
             }
         }

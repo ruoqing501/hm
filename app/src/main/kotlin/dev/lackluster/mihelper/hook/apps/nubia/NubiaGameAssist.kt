@@ -1,14 +1,11 @@
 package dev.lackluster.mihelper.hook.apps.nubia
 
 
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.hook.rules.gameassist.ActiveMode
 import dev.lackluster.mihelper.hook.rules.gameassist.HideGameChickenModeDialog
-import dev.lackluster.mihelper.hook.rules.gameassist.NubiaGameRadio
-import dev.lackluster.mihelper.hook.rules.gameassist.NubiaRecordFreely
 import dev.lackluster.mihelper.hook.rules.gameassist.NubiaSuperResolution
-import dev.lackluster.mihelper.hook.rules.gameassist.NubiaGameAssistDebug
 
 import dev.lackluster.mihelper.utils.factory.hasEnable
 

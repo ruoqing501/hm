@@ -45,3 +45,10 @@
 
 -keep class dev.lackluster.mihelper.ui.MainActivity
 -keep class dev.lackluster.mihelper.hook.HookEntry
+
+# libxposed modern API
+-dontwarn io.github.libxposed.annotation.**
+-adaptresourcefilecontents META-INF/xposed/java_init.list
+-keep,allowoptimization,allowobfuscation public class * extends io.github.libxposed.api.XposedModule {
+    public <init>();
+}

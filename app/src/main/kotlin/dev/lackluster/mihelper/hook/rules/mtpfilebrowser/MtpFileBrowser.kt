@@ -1,6 +1,6 @@
 package dev.lackluster.mihelper.hook.rules.mtpfilebrowser
 
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
 
 // MTP浏览
 object MtpFileBrowser: YukiBaseHooker(){

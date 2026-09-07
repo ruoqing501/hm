@@ -3,11 +3,11 @@ package dev.lackluster.mihelper.hook.rules.systemui.features
 import android.content.ComponentName
 import android.os.Bundle
 import android.widget.TextClock
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
-import com.highcapable.yukihookapi.hook.factory.field
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.log.YLog
-import com.highcapable.yukihookapi.hook.type.android.ContextClass
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.factory.field
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.log.YLog
+import dev.lackluster.mihelper.hook.compat.type.android.ContextClass
 import dev.lackluster.mihelper.data.Pref
 import dev.lackluster.mihelper.hook.rules.systemui.screenoff.nubia.AodSecondUpdate
 import dev.lackluster.mihelper.hook.rules.updatesystem.nubia.MockDeviceInfo

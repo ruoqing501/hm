@@ -2,7 +2,7 @@ package dev.lackluster.mihelper.hook.apps.nubia
 
 
 
-import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
+import dev.lackluster.mihelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.mihelper.hook.rules.updatesystem.nubia.MockDeviceInfo
 import dev.lackluster.mihelper.hook.rules.updatesystem.nubia.ScopeSystemUpdate
 import dev.lackluster.mihelper.utils.DexKit
@@ -15,7 +15,7 @@ object NubiaSystemUpdate : YukiBaseHooker(){
 
 
         // 模拟设备信息
-        DexKit.initDexKit(this)
+        DexKit.initDexKit(packageParam)
         loadHooker(MockDeviceInfo)
         DexKit.closeDexKit()
 

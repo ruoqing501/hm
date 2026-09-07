@@ -1,8 +1,8 @@
 package dev.lackluster.mihelper.utils.nubia
 
-import com.highcapable.yukihookapi.hook.factory.constructor
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.param.PackageParam
+import dev.lackluster.mihelper.hook.compat.factory.constructor
+import dev.lackluster.mihelper.hook.compat.factory.method
+import dev.lackluster.mihelper.hook.compat.param.PackageParam
 
 @Suppress("FunctionName")
 object KotlinFlowHelper {
