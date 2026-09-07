@@ -43,8 +43,8 @@
     *** inflate(android.view.LayoutInflater);
 }
 
--keep class dev.lackluster.mihelper.ui.MainActivity
--keep class dev.lackluster.mihelper.hook.HookEntry
+-keep class dev.lackluster.redmagichelper.ui.MainActivity
+-keep class dev.lackluster.redmagichelper.hook.HookEntry
 
 # libxposed modern API
 -dontwarn io.github.libxposed.annotation.**
