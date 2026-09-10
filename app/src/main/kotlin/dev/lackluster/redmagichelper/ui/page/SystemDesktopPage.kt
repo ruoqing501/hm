@@ -119,6 +119,20 @@ fun SystemDesktopPage(navController: NavController, adjustPadding: PaddingValues
                 }
             }
         }
+        // 红魔-桌面-应用图标与名称自定义
+        item {
+            PreferenceGroup(
+                stringResource(R.string.desktop_icon_custom),
+                visible = true,
+            ) {
+                TextPreference(
+                    title = stringResource(R.string.desktop_icon_custom),
+                    summary = stringResource(R.string.desktop_icon_custom_entry_summary)
+                ) {
+                    navController.navigateTo(Pages.DESKTOP_ICON_CUSTOM)
+                }
+            }
+        }
 
         }
     }

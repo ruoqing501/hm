@@ -5,18 +5,23 @@ import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.redmagichelper.hook.rules.android.DisablePinVerifyPer72h
 import dev.lackluster.redmagichelper.hook.rules.android.DisableThermal
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.AirplaneMode
+import dev.lackluster.redmagichelper.hook.rules.android.nubia.AudioGainHook
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.AllowUntrustedTouches
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.BlockScreenOnNotificationSound
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.BlockTelemetryService
 //import dev.lackluster.redmagichelper.hook.rules.android.nubia.CpuFreezerHook
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.DisableFlagSecureHooker
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.DisableFlagSecureHookerZygoteInit
+import dev.lackluster.redmagichelper.hook.rules.android.nubia.FreeformEnhanceHook
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.LockScreenTimeoutHook
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.NubiaDisableSystemSignatureVerification
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.PowerWakeupAssist
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.RemoveAlertWindowsNotification
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.RmIntentHijack
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.RmWindowReplyLimits
+import dev.lackluster.redmagichelper.hook.rules.android.nubia.ScreenOffAutomationHook
+import dev.lackluster.redmagichelper.hook.rules.android.nubia.SignatureMismatchInstallHook
+import dev.lackluster.redmagichelper.hook.rules.android.nubia.TgkRapidFireSystemHook
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.VolumeDialogHook
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.VolumeStepHook
 
@@ -40,6 +45,8 @@ object Android : YukiBaseHooker() {
 
         // 小窗限制
         loadHooker(RmWindowReplyLimits)
+        // 小窗增强：数量上限其余闸门 + 全应用资格（移植自 LS_Augment FreeformHook）
+        loadHooker(FreeformEnhanceHook)
 
         // 锁屏-禁用每 72 小时验证锁屏密码
         loadHooker(DisablePinVerifyPer72h)
@@ -71,10 +78,20 @@ object Android : YukiBaseHooker() {
         loadHooker(AirplaneMode)
         // 禁用系统签名验证
         loadHooker(NubiaDisableSystemSignatureVerification)
+        // 允许不同签名覆盖安装
+        loadHooker(SignatureMismatchInstallHook)
 
         // 声音步进调节
         loadHooker(VolumeStepHook)
 
+        // 音量增益（超过系统最大音量后用 LoudnessEnhancer 施加增益）
+        loadHooker(AudioGainHook)
+
+        // 熄屏自动隐藏应用
+        loadHooker(ScreenOffAutomationHook)
+
+        // 肩键极速连点 system_server 侧(移植自 LS_Augment TgkRapidFireSystemHook)
+        loadHooker(TgkRapidFireSystemHook)
 
 
     }

@@ -4,6 +4,7 @@ package dev.lackluster.redmagichelper.hook.apps.nubia
 import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.hook.rules.gameassist.ActiveMode
+import dev.lackluster.redmagichelper.hook.rules.gameassist.AiTriggerYoloScan
 import dev.lackluster.redmagichelper.hook.rules.gameassist.HideGameChickenModeDialog
 import dev.lackluster.redmagichelper.hook.rules.gameassist.NubiaSuperResolution
 
@@ -22,6 +23,9 @@ object NubiaGameAssist : YukiBaseHooker(){
 
         // 活跃模式(根据用户设置决定，避免状态被重置，避免下次进入游戏的时候默认为关闭状态)
         loadHooker(ActiveMode)
+
+        // AI 触发器间隔调整（YOLO 扫描）
+        loadHooker(AiTriggerYoloScan)
 
         //
         //// 随心录制

@@ -28,6 +28,7 @@ import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.Clock
 import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.DualRowsStatusBarHook
 import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.StatusBarAOSPNotify
 import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.StatusBarClockHooker
+import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.StatusBarGridHook
 import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.StatusBarFontRestoreHooker
 import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.StatusBarHideCellularIcon
 import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.StatusBarHideStatusBarIcon
@@ -38,6 +39,7 @@ import dev.lackluster.redmagichelper.utils.DexKit
 import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.StatusBarMaxNotificationIcons
 import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.StatusBarTemperatureHook
 import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.SunShineFeatureHooker
+import dev.lackluster.redmagichelper.hook.rules.systemui.volume.AudioGainPanelHook
 import dev.lackluster.redmagichelper.hook.rules.systemui.volume.VolumeDialogHook
 
 object SystemUI : YukiBaseHooker() {
@@ -53,6 +55,8 @@ object SystemUI : YukiBaseHooker() {
         //loadHooker(RecentTasksHook)
         loadApp(hooker = Clock())
         loadHooker(DualRowsStatusBarHook)
+        // 状态栏网格重排（移植自 LS_Augment，与双排/布局功能互斥）
+        loadHooker(StatusBarGridHook)
         loadHooker(StatusBarTemperatureHook)
         loadHooker(SunShineFeatureHooker)
         loadHooker(HideLockScreenStatusBar)
@@ -197,6 +201,8 @@ object SystemUI : YukiBaseHooker() {
         // 熄屏显示秒（调度-未实现，防止显示秒卡顿）
         loadHooker(AodSecondUpdate)
         loadHooker(StatusBarNetworkSpeedAdjuster)
+        // 音量增益-音量条量程与百分比显示同步
+        loadHooker(AudioGainPanelHook)
         //特性
         loadHooker(GestureStartDefaultDigitalAssist)//手势打开默认数字助理
         DexKit.closeDexKit()

@@ -9,6 +9,7 @@ object Pages {
     const val STATUS_BAR_TIME_INDICATOR = "StatusBarTimeIndicatorPage"
     const val SYSTEM_PAGE_FONT = "SystemPageFontPage"
     const val STATUS_BAR_DUAL= "StatusBarDualPage"
+    const val STATUS_BAR_GRID= "StatusBarGridPage"
     const val STATUS_BAR_LAYOUT= "StatusBarLayoutPage"
     const val STATUS_BAR_DISPLAY_TEMP= "StatusBarDisplayTempPage"
     const val STATUS_BAR_DISPLAY_BATTERY_INFO= "StatusBarDisplayBatteryInfoPage"
@@ -34,13 +35,17 @@ object Pages {
     const val ICON_TUNER = "IconTunerPage"
     const val NUBIA_ICON_TUNER = "NubiaIconTunerPage"
     const val SYSTEM_DESKTOP_RECENT_TASKS = "SystemDesktopRecentTasksPage"
+    const val DESKTOP_ICON_CUSTOM = "DesktopIconCustomPage"
+    const val SCREEN_OFF_HIDE_APPS = "ScreenOffHideAppsPage"
     const val MEDIA_CONTROL = "MediaControlPage"
+    const val HEALTH_STEPS = "HealthStepsPage"
 
     const val DEV_UI_TEST = "DevUITestPage"
     const val DEV_UI_TEST2 = "DevUITestPage2"
 
     const val DIALOG_MARKET_FILTER_TAB = "MarketFilterTabDialog"
     const val DIALOG_SEARCH_CUSTOM_ENGINE = "CustomEngineDialog"
+    const val DIALOG_FREEFORM_EXCLUDED_APPS = "FreeformExcludedAppsDialog"
 
     @Deprecated("")
     const val INTERCONNECTION = "page_interconnection"

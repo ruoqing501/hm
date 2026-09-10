@@ -23,6 +23,7 @@ import dev.lackluster.hyperx.compose.navigation.miuixComposable
 import dev.lackluster.redmagichelper.R
 import dev.lackluster.redmagichelper.ui.page.AboutPage
 import dev.lackluster.redmagichelper.ui.page.CleanMasterPage
+import dev.lackluster.redmagichelper.ui.page.DesktopIconCustomPage
 import dev.lackluster.redmagichelper.ui.page.IconTurnerPage
 import dev.lackluster.redmagichelper.ui.page.MainPage
 import dev.lackluster.redmagichelper.ui.page.MediaControlPage
@@ -30,6 +31,7 @@ import dev.lackluster.redmagichelper.ui.page.MenuPage
 import dev.lackluster.redmagichelper.ui.page.MiuiHomePage
 import dev.lackluster.redmagichelper.ui.page.ModuleSettingsPage
 import dev.lackluster.redmagichelper.ui.page.OthersPage
+import dev.lackluster.redmagichelper.ui.page.ScreenOffHideAppsPage
 import dev.lackluster.redmagichelper.ui.page.SecurityCenterPage
 import dev.lackluster.redmagichelper.ui.page.StatusBarClockPage
 import dev.lackluster.redmagichelper.ui.page.StatusBarFontPage
@@ -39,9 +41,11 @@ import dev.lackluster.redmagichelper.ui.page.UITestPage
 import dev.lackluster.redmagichelper.data.Pages
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.ui.dialog.MarketFilterTabDialog
+import dev.lackluster.redmagichelper.ui.dialog.FreeformExcludedAppsDialog
 import dev.lackluster.redmagichelper.ui.page.AndroidAudioPage
 import dev.lackluster.redmagichelper.ui.page.GameSpaceMenuPage
 import dev.lackluster.redmagichelper.ui.page.GameSpacePage
+import dev.lackluster.redmagichelper.ui.page.HealthStepsPage
 import dev.lackluster.redmagichelper.ui.page.MediaActionResizePage
 import dev.lackluster.redmagichelper.ui.page.NubiaIconTunerPage
 import dev.lackluster.redmagichelper.ui.page.OtherMenuPage
@@ -51,6 +55,7 @@ import dev.lackluster.redmagichelper.ui.page.StatusBaLayoutPage
 import dev.lackluster.redmagichelper.ui.page.StatusBarDisplayBatteryInfoPage
 import dev.lackluster.redmagichelper.ui.page.StatusBarDisplayTempPage
 import dev.lackluster.redmagichelper.ui.page.StatusBarDualPage
+import dev.lackluster.redmagichelper.ui.page.StatusBarGridPage
 import dev.lackluster.redmagichelper.ui.page.StatusBarTimeIndicatorPage
 import dev.lackluster.redmagichelper.ui.page.SystemDesktopPage
 import dev.lackluster.redmagichelper.ui.page.SystemDesktopRecentTasksPage
@@ -143,6 +148,7 @@ class MainActivity : HyperXActivity() {
                 miuixComposable(Pages.ANDROID_AUDIO) { AndroidAudioPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR_TIME_INDICATOR) { StatusBarTimeIndicatorPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR_DUAL) { StatusBarDualPage(navController, adjustPadding, mode) }
+                miuixComposable(Pages.STATUS_BAR_GRID) { StatusBarGridPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR_DISPLAY_TEMP) { StatusBarDisplayTempPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR_DISPLAY_BATTERY_INFO) { StatusBarDisplayBatteryInfoPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR_LAYOUT) { StatusBaLayoutPage(navController, adjustPadding, mode) }
@@ -150,6 +156,9 @@ class MainActivity : HyperXActivity() {
                 miuixComposable(Pages.GAME_SPACE) { GameSpacePage(navController, adjustPadding, mode) }
 
                 miuixComposable(Pages.SYSTEM_DESKTOP_RECENT_TASKS) { SystemDesktopRecentTasksPage(navController, adjustPadding, mode) }
+                miuixComposable(Pages.DESKTOP_ICON_CUSTOM) { DesktopIconCustomPage(navController, adjustPadding, mode) }
+                miuixComposable(Pages.SCREEN_OFF_HIDE_APPS) { ScreenOffHideAppsPage(navController, adjustPadding, mode) }
+                miuixComposable(Pages.HEALTH_STEPS) { HealthStepsPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.OTHER_MENU) { OtherMenuPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.MENU) { MenuPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.GAMESPACE_MENU) { GameSpaceMenuPage(navController, adjustPadding, mode) }
@@ -161,6 +170,7 @@ class MainActivity : HyperXActivity() {
                 miuixComposable(Pages.NUBIA_ICON_TUNER) { NubiaIconTunerPage(navController, adjustPadding, mode) }
 
                 miuixComposable(Pages.DIALOG_MARKET_FILTER_TAB) { MarketFilterTabDialog(navController, adjustPadding, mode) }
+                miuixComposable(Pages.DIALOG_FREEFORM_EXCLUDED_APPS) { FreeformExcludedAppsDialog(navController, adjustPadding, mode) }
                 miuixComposable(Pages.DEV_UI_TEST2) { MediaActionResizePage(navController, adjustPadding, "MediaActionResizePage", mode = mode) }
             }
         )

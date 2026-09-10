@@ -17,9 +17,9 @@ object VolumeDialogHook : YukiBaseHooker() {
         // 1. 屏蔽 SystemUI 的安全音量警告对话框
         hasEnable(Pref.Key.SystemUI.Volume.DISABLE_SAFETY_WARNING) {
             "com.android.systemui.volume.VolumeDialogImpl".toClassOrNull()?.apply {
+                // 按方法名 hook 所有重载，避免厂商 ROM 修改方法签名导致 hook 静默失败
                 method {
                     name = "showSafetyWarningH"
-                    paramCount = 1
                 }.hook {
                     before {
                         YLog.debug(tag = TAG, msg = "拦截安全音量警告对话框显示")

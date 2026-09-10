@@ -24,7 +24,14 @@ kotlin {
 android {
     namespace = libs.versions.project.app.packageName.get()
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+    ndkVersion = "27.2.12479018"
 
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
+    }
 
     defaultConfig {
         applicationId = libs.versions.project.app.packageName.get()

@@ -129,6 +129,22 @@ fun SystemFrameworkPage(navController: NavController, adjustPadding: PaddingValu
                     summary = stringResource(R.string.android_remove_restrictions_window_number_tips),
                     key = Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW_NUMBER
                 )
+                SwitchPreference(
+                    title = stringResource(R.string.android_freeform_unlimited_count),
+                    summary = stringResource(R.string.android_freeform_unlimited_count_tips),
+                    key = Pref.Key.Android.FREEFORM_UNLIMITED_COUNT
+                )
+                SwitchPreference(
+                    title = stringResource(R.string.android_freeform_all_apps),
+                    summary = stringResource(R.string.android_freeform_all_apps_tips),
+                    key = Pref.Key.Android.FREEFORM_ALL_APPS
+                )
+                TextPreference(
+                    title = stringResource(R.string.android_freeform_excluded_apps),
+                    summary = stringResource(R.string.android_freeform_excluded_apps_tips)
+                ) {
+                    navController.navigateTo(Pages.DIALOG_FREEFORM_EXCLUDED_APPS)
+                }
 
             }
         }
@@ -396,6 +412,12 @@ fun SystemFrameworkPage(navController: NavController, adjustPadding: PaddingValu
                 SwitchPreference(
                     title = stringResource(R.string.android_disable_system_signature_verification),
                     key = Pref.Key.Android.ANDROID_DISABLE_SYSTEM_SIGNATURE_VERIFICATION
+                )
+                // 允许不同签名覆盖安装（仅放行签名不一致的覆盖更新，默认关闭，仅用于可信 APK）
+                SwitchPreference(
+                    title = stringResource(R.string.android_allow_signature_mismatch_install),
+                    summary = stringResource(R.string.android_allow_signature_mismatch_install_tips),
+                    key = Pref.Key.Android.ANDROID_ALLOW_SIGNATURE_MISMATCH_INSTALL
                 )
                 SwitchPreference(
                     title = stringResource(R.string.android_allow_untrusted_touches),

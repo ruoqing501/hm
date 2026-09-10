@@ -149,6 +149,12 @@ fun SystemUIPage(
         )
     }
 
+    var visibilityAudioGain by remember {
+        mutableStateOf(
+            SafeSP.getBoolean(Pref.Key.AudioGain.ENABLE)
+        )
+    }
+
     BasePage(
         navController,
         adjustPadding,
@@ -295,6 +301,14 @@ fun SystemUIPage(
                 ) {
                     // 导航
                     navController.navigateTo(Pages.STATUS_BAR_DUAL)
+                }
+                // 状态栏网格重排
+                TextPreference(
+                    title = stringResource(R.string.ui_title_status_bar_grid),
+                    summary = stringResource(R.string.ui_title_status_bar_grid_summary)
+                ) {
+                    // 导航
+                    navController.navigateTo(Pages.STATUS_BAR_GRID)
                 }
                 // 显示设备温度
                 TextPreference(
@@ -632,6 +646,105 @@ fun SystemUIPage(
                     }
                 }
 
+            }
+        }
+        // 音量增益
+        item {
+            val routeSpeaker = stringResource(R.string.audio_gain_route_speaker)
+            val routeWired = stringResource(R.string.audio_gain_route_wired)
+            val routeBluetooth = stringResource(R.string.audio_gain_route_bluetooth)
+            val streamMedia = stringResource(R.string.audio_gain_stream_media)
+            val streamRing = stringResource(R.string.audio_gain_stream_ring)
+            val streamAlarm = stringResource(R.string.audio_gain_stream_alarm)
+            PreferenceGroup(
+                stringResource(R.string.audio_gain_title),
+                visible = true
+            ) {
+                SwitchPreference(
+                    title = stringResource(R.string.audio_gain_enable),
+                    summary = stringResource(R.string.audio_gain_enable_tips),
+                    key = Pref.Key.AudioGain.ENABLE,
+                    defValue = visibilityAudioGain
+                ) {
+                    visibilityAudioGain = it
+                }
+                AnimatedVisibility(visibilityAudioGain) {
+                    Column {
+                        SeekBarPreference(
+                            title = stringResource(R.string.audio_gain_step),
+                            key = Pref.Key.AudioGain.STEP,
+                            defValue = 5,
+                            min = 1,
+                            max = 20
+                        )
+                        // 扬声器
+                        SeekBarPreference(
+                            title = stringResource(R.string.audio_gain_limit_title, routeSpeaker, streamMedia),
+                            key = Pref.Key.AudioGain.LIMIT_SPEAKER_MEDIA,
+                            defValue = 100,
+                            min = 100,
+                            max = 300
+                        )
+                        SeekBarPreference(
+                            title = stringResource(R.string.audio_gain_limit_title, routeSpeaker, streamRing),
+                            key = Pref.Key.AudioGain.LIMIT_SPEAKER_RING,
+                            defValue = 100,
+                            min = 100,
+                            max = 300
+                        )
+                        SeekBarPreference(
+                            title = stringResource(R.string.audio_gain_limit_title, routeSpeaker, streamAlarm),
+                            key = Pref.Key.AudioGain.LIMIT_SPEAKER_ALARM,
+                            defValue = 100,
+                            min = 100,
+                            max = 300
+                        )
+                        // 有线 / USB
+                        SeekBarPreference(
+                            title = stringResource(R.string.audio_gain_limit_title, routeWired, streamMedia),
+                            key = Pref.Key.AudioGain.LIMIT_WIRED_MEDIA,
+                            defValue = 100,
+                            min = 100,
+                            max = 300
+                        )
+                        SeekBarPreference(
+                            title = stringResource(R.string.audio_gain_limit_title, routeWired, streamRing),
+                            key = Pref.Key.AudioGain.LIMIT_WIRED_RING,
+                            defValue = 100,
+                            min = 100,
+                            max = 300
+                        )
+                        SeekBarPreference(
+                            title = stringResource(R.string.audio_gain_limit_title, routeWired, streamAlarm),
+                            key = Pref.Key.AudioGain.LIMIT_WIRED_ALARM,
+                            defValue = 100,
+                            min = 100,
+                            max = 300
+                        )
+                        // 蓝牙
+                        SeekBarPreference(
+                            title = stringResource(R.string.audio_gain_limit_title, routeBluetooth, streamMedia),
+                            key = Pref.Key.AudioGain.LIMIT_BLUETOOTH_MEDIA,
+                            defValue = 100,
+                            min = 100,
+                            max = 300
+                        )
+                        SeekBarPreference(
+                            title = stringResource(R.string.audio_gain_limit_title, routeBluetooth, streamRing),
+                            key = Pref.Key.AudioGain.LIMIT_BLUETOOTH_RING,
+                            defValue = 100,
+                            min = 100,
+                            max = 300
+                        )
+                        SeekBarPreference(
+                            title = stringResource(R.string.audio_gain_limit_title, routeBluetooth, streamAlarm),
+                            key = Pref.Key.AudioGain.LIMIT_BLUETOOTH_ALARM,
+                            defValue = 100,
+                            min = 100,
+                            max = 300
+                        )
+                    }
+                }
             }
         }
         //红魔-熄屏

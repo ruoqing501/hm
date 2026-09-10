@@ -3,10 +3,7 @@ package dev.lackluster.redmagichelper.hook.rules.gamespace
 import android.content.ContentResolver
 import android.os.BaseBundle
 import android.os.Bundle
-import android.view.View
 import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
-import dev.lackluster.redmagichelper.hook.compat.factory.current
-import dev.lackluster.redmagichelper.hook.compat.factory.field
 import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.type.android.ContextClass
@@ -14,7 +11,6 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.BooleanType
 import dev.lackluster.redmagichelper.hook.compat.type.java.CharSequenceClass
 import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
-import dev.lackluster.redmagichelper.hook.compat.type.java.UnitType
 
 // 包名：cn.nubia.gamelauncher 游戏空间
 object NubiaTgkHelper : YukiBaseHooker() {
@@ -31,6 +27,9 @@ object NubiaTgkHelper : YukiBaseHooker() {
 
         // 1. 解除特定游戏的禁用选项掩码 (解决连点/滑动等被禁用)
         hookTgkDisableOpt()
+
+        // 4. 从原厂连招/连点黑名单中放行 (LS_Augment GS-04)
+        hookPluginConfigBlackList()
 
 
 
@@ -185,23 +184,92 @@ object NubiaTgkHelper : YukiBaseHooker() {
     }
 
     /**
-     * Hook TgkMapView.getGameKeyLinkMotionState 方法后的 mSupportedGameKeyLink 字段，
-     * 强制设置 mSupportedGameKeyLink = true，确保一键连招选项始终可用。
+     * Hook TgkMapView.getGameKeyLinkMotionState 方法:
+     * - 原厂返回 Boolean false 时直接改为 true(LS_Augment GS-03 的返回值放行);
+     * - 同时尽力将支持字段(mSupportedGameKeyLink 等别名)置为 true。
      */
     private fun hookSupportedGameKeyLink() {
         "cn.nubia.tgk.TgkMapView".toClass().method {
             name = "getGameKeyLinkMotionState"
             emptyParam()
-            returnType = UnitType
         }.hook {
             after {
-                instance.current().field {
-                    name = "mSupportedGameKeyLink"
-                    type = BooleanType
-                }.set(true)
-
-                YLog.debug(tag = TAG, msg = "强制启用 mSupportedGameKeyLink")
+                if (result is Boolean && result == false) {
+                    result = true
+                    YLog.debug(tag = TAG, msg = "GS-03 getGameKeyLinkMotionState false-to-true")
+                }
+                if (forceSupportedGameKeyLink(instance)) {
+                    YLog.debug(tag = TAG, msg = "强制启用 mSupportedGameKeyLink")
+                }
             }
         }
     }
+
+    /** LS_Augment GS-03 的字段置位:沿继承体系尝试多个已知字段名。 */
+    private fun forceSupportedGameKeyLink(owner: Any?): Boolean {
+        if (owner == null) return false
+        for (name in arrayOf(
+            "mSupportedGameKeyLink", "supportedGameKeyLink",
+            "mGameKeyLinkSupported", "gameKeyLinkSupported"
+        )) {
+            var type: Class<*>? = owner.javaClass
+            while (type != null) {
+                try {
+                    val field = type.getDeclaredField(name)
+                    field.isAccessible = true
+                    if (field.type != java.lang.Boolean.TYPE &&
+                        field.type != java.lang.Boolean::class.java
+                    ) break
+                    field.set(owner, true)
+                    return true
+                } catch (_: NoSuchFieldException) {
+                    type = type.superclass
+                } catch (_: Throwable) {
+                    return false
+                }
+            }
+        }
+        return false
+    }
+
+    /**
+     * LS_Augment GS-04:把肩键相关插件(keylink / touch_long_keylink_point /
+     * range_line)的原厂黑名单清空,仅保留 Root/模块管理器等受保护包。
+     * LS_Augment 只移除用户选定且非系统的目标包;本项目与 hookTgkDisableOpt 的
+     * 全量放行语义保持一致(本模块没有按游戏选择列表)。
+     */
+    private fun hookPluginConfigBlackList() {
+        val pluginConfig =
+            "cn.nubia.gamelauncher.gamecontrolpanel.config.PluginConfig".toClassOrNull() ?: return
+        pluginConfig.method {
+            name = "getBlackList"
+            param(ContextClass, StringClass)
+            modifiers { isStatic }
+        }.hook {
+            after {
+                val plugin = args[1] as? String
+                if (plugin !in setOf("keylink", "touch_long_keylink_point", "range_line")) {
+                    return@after
+                }
+                val original = result as? Array<*> ?: return@after
+                val filtered = original.filterIsInstance<String>()
+                    .filterNot { isProtectedShoulderPackage(it) }
+                if (filtered.size != original.size) {
+                    result = filtered.toTypedArray()
+                    YLog.debug(
+                        tag = TAG,
+                        msg = "GS-04 getBlackList plugin=$plugin removed=${original.size - filtered.size}"
+                    )
+                }
+            }
+        }
+    }
+
+    private fun isProtectedShoulderPackage(packageName: String): Boolean =
+        packageName in setOf(
+            "dev.lackluster.redmagichelper",
+            "me.weishu.kernelsu", "me.weishu.kernelsu.debug",
+            "com.rifsxd.ksunext", "org.lsposed.manager",
+            "com.topjohnwu.magisk", "me.bmax.apatch"
+        )
 }

@@ -95,6 +95,11 @@ object DualRowsStatusBarHook : YukiBaseHooker() {
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_LAYOUT_SWITCH,false)
     }
 
+    // 网格重排开启时，双排/时钟对齐/边距由 StatusBarGridHook 接管，避免结构性冲突
+    private val gridLayoutEnabled by lazy {
+        Prefs.getBoolean(Pref.Key.SystemUI.StatusBarGrid.SWITCH, false)
+    }
+
     // 使用整数作为标记键（避免与系统资源 ID 冲突，使用大于 0x00FFFFFF 的值或自定义范围）
     private val TAG_MODIFIED_LEFT = 0x7F000001
     private val TAG_MODIFIED_RIGHT = 0x7F000002
@@ -260,17 +265,19 @@ object DualRowsStatusBarHook : YukiBaseHooker() {
                     return@hasEnable
                 }
 
-                if (statusBarHorizontalAlignment ==1){
+                if (statusBarHorizontalAlignment ==1 && !gridLayoutEnabled){
                     timeLeft(sbView)
                 }
                 // 如果需要时钟居中，则执行居中操作
-                if (statusBarHorizontalAlignment == 2) {
+                if (statusBarHorizontalAlignment == 2 && !gridLayoutEnabled) {
                     timeCenter(sbView)
                 }
 
-                if (statusBarHorizontalAlignment == 3) {
+                if (statusBarHorizontalAlignment == 3 && !gridLayoutEnabled) {
                     timeRight(sbView)
                 }
+                // 网格重排接管布局时跳过双排
+                if (gridLayoutEnabled) return@after
                 // 检测是否需要双排显示
                 if (!isStatusBarDual) return@after
                 YLog.debug(tag = TAG, msg = "Starting dual rows status bar hook")

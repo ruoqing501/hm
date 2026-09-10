@@ -4,60 +4,46 @@ import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
+import dev.lackluster.redmagichelper.utils.Prefs
 import dev.lackluster.redmagichelper.utils.factory.hasEnable
 
 object RemoveAlertWindowsNotification : YukiBaseHooker() {
+    private const val TAG = "RemoveAlertWindowsNotification"
 
     override fun onHook() {
+        val prefValue = Prefs.getBoolean(Pref.Key.Android.REMOVE_ALERT_WINDOWS_NOTIFICATION, false)
+        android.util.Log.i("RMH_DEBUG", "RemoveAlertWindowsNotification onHook pref=$prefValue")
         hasEnable(Pref.Key.Android.REMOVE_ALERT_WINDOWS_NOTIFICATION) {
-            YLog.debug("[RemoveAlertWindowsNotification] 开始Hook - 检测到用户启用了移除悬浮窗通知功能")
+            val alertWindowNotificationClass =
+                "com.android.server.wm.AlertWindowNotification".toClassOrNull()
 
-            // 尝试加载AlertWindowNotification类
-            YLog.debug("[RemoveAlertWindowsNotification] 正在尝试加载类: com.android.server.wm.AlertWindowNotification")
-            val alertWindowNotificationClass = "com.android.server.wm.AlertWindowNotification".toClassOrNull()
-
-            if (alertWindowNotificationClass != null) {
-                YLog.debug("[RemoveAlertWindowsNotification] 成功找到AlertWindowNotification类: ${alertWindowNotificationClass.name}")
-
-                // 查找onPostNotification方法
-                YLog.debug("[RemoveAlertWindowsNotification] 正在查找onPostNotification方法...")
-                val method = alertWindowNotificationClass.method {
-                    name = "onPostNotification"
-                    emptyParam()
-                }
-
-                // Hook onPostNotification方法
-                method.hook {
-                    before {
-                        YLog.debug("[RemoveAlertWindowsNotification] onPostNotification方法被调用，正在阻止悬浮窗通知发送")
-                        YLog.debug("[RemoveAlertWindowsNotification] 原始方法参数: ${args?.joinToString() ?: "无参数"}")
-                        YLog.debug("[RemoveAlertWindowsNotification] 原始调用栈: ${Throwable().stackTrace.take(5).joinToString("\n")}")
-
-                        // 阻止通知的发送，将结果设为null
-                        this.result = null
-
-                        YLog.debug("[RemoveAlertWindowsNotification] 已成功阻止悬浮窗通知，方法返回null")
-                        YLog.debug("[RemoveAlertWindowsNotification] Hook操作完成，用户将不会收到悬浮窗权限提示通知")
-                    }
-
-                    after {
-                        YLog.debug("[RemoveAlertWindowsNotification] onPostNotification方法执行完毕，最终结果: ${result ?: "null"}")
-                    }
-                }
-
-                YLog.info("[RemoveAlertWindowsNotification] Hook设置完成，等待方法被调用")
-            } else {
-                YLog.warn("[RemoveAlertWindowsNotification] 未找到AlertWindowNotification类，可能原因:")
-                YLog.warn("[RemoveAlertWindowsNotification] 1. 系统版本不支持")
-                YLog.warn("[RemoveAlertWindowsNotification] 2. 类名或路径不正确")
-                YLog.warn("[RemoveAlertWindowsNotification] 3. 类已被混淆或重命名")
-
-
+            if (alertWindowNotificationClass == null) {
+                YLog.warn(tag = TAG, msg = "未找到 AlertWindowNotification 类，可能版本不兼容")
+                return@hasEnable
             }
 
-            YLog.debug("[RemoveAlertWindowsNotification] Hook流程结束")
+            // 按方法名 hook 所有重载，避免厂商 ROM 修改方法签名导致 hook 静默失败
+            // post() 是发送入口（Session 侧调用），拦截后通知不会再进入发送流程
+            alertWindowNotificationClass.method {
+                name = "post"
+            }.hook {
+                before {
+                    YLog.debug(tag = TAG, msg = "拦截 AlertWindowNotification.post()，阻止悬浮窗通知发送")
+                    result = null
+                }
+            }
+
+            // onPostNotification() 是实际构建并发送通知的方法，作为兜底拦截
+            alertWindowNotificationClass.method {
+                name = "onPostNotification"
+            }.hook {
+                before {
+                    YLog.debug(tag = TAG, msg = "拦截 onPostNotification()，阻止悬浮窗通知发送")
+                    result = null
+                }
+            }
+
+            YLog.info(tag = TAG, msg = "Hook 设置完成，悬浮窗通知将被拦截")
         }
     }
-
-
 }

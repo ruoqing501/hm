@@ -79,6 +79,14 @@ fun ThemePage(navController: NavController, adjustPadding: PaddingValues, mode: 
                     key = Pref.Key.NubiaTheme.CANCEL_TRIAL_LOGIN, //唯一id
                 )
 
+                // 保留本地试用主题
+                // 阻断试用到期后的本地重置与弹窗
+                SwitchPreference(
+                    title = stringResource(R.string.ui_title_theme_unlimited_trial),
+                    summary = stringResource(R.string.ui_title_theme_unlimited_trial_tips),
+                    key = Pref.Key.NubiaTheme.UNLIMITED_TRIAL, //唯一id
+                )
+
 
             }
         }

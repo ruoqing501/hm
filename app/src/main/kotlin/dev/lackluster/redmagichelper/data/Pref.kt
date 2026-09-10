@@ -21,6 +21,8 @@ object Pref {
             const val HIDE_MTP_CATEGORY_BROWSE = "hide_mtp_category_browse"
             const val MTP_RENAME_ROOT_NAME_SWITCH = "mtp_rename_root_name_switch"
             const val MTP_RENAME_ROOT_NAME = "mtp_rename_root_name"
+            const val SCREEN_OFF_HIDE_ENABLED = "screen_off_hide_enabled"
+            const val SCREEN_OFF_HIDE_TARGETS = "screen_off_hide_targets"
         }
         object Module {
             const val ENABLED = "enable_module"
@@ -32,6 +34,11 @@ object Pref {
             const val SETTINGS_NAME = "entry_name"
             const val SETTINGS_NAME_CUSTOM = "entry_name_custom"
             const val SP_VERSION = "sp_version"
+            // 快捷设置磁贴(移植自 LS_Augment 的 TILE_*):开关、名称、描述、自定义图片(Base64 WebP)
+            const val TILE_ENABLED = "module_tile_enabled"
+            const val TILE_LABEL = "module_tile_label"
+            const val TILE_DESCRIPTION = "module_tile_description"
+            const val TILE_ICON = "module_tile_icon"
         }
         object Android {
             const val DISABLE_FREEFORM_RESTRICT = "android_freeform_restriction"
@@ -53,11 +60,18 @@ object Pref {
             const val SYSTEM_FRAMEWORK_OTHER_DISABLE_THERMAL = "system_framework_other_disable_thermal"
             const val REMOVE_RESTRICTIONS_WINDOW = "remove_restrictions_window"
             const val REMOVE_RESTRICTIONS_WINDOW_NUMBER = "remove_restrictions_window_number"
+            // 小窗增强：解除数量上限的其余闸门（尺寸统计/可见列表/上限弹窗/挂起图标上限）
+            const val FREEFORM_UNLIMITED_COUNT = "android_freeform_unlimited_count"
+            // 小窗增强：强制所有应用通过小窗资格检查
+            const val FREEFORM_ALL_APPS = "android_freeform_all_apps"
+            // 小窗增强：原厂策略例外清单（StringSet，包名）
+            const val FREEFORM_EXCLUDED_APPS = "android_freeform_excluded_apps"
             const val REMOVE_ALERT_WINDOWS_NOTIFICATION = "remove_alert_windows_notification"
             const val DISABLE_SOUND_WHEN_UNLOCKED = "disable_sound_when_unlocked"
             const val ANDROID_REMOVE_INTENT_HIJACK_CONTENT = "android_remove_intent_hijack_content"
             const val ANDROID_ALLOW_UNTRUSTED_TOUCHES = "android_allow_untrusted_touches"
             const val ANDROID_DISABLE_SYSTEM_SIGNATURE_VERIFICATION = "android_disable_system_signature_verification"
+            const val ANDROID_ALLOW_SIGNATURE_MISMATCH_INSTALL = "android_allow_signature_mismatch_install"
             const val ANDROID_LONG_POWER_KEY_WAKEUP_ASSIST = "android_long_power_key_wakeup_assist"
             const val ANDROID_BLOCK_TELEMETRY_SERVICE = "android_block_telemetry_service"
             const val ANDROID_AIRPLANE_MODE_KEEP_BLUETOOTH = "android_airplane_mode_keep_bluetooth"
@@ -83,6 +97,19 @@ object Pref {
             const val NOTIFICATION_CLOCK_VOLUME_LEVEL = "notification_clock_volume_level"
             const val RING_CLOCK_VOLUME_LEVEL = "ring_clock_volume_level"
             const val VOICE_CLOCK_VOLUME_LEVEL = "voice_clock_volume_level"
+        }
+        object AudioGain {
+            const val ENABLE = "audio_gain_enable"
+            const val STEP = "audio_gain_step"
+            const val LIMIT_SPEAKER_MEDIA = "audio_gain_limit_speaker_media"
+            const val LIMIT_SPEAKER_RING = "audio_gain_limit_speaker_ring"
+            const val LIMIT_SPEAKER_ALARM = "audio_gain_limit_speaker_alarm"
+            const val LIMIT_WIRED_MEDIA = "audio_gain_limit_wired_media"
+            const val LIMIT_WIRED_RING = "audio_gain_limit_wired_ring"
+            const val LIMIT_WIRED_ALARM = "audio_gain_limit_wired_alarm"
+            const val LIMIT_BLUETOOTH_MEDIA = "audio_gain_limit_bluetooth_media"
+            const val LIMIT_BLUETOOTH_RING = "audio_gain_limit_bluetooth_ring"
+            const val LIMIT_BLUETOOTH_ALARM = "audio_gain_limit_bluetooth_alarm"
         }
         object Browser {
             const val AD_BLOCKER = "browser_ad_block"
@@ -241,6 +268,39 @@ object Pref {
             const val GAME_SPACE_DEVIL_MODE_HIDE_PROMPT = "game_space_devil_mode_hide_prompt"
             const val GAME_SPACE_ENABLE_SUPER_RESOLUTION_LOW = "game_space_enable_super_resolution_low"
             const val GAME_SPACE_DEVIL_MODE_ENABLE_SUPER_RESOLUTION_LOW_PROP_PROMPT = "game_space_devil_mode_enable_super_resolution_low_prop_prompt"
+            // 超境模式与破坏神模式共存 (阻断自动互斥)
+            const val GAME_SPACE_SUPER_RESOLUTION_DIABLO_COEXIST = "game_space_super_resolution_diablo_coexist"
+            // 一键连招 1~10 倍速
+            const val GAME_SPACE_COMBO_SPEED_ENABLED = "game_space_combo_speed_enabled"
+            const val GAME_SPACE_COMBO_SPEED_RATE = "game_space_combo_speed_rate"
+            const val AI_TRIGGER_SWITCH = "ai_trigger_switch"
+            const val AI_TRIGGER_TEMPLATE_SCAN_MS = "ai_trigger_template_scan_ms"
+            const val AI_TRIGGER_CLICK_MS = "ai_trigger_click_ms"
+            const val AI_TRIGGER_COOLDOWN_MS = "ai_trigger_cooldown_ms"
+            const val AI_TRIGGER_YOLO_SCAN_MS = "ai_trigger_yolo_scan_ms"
+            // 肩键极速连点(10~50 CPS,移植自 LS_Augment;令牌/会话由兼容性测试写入)
+            const val TGK_RAPID_FIRE_ENABLED = "tgk_rapid_fire_enabled"
+            const val TGK_RAPID_FIRE_CPS = "tgk_rapid_fire_cps"
+            const val TGK_RAPID_FIRE_COMPAT_TOKEN = "tgk_rapid_fire_compat_token"
+            const val TGK_RAPID_FIRE_TEST_SESSION = "tgk_rapid_fire_test_session"
+        }
+        object Fan {
+            const val FIXED_ENABLED = "fan_fixed_enabled"
+            const val UNLOCK_MAX = "fan_unlock_max"
+            const val TARGET_RPM = "fan_target_rpm"
+            const val CALIBRATION_REQUEST = "fan_calibration_request"
+            const val MEASUREMENT = "fan_measurement"
+            // 手动输入校准数据开关与各档转速(校准通道不可用时的退化方案)
+            const val MANUAL_ENTRY_ENABLED = "fan_manual_entry_enabled"
+            const val MANUAL_RPM_1 = "fan_manual_rpm_1"
+            const val MANUAL_RPM_2 = "fan_manual_rpm_2"
+            const val MANUAL_RPM_3 = "fan_manual_rpm_3"
+            const val MANUAL_RPM_4 = "fan_manual_rpm_4"
+            const val MANUAL_RPM_5 = "fan_manual_rpm_5"
+        }
+        object Battery {
+            // 关闭原厂「按循环降压」策略(可逆 bind 覆盖,见 utils/BatteryLifeControl.kt)
+            const val DISABLE_AGE_REDUCTION = "battery_disable_age_reduction"
         }
         object SystemUI {
             object Volume {
@@ -373,6 +433,59 @@ object Pref {
                 const val NOTIFICATION_COUNT_ICON = "statusbar_notif_icon_max"
                 const val DOUBLE_TAP_TO_SLEEP = "statusbar_double_tap_sleep"
                 const val DISABLE_SMART_DARK = "systemui_disable_smart_dark"
+            }
+            // 状态栏网格重排（移植自 LS_Augment：区域/顺序/大小/可见性 + 指标文本摆放）
+            object StatusBarGrid {
+                const val SWITCH = "status_bar_grid_switch"
+                const val NOTIFICATION_TWO_ROWS = "status_bar_grid_notification_two_rows"
+                const val SYSTEM_TWO_ROWS = "status_bar_grid_system_two_rows"
+                const val DUAL_ROW_GAP = "status_bar_grid_dual_row_gap"
+                // 0=默认(双排上下行) 1=单排仅上行 2=单排仅下载 3=单排上行+下行 4=双排上行/下行
+                const val NETWORK_DISPLAY_MODE = "status_bar_grid_network_display_mode"
+                const val MARGIN_LEFT = "status_bar_grid_margin_left"
+                const val MARGIN_RIGHT = "status_bar_grid_margin_right"
+                const val MARGIN_TOP = "status_bar_grid_margin_top"
+                const val MARGIN_BOTTOM = "status_bar_grid_margin_bottom"
+                const val CLOCK_ZONE = "status_bar_grid_clock_zone"
+                const val CLOCK_ORDER = "status_bar_grid_clock_order"
+                const val CLOCK_SIZE = "status_bar_grid_clock_size"
+                const val CLOCK_VISIBLE = "status_bar_grid_clock_visible"
+                const val NOTIFICATIONS_ZONE = "status_bar_grid_notifications_zone"
+                const val NOTIFICATIONS_ORDER = "status_bar_grid_notifications_order"
+                const val NOTIFICATIONS_SIZE = "status_bar_grid_notifications_size"
+                const val NOTIFICATIONS_VISIBLE = "status_bar_grid_notifications_visible"
+                const val SYSTEM_ICONS_ZONE = "status_bar_grid_system_icons_zone"
+                const val SYSTEM_ICONS_ORDER = "status_bar_grid_system_icons_order"
+                const val SYSTEM_ICONS_SIZE = "status_bar_grid_system_icons_size"
+                const val SYSTEM_ICONS_VISIBLE = "status_bar_grid_system_icons_visible"
+                const val BATTERY_ZONE = "status_bar_grid_battery_zone"
+                const val BATTERY_ORDER = "status_bar_grid_battery_order"
+                const val BATTERY_SIZE = "status_bar_grid_battery_size"
+                const val BATTERY_VISIBLE = "status_bar_grid_battery_visible"
+                const val CPU_ZONE = "status_bar_grid_cpu_zone"
+                const val CPU_ORDER = "status_bar_grid_cpu_order"
+                const val CPU_SIZE = "status_bar_grid_cpu_size"
+                const val CPU_VISIBLE = "status_bar_grid_cpu_visible"
+                const val GPU_ZONE = "status_bar_grid_gpu_zone"
+                const val GPU_ORDER = "status_bar_grid_gpu_order"
+                const val GPU_SIZE = "status_bar_grid_gpu_size"
+                const val GPU_VISIBLE = "status_bar_grid_gpu_visible"
+                const val BATTERY_TEMP_ZONE = "status_bar_grid_battery_temp_zone"
+                const val BATTERY_TEMP_ORDER = "status_bar_grid_battery_temp_order"
+                const val BATTERY_TEMP_SIZE = "status_bar_grid_battery_temp_size"
+                const val BATTERY_TEMP_VISIBLE = "status_bar_grid_battery_temp_visible"
+                const val CURRENT_ZONE = "status_bar_grid_current_zone"
+                const val CURRENT_ORDER = "status_bar_grid_current_order"
+                const val CURRENT_SIZE = "status_bar_grid_current_size"
+                const val CURRENT_VISIBLE = "status_bar_grid_current_visible"
+                const val POWER_ZONE = "status_bar_grid_power_zone"
+                const val POWER_ORDER = "status_bar_grid_power_order"
+                const val POWER_SIZE = "status_bar_grid_power_size"
+                const val POWER_VISIBLE = "status_bar_grid_power_visible"
+                const val NETWORK_ZONE = "status_bar_grid_network_zone"
+                const val NETWORK_ORDER = "status_bar_grid_network_order"
+                const val NETWORK_SIZE = "status_bar_grid_network_size"
+                const val NETWORK_VISIBLE = "status_bar_grid_network_visible"
             }
             object ScreenOff{
                 const val SCREEN_OFF_PERIOD_FONT_SIZE = "screen_off_period_font_size"
@@ -555,6 +668,30 @@ object Pref {
             const val CTS_TEST_INSTALLER = "cts_test_installer"
 
         }
+        object NeoStore{
+            const val STORE_DOWNLOAD_ENABLED = "neostore_download_enabled"
+            const val STORE_DOWNLOAD_COUNT = "neostore_download_count"
+        }
+        object MiHealth {
+            // 步数增强总开关(hook 侧运行时重读,见 hook/rules/mihealth/MiHealthHook.kt)
+            const val ENABLED = "mi_health_enabled"
+            const val MULTIPLY_ENABLED = "mi_health_multiply_enabled"
+            // 倍率 1~10(倍),hook 侧 *100 换算为百分比;LS_Augment 存的是 100~2000 的百分比
+            const val MULTIPLIER = "mi_health_multiplier"
+            // 绑定账户散列(64 位小写 hex,空串=未绑定)
+            const val ACCOUNT = "mi_health_account"
+            const val PLAN_ENABLED = "mi_health_plan_enabled"
+            // 序列化计划(SP1/SP2 格式,与 LS_Augment StepPlan 兼容)
+            const val PLAN = "mi_health_plan"
+            // 倍率生效起始时间(epoch 秒字符串),启用倍率/换绑账户时由 UI 刷新
+            const val SINCE = "mi_health_since"
+            // 以下为计划草稿(UI 分项编辑,保存时合成 PLAN)
+            const val PLAN_FROM = "mi_health_plan_from"
+            const val PLAN_TO = "mi_health_plan_to"
+            const val PLAN_EXECUTIONS = "mi_health_plan_executions"
+            const val PLAN_STEPS = "mi_health_plan_steps"
+            const val PLAN_WEEKDAYS = "mi_health_plan_weekdays"
+        }
         object NubiaSystemSettings{
             const val DISABLE_USB_INSTALLATION_AND_SWITCH_ACCOUNT_VERIFICATION = "disable_usb_installation_and_switch_account_verification"
             const val TIME_PICKER_PERIOD = "time_picker_period"
@@ -590,6 +727,10 @@ object Pref {
             const val DISPLAY_STYLE= "DISPLAY_STYLE"
             const val SYSTEM_TIME_COMPONENT_DESKTOP_SHOW_SECONDS = "system_time_component_desktop_show_seconds"
             const val SYSTEM_TIME_COMPONENT_DESKTOP_SHOW_PERIOD = "system_time_component_desktop_show_period"
+            // 桌面个性化:自定义应用图标与名称(总开关)
+            const val APP_ICON_CUSTOMIZE_SWITCH = "desktop_app_icon_customize_switch"
+            // 覆盖数据 JSON:包名→自定义名称/Base64 WebP 图标(单应用控制在几十 KB 内)
+            const val APP_ICON_OVERRIDES = "desktop_app_icon_overrides"
         }
         object NubiaSystemUpdate{
             const val DISABLE_SYSTEM_UPDATE = "disable_system_update"
@@ -618,6 +759,7 @@ object Pref {
         }
         object NubiaTheme{
             const val CANCEL_TRIAL_LOGIN = "cancel_trial_login"
+            const val UNLIMITED_TRIAL = "theme_unlimited_trial"
         }
         object Taplus {
             const val HIDE_SHOP = "taplus_hide_shop"

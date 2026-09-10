@@ -11,12 +11,19 @@ import dev.lackluster.redmagichelper.data.Scope
 import dev.lackluster.redmagichelper.hook.apps.Android
 import dev.lackluster.redmagichelper.hook.apps.DeskTop
 import dev.lackluster.redmagichelper.hook.apps.SystemUI
+import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaFan
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaGameAssist
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaGameAssist2
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaGameFloat
+import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaGameLab
+import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaMiHealth
+import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaNeoStore
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaPackageInstaller
+import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaPluginTrigger
+import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaRecommend
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaSystemSettings
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaSystemUpdate
+import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaThemeAdapter
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaThemeUpdate
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaWeather
 import dev.lackluster.redmagichelper.hook.compat.XposedEnv
@@ -26,8 +33,10 @@ import dev.lackluster.redmagichelper.hook.compat.param.PackageParam
 import dev.lackluster.redmagichelper.hook.rules.doubleApp.DoubleApp
 import dev.lackluster.redmagichelper.hook.rules.gameheightlights.NubiaHeightLights
 import dev.lackluster.redmagichelper.hook.rules.gamehelpmodule.NubiaComboAttack
+import dev.lackluster.redmagichelper.hook.rules.gamehelpmodule.NubiaComboSpeed
 import dev.lackluster.redmagichelper.hook.rules.gamespace.NubiaGameSpace
 import dev.lackluster.redmagichelper.hook.rules.gamespace.NubiaTgkHelper
+import dev.lackluster.redmagichelper.hook.rules.gamespace.TgkRapidFireHook
 import dev.lackluster.redmagichelper.hook.rules.mtpfilebrowser.MtpFileBrowser
 import dev.lackluster.redmagichelper.hook.rules.nfc.NfcService
 import dev.lackluster.redmagichelper.hook.rules.permissioncontroller.PermissionController
@@ -40,10 +49,18 @@ class HookEntry : XposedModule() {
     override fun onModuleLoaded(param: ModuleLoadedParam) {
         XposedEnv.module = this
         Prefs.initHook(this)
+        android.util.Log.i("RMH_DEBUG", "onModuleLoaded process=${param.processName}")
     }
 
     override fun onSystemServerStarting(param: SystemServerStartingParam) {
         XposedEnv.module = this
+        Prefs.initHook(this)
+        android.util.Log.i(
+            "RMH_DEBUG",
+            "onSystemServerStarting enabled=$moduleEnabled " +
+                "rmAlert=${Prefs.getBoolean(Pref.Key.Android.REMOVE_ALERT_WINDOWS_NOTIFICATION, false)} " +
+                "volSafety=${Prefs.getBoolean(Pref.Key.SystemUI.Volume.DISABLE_SAFETY_WARNING, false)}"
+        )
         if (!moduleEnabled) return
         loadHookers(PackageParam(Scope.ANDROID, param.classLoader, null), Android)
     }
@@ -51,6 +68,7 @@ class HookEntry : XposedModule() {
     override fun onPackageReady(param: PackageReadyParam) {
         XposedEnv.module = this
         if (!param.isFirstPackage) return
+        android.util.Log.i("RMH_DEBUG", "onPackageReady pkg=${param.packageName} enabled=$moduleEnabled")
         dispatchPackage(param.packageName, param.classLoader, param.applicationInfo)
     }
 
@@ -93,12 +111,15 @@ class HookEntry : XposedModule() {
             Scope.SYSTEM_SETTINGS -> hookers += NubiaSystemSettings
             Scope.SYSTEM_UPDATE -> hookers += NubiaSystemUpdate
             Scope.SYSTEM_THEME -> hookers += NubiaThemeUpdate
+            Scope.THEME_ADAPTER -> hookers += NubiaThemeAdapter
             Scope.SYSTEM_DESKTOP -> hookers += DeskTop
             Scope.SYSTEM_WEATHER -> hookers += NubiaWeather
             Scope.GAME_ASSIST -> {
                 hookers += NubiaGameAssist
                 if (gameFunctionUnfrozen) hookers += NubiaGameAssist2
             }
+            Scope.PLUGIN_TRIGGER -> hookers += NubiaPluginTrigger
+            Scope.GAME_LAB -> hookers += NubiaGameLab
             Scope.NFC -> hookers += NfcService
             Scope.PERMISSION_CONTROLLER -> hookers += PermissionController
             Scope.DOUBLE_APP -> hookers += DoubleApp
@@ -106,8 +127,12 @@ class HookEntry : XposedModule() {
             Scope.ZTE_SCREENSHOT -> hookers += listOf(ScreenshotLoggerHook, RecordScreenHook)
             Scope.GAME_FLOAT -> if (gameFunctionUnfrozen) hookers += NubiaGameFloat
             Scope.REDMAGIC_MOMENT -> if (gameFunctionUnfrozen) hookers += NubiaHeightLights
-            Scope.GAME_SPACE -> if (gameFunctionUnfrozen) hookers += listOf(NubiaGameSpace, NubiaTgkHelper)
-            Scope.COMBO_ATTACK -> if (gameFunctionUnfrozen) hookers += NubiaComboAttack
+            Scope.GAME_SPACE -> if (gameFunctionUnfrozen) hookers += listOf(NubiaGameSpace, NubiaTgkHelper, TgkRapidFireHook)
+            Scope.COMBO_ATTACK -> if (gameFunctionUnfrozen) hookers += listOf(NubiaComboAttack, NubiaComboSpeed)
+            Scope.NEO_STORE -> hookers += NubiaNeoStore
+            Scope.ZTE_RECOMMEND -> hookers += NubiaRecommend
+            Scope.NUBIA_FAN -> hookers += NubiaFan
+            Scope.MI_HEALTH -> hookers += NubiaMiHealth
         }
         if (hookers.isEmpty()) return
         loadHookers(PackageParam(packageName, classLoader, applicationInfo), *hookers.toTypedArray())

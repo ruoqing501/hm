@@ -2,6 +2,7 @@ android
 com.android.systemui
 com.zte.zdm
 com.zte.beautify
+com.zte.beautifyadapter
 com.zte.mifavor.launcher
 com.zte.mifavor.weather
 com.android.packageinstaller
@@ -16,3 +17,9 @@ com.android.nfc
 com.zte.cn.doubleapp
 cn.nubia.filebrowser
 com.android.ztescreenshot
+cn.nubia.neostore
+com.mi.health
+cn.nubia.fan
+com.zte.game.plugintrigger
+cn.nubia.gamelab
+com.zte.recommend
