@@ -128,9 +128,7 @@ fun MainPage(navController: NavController, adjustPadding: PaddingValues, mode: B
 
         // 功能搜索
         item {
-            PreferenceGroup(first = true) {
-                SearchBarSettings(navController)
-            }
+            SearchBarSettings(navController)
         }
         // 主页面
         item {

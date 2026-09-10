@@ -1,7 +1,9 @@
 package dev.lackluster.redmagichelper.ui.component
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -63,8 +65,15 @@ fun SearchBarSettings(navController: NavController) {
         }
     }
 
-    SearchBar(
-        inputField = {
+    // 与卡片组对齐的边距(等同 PreferenceGroup first 的间距),搜索栏直接铺在页面背景上
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .padding(top = 12.dp, bottom = 6.dp)
+    ) {
+        SearchBar(
+            inputField = {
             InputField(
                 query = searchText,
                 onQueryChange = { searchText = it },
@@ -81,9 +90,9 @@ fun SearchBarSettings(navController: NavController) {
                 }
             )
         },
-        expanded = expanded,
-        onExpandedChange = { expanded = it }
-    ) {
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
+        ) {
         if (searchText.isNotBlank() && filteredEntries.isEmpty()) {
             Text(
                 modifier = Modifier.padding(16.dp),
@@ -109,6 +118,7 @@ fun SearchBarSettings(navController: NavController) {
                     }
                 )
             }
+        }
         }
     }
 }
