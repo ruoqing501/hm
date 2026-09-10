@@ -126,21 +126,10 @@ fun MainPage(navController: NavController, adjustPadding: PaddingValues, mode: B
         }
     ) {
 
-//        item {
-//            PreferenceGroup(first = true) {
-//                SearchBarSettings()
-//            }
-//        }
-        // 模块设置
+        // 功能搜索
         item {
             PreferenceGroup(first = true) {
-                TextPreference(
-                    icon = ImageIcon(iconRes = R.drawable.ic_header_hyper_helper_gray),
-//                    icon = ImageIcon(iconRes = R.drawable.ic_system_app_settings),
-                    title = stringResource(R.string.page_module)
-                ) {
-                    navController.navigateWithPopup(Pages.MODULE_SETTINGS)
-                }
+                SearchBarSettings(navController)
             }
         }
         // 主页面
@@ -236,6 +225,17 @@ fun MainPage(navController: NavController, adjustPadding: PaddingValues, mode: B
 //                ) {
 //                    navController.navigateWithPopup(Pages.OTHERS)
 //                }
+            }
+        }
+        // 模块设置
+        item {
+            PreferenceGroup {
+                TextPreference(
+                    icon = ImageIcon(iconRes = R.drawable.ic_header_hyper_helper_gray),
+                    title = stringResource(R.string.page_module)
+                ) {
+                    navController.navigateWithPopup(Pages.MODULE_SETTINGS)
+                }
             }
         }
         item {

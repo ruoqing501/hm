@@ -361,6 +361,8 @@
     <string name="android_rotation_disable_fixed_orientation_scope_tips">重启后生效</string>
     <string name="button_clear">清除</string>
     <string name="common_search">搜索</string>
+    <string name="search_features_hint">搜索功能</string>
+    <string name="search_no_result">无结果</string>
     <string name="common_invalid_input">无效输入</string>
     <string name="scope_package_installer">应用包管理组件</string>
     <string name="cleaner_package_no_network">伪装成无网状态</string>

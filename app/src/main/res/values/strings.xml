@@ -9,6 +9,8 @@
     <string name="common_invalid_input">Invalid input</string>
     <string name="common_range">Range</string>
     <string name="common_search">Search</string>
+    <string name="search_features_hint">Search features</string>
+    <string name="search_no_result">No matching features</string>
     <string name="common_others">Others</string>
     <string name="mtp_service">MTP Service</string>
     <string name="hide_mtp_category_browse">Hide the categorized browsing in MTP</string>
