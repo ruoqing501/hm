@@ -12,13 +12,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import dev.lackluster.redmagichelper.R
 import dev.lackluster.redmagichelper.data.Pages
-import top.yukonga.miuix.kmp.basic.FloatingNavigationBar
-import top.yukonga.miuix.kmp.basic.FloatingNavigationBarMode
+import top.yukonga.miuix.kmp.basic.NavigationBar
 import top.yukonga.miuix.kmp.basic.NavigationItem
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.icons.useful.Info
 import top.yukonga.miuix.kmp.icon.icons.useful.Settings
-import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 private val tabRoutes = listOf(
     Pages.MAIN,
@@ -36,7 +34,7 @@ fun BottomNavBar(navController: NavController, currentRoute: String) {
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination?.route ?: currentRoute
     val selected = tabRoutes.indexOf(currentDestination).coerceAtLeast(0)
-    FloatingNavigationBar(
+    NavigationBar(
         items = items,
         selected = selected,
         onClick = { index ->
@@ -51,8 +49,7 @@ fun BottomNavBar(navController: NavController, currentRoute: String) {
                 }
             }
         },
-        color = MiuixTheme.colorScheme.surfaceContainer.copy(alpha = 0.3f),
-        mode = FloatingNavigationBarMode.IconAndText
+        color = Color.Transparent
     )
 }
 
