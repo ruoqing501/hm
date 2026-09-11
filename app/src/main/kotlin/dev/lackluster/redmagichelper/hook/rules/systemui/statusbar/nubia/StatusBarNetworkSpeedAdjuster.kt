@@ -58,7 +58,16 @@ object StatusBarNetworkSpeedAdjuster : YukiBaseHooker() {
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_NETWORK_SPEED_REFRESH_SPEED, false)
     }
 
+    // 网格重排开启时，网速显示由 StatusBarGridHook 接管，整体跳过避免重复显示
+    private val gridLayoutEnabled by lazy {
+        Prefs.getBoolean(Pref.Key.SystemUI.StatusBarGrid.SWITCH, false)
+    }
+
     override fun onHook() {
+        if (gridLayoutEnabled) {
+            YLog.info("$TAG 状态栏网格重排已启用，跳过网速调整")
+            return
+        }
         //// 网速秒刷新
         //if (refreshSpeedEnabled) {
         //    networkSpeedSeconds()

@@ -350,7 +350,7 @@ fun GameSpacePage(
                     summary = stringResource(
                         if (unlocked) R.string.tgk_rapid_fire_unlocked_tips
                         else R.string.tgk_rapid_fire_locked_tips
-                    ),
+                    ) + "\n" + stringResource(R.string.tgk_rapid_fire_requires_unfreeze),
                     key = Pref.Key.GameSpace.TGK_RAPID_FIRE_ENABLED,
                     enabled = unlocked
                 ) {

@@ -60,10 +60,6 @@ object Pref {
             const val SYSTEM_FRAMEWORK_OTHER_DISABLE_THERMAL = "system_framework_other_disable_thermal"
             const val REMOVE_RESTRICTIONS_WINDOW = "remove_restrictions_window"
             const val REMOVE_RESTRICTIONS_WINDOW_NUMBER = "remove_restrictions_window_number"
-            // 小窗增强：解除数量上限的其余闸门（尺寸统计/可见列表/上限弹窗/挂起图标上限）
-            const val FREEFORM_UNLIMITED_COUNT = "android_freeform_unlimited_count"
-            // 小窗增强：强制所有应用通过小窗资格检查
-            const val FREEFORM_ALL_APPS = "android_freeform_all_apps"
             // 小窗增强：原厂策略例外清单（StringSet，包名）
             const val FREEFORM_EXCLUDED_APPS = "android_freeform_excluded_apps"
             const val REMOVE_ALERT_WINDOWS_NOTIFICATION = "remove_alert_windows_notification"
@@ -111,37 +107,7 @@ object Pref {
             const val LIMIT_BLUETOOTH_RING = "audio_gain_limit_bluetooth_ring"
             const val LIMIT_BLUETOOTH_ALARM = "audio_gain_limit_bluetooth_alarm"
         }
-        object Browser {
-            const val AD_BLOCKER = "browser_ad_block"
-            const val DEBUG_MODE = "browser_debug_mode"
-            const val SWITCH_ENV = "browser_switch_env"
-            const val BLOCK_UPDATE = "browser_no_update"
-            const val SKIP_SPLASH = "browser_skip_splash"
-            const val REMOVE_APP_REC = "browser_remove_app_rec"
-            const val HIDE_HOMEPAGE_TOP_BAR = "browser_hide_home_top_bar"
-            const val HIDE_AI_SEARCH_ENTRY = "browser_hide_ai_search"
-        }
-        object Download {
-            const val FUCK_XL = "download_remove_xl"
-        }
-        object DownloadUI {
-            const val HIDE_XL = "downloadui_remove_xl"
-        }
-        object GuardProvider {
-            const val BLOCK_UPLOAD_APP = "guard_forbid_upload_app"
-            const val BLOCK_ENV_CHECK = "guard_block_env_check"
-        }
-        object InCallUI {
-            const val HIDE_CRBT = "incallui_hide_crbt"
-        }
-        object LBE {
-            const val BLOCK_REMOVE_AUTO_STARTUP = "lbe_block_rec_auto_startup"
-            const val CLIPBOARD_TOAST = "lbe_clipboard_toast"
-        }
         object Market {
-            const val AD_BLOCKER = "market_ad_block"
-            const val SKIP_SPLASH = "market_skip_splash"
-            const val TAB_BLUR = "market_tab_blur"
             const val FILTER_TAB = "market_filter_tab"
             const val FILTER_TAB_IGNORE_RESTRICT = "market_tab_ignore_restrict"
             const val HIDE_TAB_HOME = "market_hide_tab_home"
@@ -152,110 +118,14 @@ object Pref {
             const val HIDE_TAB_MINI_GAME = "market_hide_tab_mini_game"
             const val HIDE_TAB_MINE = "market_hide_tab_mine"
             const val HIDE_TAB_OTHERS = "market_hide_tab_others"
-            const val BLOCK_UPDATE_DIALOG = "market_block_up_dialog"
-            const val HIDE_APP_SECURITY = "market_hide_app_security"
-        }
-        object MiAi {
-            const val SEARCH_USE_BROWSER = "xiaoai_use_browser"
-            const val SEARCH_ENGINE = "xiaoai_search_engine"
-            const val SEARCH_URL = "xiaoai_search_url"
-            const val HIDE_WATERMARK = "xiaoai_hide_watermark"
-        }
-        object MiLink {
-            const val FUCK_HPPLAY = "milink_fuck_hpplay"
-        }
-        object MiMirror {
-            const val CONTINUE_ALL_TASKS = "mismarthub_all_app"
-            const val ENHANCE_CONTINUE_TASKS = "mismarthub_enhance_continue"
-        }
-        object MiTrust {
-            const val DISABLE_RISK_CHECK = "mitrust_skip_risk_check"
-        }
-        object MiuiHome {
-            const val REMOVE_REPORT = "home_remove_report"
-            const val DOUBLE_TAP_TO_SLEEP = "home_double_tap_sleep"
-            const val BACK_HAPTIC = "home_back_haptic"
-            const val QUICK_SWITCH = "home_quick_back"
-            const val QUICK_SWITCH_LEFT = "home_quick_back_left"
-            const val QUICK_SWITCH_RIGHT = "home_quick_back_right"
-            const val LINE_GESTURE_DOUBLE_TAP = "home_line_double_tap"
-            const val LINE_GESTURE_LONG_PRESS = "home_line_long_press"
-            const val ANIM_ICON_ZOOM = "home_anim_icon_zoom"
-            const val ANIM_ICON_DARKEN = " home_anim_icon_darken"
-            const val ANIM_FOLDER_ZOOM = "home_anim_folder_zoom"
-            const val ANIM_FOLDER_ICON_DARKEN = "home_anim_folder_icon_darken"
-            const val FOLDER_ADAPT_SIZE ="home_folder_aapt_size"
-            const val PAD_RECENT_SHOW_MEMORY = "home_recent_pad_memory"
-            const val PAD_RECENT_HIDE_WORLD = "home_recent_pad_world"
-            const val RECENT_SHOW_REAL_MEMORY = "home_recent_real_memory"
-            const val RECENT_CARD_ANIM = "home_recent_anim"
-            const val RECENT_HIDE_CLEAR_BUTTON = "home_recent_hide_clear_button"
-            const val RECENT_MEM_INFO_CLEAR = "home_recent_mem_info_clear"
-            const val RECENT_DISABLE_FAKE_NAVBAR = "home_disable_fake_navbar"
-            const val MINUS_RESTORE_SETTING = "home_minus_restore"
-            const val FORCE_COLOR_STATUS_BAR = "home_force_color_status_bar"
-            const val FORCE_COLOR_TEXT_ICON = "home_force_color_text_icon"
-            const val FORCE_COLOR_MINUS = "home_force_color_minus"
-            const val DOCK_REMOVE_NUM_LIMIT = "home_dock_remove_num_limit"
-        }
-        object MMS {
-            const val AD_BLOCKER = "mms_ad_block"
-        }
-        object Music {
-            const val AD_BLOCKER = "music_ad_block"
-            const val SKIP_SPLASH = "music_skip_splash"
-            const val HIDE_KARAOKE = "music_hide_karaoke"
-            const val HIDE_LONG_AUDIO = "music_hide_long_audio"
-            const val HIDE_DISCOVER = "music_hide_discover"
-            const val MY_HIDE_BANNER = "music_my_hide_banner"
-            const val MY_HIDE_REC_PLAYLIST = "music_my_hide_rec"
-            const val HIDE_FAV_NUM = "music_hide_fav_num"
         }
         object PackageInstaller {
-            const val BLOCK_UPLOAD_INFO = "package_block_upload"
-            const val REMOVE_ELEMENT = "package_ad_block"
-            const val DISABLE_COUNT_CHECK = "package_count_check"
-            const val DISABLE_RISK_CHECK = "package_skip_risk_check"
+            // MainActivity 版本迁移仍在读取
             const val INSTALL_SOURCE = "package_install_source"
-            const val SOURCE_PKG_NAME = "package_source_pkg"
-            const val DISGUISE_NO_NETWORK = "package_no_network"
-        }
-        object PowerKeeper {
-            const val DO_NOT_KILL_APP = "power_donot_kill_app"
-            const val BLOCK_BATTERY_WHITELIST = "power_battery_whitelist"
-            const val GMS_BG_RUNNING = "power_gms_bg_running"
-            const val UNLOCK_CUSTOM_REFRESH = "power_custom_refresh"
-        }
-        object RemoteController {
-            const val AD_BLOCKER = "remote_ad_block"
-        }
-        object Search {
-            const val MORE_SEARCH_ENGINE = "search_more_engine"
-            const val CUSTOM_SEARCH_ENGINE = "search_custom_engine"
-            const val CUSTOM_SEARCH_ENGINE_ENTITY = "search_custom_engine_entity"
         }
         object SecurityCenter {
-            const val SKIP_SPLASH = "security_skip_splash"
-            const val LOCK_SCORE = "security_lock_score"
-            const val HIDE_RED_DOT = "security_hide_red_dot"
-            const val HIDE_HOME_REC = "security_hide_home_rec"
-            const val HIDE_HOME_COMMON = "security_hide_home_common"
-            const val HIDE_HOME_POPULAR = "security_hide_home_popular"
-            const val DISABLE_RISK_APP_NOTIF = "security_no_risk_notification"
-            const val REMOVE_REPORT = "security_remove_report"
-            const val SKIP_WARNING = "security_skip_warn"
+            // MainActivity 版本迁移仍在读取
             const val LINK_START = "security_link_start"
-            const val SHOW_SCREEN_BATTERY = "security_screen_battery"
-            const val SHOW_SYSTEM_BATTERY = "security_system_battery"
-            const val DISABLE_BUBBLE_RESTRICT = "security_bubble_restriction"
-            const val CTRL_SYSTEM_APP_WIFI = "security_system_app_wifi"
-            const val CLICK_ICON_TO_OPEN = "security_click_icon_open"
-        }
-        object Settings {
-            const val SHOE_GOOGLE = "settings_show_google"
-            const val UNLOCK_TAPLUS_FOR_PAD = "taplus_unlock_pad"
-            const val QUICK_PER_OVERLAY = "settings_quick_per_overlay"
-            const val QUICK_PER_INSTALL_SOURCE = "settings_quick_per_install"
         }
         object GameSpace {
 
@@ -406,13 +276,8 @@ object Pref {
                 const val STATUS_BAR_NETWORK_SPEED_DUAL_ROW_WIDTH = "status_bar_network_speed_dual_row_width"
                 const val STATUS_BAR_NETWORK_SPEED_DUAL_ROW_DIGIT_LEN = "status_bar_network_speed_dual_row_digit_len"
                 const val LOW_SPEED_HIDE_KILO_BYTES = "low_speed_hide_kilo_bytes"
-                const val CLOCK_LAYOUT_CUSTOM = "statusbar_clock_custom"
-                const val CLOCK_PADDING_LEFT = "statusbar_clock_padding_left"
-                const val CLOCK_PADDING_RIGHT = "statusbar_clock_padding_right"
                 const val CLOCK_GEEK = "statusbar_clock_geek"
                 const val CLOCK_GEEK_FORMAT = "statusbar_clock_pattern"
-                const val CLOCK_GEEK_FORMAT_HORIZON = "statusbar_clock_pattern_horizon"
-                const val CLOCK_GEEK_FORMAT_PAD = "statusbar_clock_pattern_pad"
                 const val CLOCK_SHOW_PERIOD = "statusbar_clock_show_period"
                 const val CLOCK_SHOW_WEEK = "statusbar_clock_show_week"
                 const val STATUS_BAR_DOUBLE_CLICKED_LOCKED_SCREEN = "status_bar_double_clicked_locked_screen"
@@ -424,11 +289,6 @@ object Pref {
                 const val STATUS_BAR_DISPLAY_TEMPERATURE = "status_bar_display_temperature"
                 const val CLOCK_SHOW_PULL_DOWN_PERIOD = "statusbar_clock_pull_down_show_period"
 
-                const val CLOCK_SHOW_AMPM = "statusbar_clock_show_ampm"
-                const val CLOCK_SHOW_SECONDS = "statusbar_clock_show_seconds"
-                const val CLOCK_SHOW_LEADING_ZERO = "statusbar_clock_show_zero"
-                const val CLOCK_FIXED_WIDTH = "statusbar_clock_fixed_width"
-                const val CLOCK_TNUM = "statusbar_clock_tnum"
                 const val NOTIFICATION_COUNT = "statusbar_notif_max"
                 const val NOTIFICATION_COUNT_ICON = "statusbar_notif_icon_max"
                 const val DOUBLE_TAP_TO_SLEEP = "statusbar_double_tap_sleep"
@@ -498,27 +358,7 @@ object Pref {
                 const val AOD_CLOCK = "aod_clock"
                 const val AOD_SHOW_SECONDS = "aod_show_seconds"
                 const val LOCK_SCREEN_FONT_SIZE_ZOOM = "lock_screen_font_size_zoom"
-                const val CLOCK = "sb_font_clock"
-                const val CLOCK_WEIGHT = "sb_font_clock_weight"
-                const val CLOCK_NOTIFICATION = "sb_font_clock_notif"
-                const val CLOCK_NOTIFICATION_WEIGHT = "sb_font_clock_notif_weight"
-                const val FOCUS_NOTIFICATION = "sb_font_focus"
-                const val FOCUS_NOTIFICATION_WEIGHT = "sb_font_focus_weight"
-                const val CARRIER = "sb_font_carrier"
                 const val LOCKSCREEN_CLOCK = "sb_font_lockscreen_clock"
-                const val CARRIER_WEIGHT = "sb_font_carrier_weight"
-                const val NET_SPEED_NUMBER = "sb_font_speed_num"
-                const val NET_SPEED_NUMBER_WEIGHT = "sb_font_speed_num_weight"
-                const val NET_SPEED_UNIT = "sb_font_speed_unit"
-                const val NET_SPEED_UNIT_WEIGHT = "sb_font_speed_unit_weight"
-                const val MOBILE_TYPE = "sb_font_mobile_type"
-                const val MOBILE_TYPE_WEIGHT = "sb_font_mobile_type_weight"
-                const val BATTERY_PERCENTAGE_IN = "sb_font_battery_pct_in"
-                const val BATTERY_PERCENTAGE_IN_WEIGHT = "sb_font_bat_pct_in_weight"
-                const val BATTERY_PERCENTAGE_OUT = "sb_font_bat_pct_out"
-                const val BATTERY_PERCENTAGE_OUT_WEIGHT = "sb_font_bat_pct_out_weight"
-                const val BATTERY_PERCENTAGE_MARK = "sb_font_bat_pct_mark"
-                const val BATTERY_PERCENTAGE_MARK_WEIGHT = "sb_font_bat_pct_mark_weight"
             }
             object IconTurner {
                 const val DISABLE_ATTERY_PERCENTAGE_DISPLAY_SETTING_OPTION = "disable_attery_percentage_display_setting_option"
@@ -657,7 +497,6 @@ object Pref {
             object Plugin {
                 const val AUTO_FLASH_ON = "sys_plugin_flash_on"
             }
-            const val FUCK_GESTURES_DAT = "systemui_fuck_gesture_dat"
         }
 
 
@@ -761,23 +600,8 @@ object Pref {
             const val CANCEL_TRIAL_LOGIN = "cancel_trial_login"
             const val UNLIMITED_TRIAL = "theme_unlimited_trial"
         }
-        object Taplus {
-            const val HIDE_SHOP = "taplus_hide_shop"
-            const val SEARCH_USE_BROWSER = "taplus_use_browser"
-            const val SEARCH_ENGINE = "taplus_search_engine"
-            const val SEARCH_URL = "taplus_search_url"
-        }
-        object Themes {
-            const val SKIP_SPLASH = "themes_skip_splash"
-        }
         object Hints {
             const val MEDIA_ADVANCED_TEXTURES = "hint_media_adv_textures"
-        }
-        object Updater {
-            const val DISABLE_VALIDATION = "updater_no_validation"
-        }
-        object Weather {
-            const val CARD_COLOR = "weather_card_color"
         }
     }
     @Suppress("unused")
@@ -912,9 +736,6 @@ object Pref {
     object DefValue {
         object SystemUI {
             const val CLOCK_GEEK_FORMAT = "HH:mm"
-
-            const val CLOCK_GEEK_FORMAT_HORIZON = "M d E"
-            const val CLOCK_GEEK_FORMAT_PAD = "M d E"
         }
     }
 }

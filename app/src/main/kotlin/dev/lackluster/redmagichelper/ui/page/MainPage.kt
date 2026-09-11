@@ -28,8 +28,6 @@ import dev.lackluster.redmagichelper.R
 import dev.lackluster.redmagichelper.ui.MainActivity
 import dev.lackluster.redmagichelper.data.Constants
 import dev.lackluster.redmagichelper.data.Pages
-import dev.lackluster.redmagichelper.ui.component.SearchBarSettings
-import dev.lackluster.redmagichelper.utils.Device
 import dev.lackluster.redmagichelper.utils.ShellUtils
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -40,6 +38,7 @@ import top.yukonga.miuix.kmp.basic.PopupPositionProvider
 import top.yukonga.miuix.kmp.extra.DropdownImpl
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.icons.useful.ImmersionMore
+import top.yukonga.miuix.kmp.icon.icons.useful.Search
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 @Composable
@@ -126,9 +125,16 @@ fun MainPage(navController: NavController, adjustPadding: PaddingValues, mode: B
         }
     ) {
 
-        // 功能搜索
+        // 功能搜索入口
         item {
-            SearchBarSettings(navController)
+            PreferenceGroup(first = true) {
+                TextPreference(
+                    icon = ImageIcon(iconVector = MiuixIcons.Useful.Search),
+                    title = stringResource(R.string.search_features_hint)
+                ) {
+                    navController.navigateWithPopup(Pages.SEARCH)
+                }
+            }
         }
         // 主页面
         item {
@@ -199,30 +205,6 @@ fun MainPage(navController: NavController, adjustPadding: PaddingValues, mode: B
                 ) {
                     navController.navigateWithPopup(Pages.OTHER)
                 }
-//                TextPreference(
-//                    icon = ImageIcon(iconRes = R.drawable.ic_header_home),
-//                    title = stringResource(R.string.page_miui_home)
-//                ) {
-//                    navController.navigateWithPopup(Pages.MIUI_HOME)
-//                }
-//                TextPreference(
-//                    icon = ImageIcon(iconRes = R.drawable.ic_header_cleaner),
-//                    title = stringResource(R.string.page_cleaner)
-//                ) {
-//                    navController.navigateWithPopup(Pages.CLEAN_MASTER)
-//                }
-//                TextPreference(
-//                    icon = ImageIcon(iconRes = R.drawable.ic_header_security_center),
-//                    title = stringResource(if (Device.isPad) R.string.page_security_center_pad else R.string.page_security_center)
-//                ) {
-//                    navController.navigateWithPopup(Pages.SECURITY_CENTER)
-//                }
-//                TextPreference(
-//                    icon = ImageIcon(iconRes = R.drawable.ic_header_others),
-//                    title = stringResource(R.string.page_others)
-//                ) {
-//                    navController.navigateWithPopup(Pages.OTHERS)
-//                }
             }
         }
         // 模块设置

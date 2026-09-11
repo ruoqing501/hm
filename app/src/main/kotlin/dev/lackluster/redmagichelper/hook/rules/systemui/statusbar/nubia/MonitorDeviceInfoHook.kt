@@ -212,7 +212,16 @@ object StatusBarTemperatureHook : YukiBaseHooker() {
         TempItem(GPU_TITLE, GPU_TEMP_PATH, 1000, TAG_TEMP_GPU)
     )
 
+    // 网格重排开启时，温度/电池信息由 StatusBarGridHook 自绘，整体跳过避免重复显示
+    private val gridLayoutEnabled by lazy {
+        Prefs.getBoolean(Pref.Key.SystemUI.StatusBarGrid.SWITCH, false)
+    }
+
     override fun onHook() {
+        if (gridLayoutEnabled) {
+            YLog.info(tag = TAG, msg = "状态栏网格重排已启用，跳过温度/电池信息挂载")
+            return
+        }
         "com.android.systemui.statusbar.phone.PhoneStatusBarView".toClass().method {
             name = "onFinishInflate"
         }.hook {

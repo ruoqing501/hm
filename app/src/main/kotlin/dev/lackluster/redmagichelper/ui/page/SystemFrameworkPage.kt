@@ -63,6 +63,10 @@ fun SystemFrameworkPage(navController: NavController, adjustPadding: PaddingValu
         SafeSP.getBoolean(Pref.Key.Android.SYSTEM_FRAMEWORK_LOCK_SCREEN_TIMEOUT)
     ) }
 
+    var visibilityFreeformExcludedApps by remember { mutableStateOf(
+        SafeSP.getBoolean(Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW)
+    ) }
+
     LaunchedEffect(checkFontScale) {
         try {
             ShellUtils.tryExec(
@@ -123,27 +127,23 @@ fun SystemFrameworkPage(navController: NavController, adjustPadding: PaddingValu
                 SwitchPreference(
                     title = stringResource(R.string.android_remove_restrictions_window),
                     key = Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW
-                )
+                ) {
+                    visibilityFreeformExcludedApps = it
+                }
                 SwitchPreference(
                     title = stringResource(R.string.android_remove_restrictions_window_number),
                     summary = stringResource(R.string.android_remove_restrictions_window_number_tips),
                     key = Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW_NUMBER
                 )
-                SwitchPreference(
-                    title = stringResource(R.string.android_freeform_unlimited_count),
-                    summary = stringResource(R.string.android_freeform_unlimited_count_tips),
-                    key = Pref.Key.Android.FREEFORM_UNLIMITED_COUNT
-                )
-                SwitchPreference(
-                    title = stringResource(R.string.android_freeform_all_apps),
-                    summary = stringResource(R.string.android_freeform_all_apps_tips),
-                    key = Pref.Key.Android.FREEFORM_ALL_APPS
-                )
-                TextPreference(
-                    title = stringResource(R.string.android_freeform_excluded_apps),
-                    summary = stringResource(R.string.android_freeform_excluded_apps_tips)
+                AnimatedVisibility(
+                    visibilityFreeformExcludedApps
                 ) {
-                    navController.navigateTo(Pages.DIALOG_FREEFORM_EXCLUDED_APPS)
+                    TextPreference(
+                        title = stringResource(R.string.android_freeform_excluded_apps),
+                        summary = stringResource(R.string.android_freeform_excluded_apps_tips)
+                    ) {
+                        navController.navigateTo(Pages.DIALOG_FREEFORM_EXCLUDED_APPS)
+                    }
                 }
 
             }
@@ -220,12 +220,12 @@ fun SystemFrameworkPage(navController: NavController, adjustPadding: PaddingValu
                 stringResource(R.string.ui_title_android_audio),
                 first = true,
             ) {
-                //TextPreference(
-                //    title = stringResource(R.string.ui_title_android_audio)
-                //) {
-                //    // 导航到音量界面
-                //    navController.navigateTo(Pages.ANDROID_AUDIO)
-                //}
+                TextPreference(
+                    title = stringResource(R.string.ui_title_volume_steps)
+                ) {
+                    // 导航到音量步进界面
+                    navController.navigateTo(Pages.ANDROID_AUDIO)
+                }
                 SwitchPreference(
                     title = stringResource(R.string.android_mute_volume_detection),
                     summary = stringResource(R.string.android_mute_volume_detection_tips),

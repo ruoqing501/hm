@@ -22,19 +22,13 @@ import dev.lackluster.hyperx.compose.base.HyperXApp
 import dev.lackluster.hyperx.compose.navigation.miuixComposable
 import dev.lackluster.redmagichelper.R
 import dev.lackluster.redmagichelper.ui.page.AboutPage
-import dev.lackluster.redmagichelper.ui.page.CleanMasterPage
 import dev.lackluster.redmagichelper.ui.page.DesktopIconCustomPage
-import dev.lackluster.redmagichelper.ui.page.IconTurnerPage
 import dev.lackluster.redmagichelper.ui.page.MainPage
 import dev.lackluster.redmagichelper.ui.page.MediaControlPage
 import dev.lackluster.redmagichelper.ui.page.MenuPage
-import dev.lackluster.redmagichelper.ui.page.MiuiHomePage
 import dev.lackluster.redmagichelper.ui.page.ModuleSettingsPage
-import dev.lackluster.redmagichelper.ui.page.OthersPage
+import dev.lackluster.redmagichelper.ui.page.SearchPage
 import dev.lackluster.redmagichelper.ui.page.ScreenOffHideAppsPage
-import dev.lackluster.redmagichelper.ui.page.SecurityCenterPage
-import dev.lackluster.redmagichelper.ui.page.StatusBarClockPage
-import dev.lackluster.redmagichelper.ui.page.StatusBarFontPage
 import dev.lackluster.redmagichelper.ui.page.SystemFrameworkPage
 import dev.lackluster.redmagichelper.ui.page.SystemUIPage
 import dev.lackluster.redmagichelper.ui.page.UITestPage
@@ -132,6 +126,7 @@ class MainActivity : HyperXActivity() {
             },
             otherPageBuilder = { navController, adjustPadding, mode ->
                 miuixComposable(Pages.MODULE_SETTINGS) { ModuleSettingsPage(navController, adjustPadding, mode) }
+                miuixComposable(Pages.SEARCH) { SearchPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.SYSTEM_UI) { SystemUIPage(navController, adjustPadding, mode)}
                 miuixComposable(Pages.PACKAGE_INSTALLER) { PackageInstallerPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.SYSTEM_SETTINGS) { SystemSettingsPage(navController, adjustPadding, mode) }
@@ -139,10 +134,6 @@ class MainActivity : HyperXActivity() {
                 miuixComposable(Pages.SYSTEM_DESKTOP) { SystemDesktopPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.SYSTEM_THEME) { ThemePage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.SYSTEM_FRAMEWORK) { SystemFrameworkPage(navController, adjustPadding, mode) }
-                miuixComposable(Pages.MIUI_HOME) { MiuiHomePage(navController, adjustPadding, mode) }
-                miuixComposable(Pages.CLEAN_MASTER) { CleanMasterPage(navController, adjustPadding, mode) }
-                miuixComposable(Pages.SECURITY_CENTER) { SecurityCenterPage(navController, adjustPadding, mode) }
-                miuixComposable(Pages.OTHERS) { OthersPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.OTHER) { OtherPage (navController, adjustPadding, mode) }
                 miuixComposable(Pages.ABOUT) { AboutPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.ANDROID_AUDIO) { AndroidAudioPage(navController, adjustPadding, mode) }
@@ -163,9 +154,6 @@ class MainActivity : HyperXActivity() {
                 miuixComposable(Pages.MENU) { MenuPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.GAMESPACE_MENU) { GameSpaceMenuPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.DEV_UI_TEST) { UITestPage(navController, adjustPadding, mode) }
-                miuixComposable(Pages.STATUS_BAR_CLOCK) { StatusBarClockPage(navController, adjustPadding, mode) }
-                miuixComposable(Pages.STATUS_BAR_FONT) { StatusBarFontPage(navController, adjustPadding, mode) }
-                miuixComposable(Pages.ICON_TUNER) { IconTurnerPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.MEDIA_CONTROL) { MediaControlPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.NUBIA_ICON_TUNER) { NubiaIconTunerPage(navController, adjustPadding, mode) }
 

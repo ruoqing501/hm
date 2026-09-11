@@ -2,6 +2,7 @@ package dev.lackluster.redmagichelper.data
 
 object Pages {
     const val MAIN = "MainPage"
+    const val SEARCH = "SearchPage"
     const val EMPTY = "EmptyPage"
     const val MODULE_SETTINGS = "ModuleSettingsPage"
     const val SYSTEM_UI = "SystemUIPage"
@@ -19,20 +20,13 @@ object Pages {
     const val SYSTEM_SETTINGS = "SystemSettingsPage"
     const val SYSTEM_UPDATE = "SystemUpdatePage"
     const val SYSTEM_FRAMEWORK = "AndroidPage"
-    const val MIUI_HOME = "MiuiHomePage"
-    const val CLEAN_MASTER = "CleanMasterPage"
-    const val SECURITY_CENTER = "SecurityCenterPage"
-    const val OTHERS = "OthersPage"
     const val ABOUT = "AboutPage"
     const val OTHER = "OtherPage"
 
     const val MENU = "MenuPage"
     const val GAMESPACE_MENU = "GameSpaceMenuPage"
     const val OTHER_MENU = "OtherMenuPage"
-    const val STATUS_BAR_CLOCK = "StatusBarClockPage"
-    const val STATUS_BAR_FONT = "StatusBarFontPage"
     const val ANDROID_AUDIO = "AndroidAudioPage"
-    const val ICON_TUNER = "IconTunerPage"
     const val NUBIA_ICON_TUNER = "NubiaIconTunerPage"
     const val SYSTEM_DESKTOP_RECENT_TASKS = "SystemDesktopRecentTasksPage"
     const val DESKTOP_ICON_CUSTOM = "DesktopIconCustomPage"

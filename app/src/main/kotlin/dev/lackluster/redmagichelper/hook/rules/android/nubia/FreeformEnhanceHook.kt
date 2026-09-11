@@ -24,13 +24,13 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * 小窗增强（移植自 LS_Augment 的 FreeformHook，仅保留 RedMagicHelper 尚未覆盖的部分）。
  *
- * 数量上限解除（FREEFORM_UNLIMITED_COUNT）：
+ * 数量上限解除（REMOVE_RESTRICTIONS_WINDOW_NUMBER）：
  * isReachWrMaxSizeForMulti 已由 RmWindowReplyLimits 覆盖，这里补齐其余闸门——
  * windowReplySizeForMulti、getFreeformRootTasksVisibleListWrForMulti、
  * alertMessageForReachMultiWrMaxSizeWr，以及 Supervisor 返回 102（厂商专用上限结果码）时
  * 回退到标准 startActivityFromRecents。
  *
- * 全应用资格（FREEFORM_ALL_APPS）：
+ * 全应用资格（REMOVE_RESTRICTIONS_WINDOW）：
  * TaskDisplayAreaMifavor / ActivityClientController / ActivityRecord / Task / TaskFragment
  * 上的原厂资格闸门，带系统关键界面白名单与例外清单（FREEFORM_EXCLUDED_APPS）保护，
  * 所有反射与判定均为 fail-closed（任何异常都走原厂逻辑）。
@@ -73,10 +73,10 @@ object FreeformEnhanceHook : YukiBaseHooker() {
     private val pendingResizeTx = ThreadLocal<ResizeMetadataTransaction?>()
 
     override fun onHook() {
-        hasEnable(Pref.Key.Android.FREEFORM_UNLIMITED_COUNT) {
+        hasEnable(Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW_NUMBER) {
             hookUnlimitedCount()
         }
-        hasEnable(Pref.Key.Android.FREEFORM_ALL_APPS) {
+        hasEnable(Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW) {
             if (verifyAllAppsCompatibility()) {
                 hookAllApps()
             } else {

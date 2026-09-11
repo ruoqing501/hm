@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import dev.lackluster.hyperx.compose.activity.SafeSP
 import dev.lackluster.hyperx.compose.base.BasePage
 import dev.lackluster.hyperx.compose.base.BasePageDefaults
+import dev.lackluster.hyperx.compose.component.Hint
 import dev.lackluster.hyperx.compose.preference.DropDownEntry
 import dev.lackluster.hyperx.compose.preference.DropDownPreference
 import dev.lackluster.hyperx.compose.preference.MultDropDownPreference
@@ -66,6 +67,11 @@ fun StatusBarDisplayTempPage(navController: NavController, adjustPadding: Paddin
         }
 
     ) {
+        item {
+            Hint(
+                text = stringResource(R.string.status_bar_grid_mutex_tips)
+            )
+        }
         item {
             PreferenceGroup(
                 title = stringResource(R.string.ui_title_status_bar_display_temp)

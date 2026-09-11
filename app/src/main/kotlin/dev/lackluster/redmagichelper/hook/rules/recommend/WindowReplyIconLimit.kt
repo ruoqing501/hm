@@ -32,7 +32,7 @@ object WindowReplyIconLimit : YukiBaseHooker() {
     private val parkedState = ThreadLocal<ParkedState?>()
 
     override fun onHook() {
-        hasEnable(Pref.Key.Android.FREEFORM_UNLIMITED_COUNT) {
+        hasEnable(Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW_NUMBER) {
             hookIconManager()
             hookIconService()
         }

@@ -212,13 +212,6 @@ fun SystemUIPage(
                 first = true,
                 visible = false, //隐藏状态栏卡片
             ) {
-                // 时间
-                TextPreference(
-                    title = stringResource(R.string.systemui_statusbar_clock)
-                ) {
-                    // 时间导航到时间设置
-                    navController.navigateTo(Pages.STATUS_BAR_CLOCK)
-                }
                 // 自定义通知的最大显示数量开关,  打开后弹出状态栏通知图标最大数量
                 SwitchPreference(
                     title = stringResource(R.string.systemui_statusbar_notif_count),
@@ -240,20 +233,6 @@ fun SystemUIPage(
                         min = 0,
                         max = 15
                     )
-                }
-                // 字体
-                TextPreference(
-                    title = stringResource(R.string.systemui_statusbar_font)
-                ) {
-                    // 导航到字体界面
-                    navController.navigateTo(Pages.STATUS_BAR_FONT)
-                }
-                // 图标调整
-                TextPreference(
-                    title = stringResource(R.string.systemui_statusbar_icon)
-                ) {
-                    // 导航到图标调整界面
-                    navController.navigateTo(Pages.ICON_TUNER)
                 }
                 // 普通的开关
                 SwitchPreference(

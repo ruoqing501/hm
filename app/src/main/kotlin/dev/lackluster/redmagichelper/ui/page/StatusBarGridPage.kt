@@ -95,7 +95,7 @@ fun StatusBarGridPage(navController: NavController, adjustPadding: PaddingValues
             ) {
                 SwitchPreference(
                     title = stringResource(R.string.status_bar_grid_enable),
-                    summary = stringResource(R.string.status_bar_grid_enable_summary),
+                    summary = stringResource(R.string.status_bar_grid_enable_summary) + "\n" + stringResource(R.string.status_bar_grid_enable_takeover),
                     key = gridKey.SWITCH
                 ) {
                     enableGrid = it
