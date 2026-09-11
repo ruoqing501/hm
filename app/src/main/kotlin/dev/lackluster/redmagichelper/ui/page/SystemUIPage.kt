@@ -373,21 +373,6 @@ fun SystemUIPage(
                     summary = stringResource(R.string.status_bar_use_the_native_notification_icon_tips),
                     key = Pref.Key.SystemUI.StatusBar.STATUS_BAR_USE_THE_NATIVE_NOTIFICATION_ICON, //唯一id
                 )
-//                // 显示月/日
-//                SwitchPreference(
-//                    title = stringResource(R.string.clock_easy_show_month_day),
-//                    key = Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_MONTH_DAY, //唯一id
-//                )
-//                // 新增组件-显示星期
-//                SwitchPreference(
-//                    title = stringResource(R.string.clock_easy_show_week),
-//                    key = Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_WEEK  //唯一id
-//                )
-//                // 新增组件-显示时段
-//                SwitchPreference(
-//                    title = stringResource(R.string.clock_easy_show_period),
-//                    key = Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PERIOD  //唯一id
-//                )
                 // 下拉状态栏时间
                 DropDownPreference(
                     title = stringResource(R.string.clock_easy_pull_down_time),

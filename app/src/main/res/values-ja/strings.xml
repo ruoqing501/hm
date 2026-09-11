@@ -396,13 +396,10 @@
     <string name="clock_geek_time_format_pattern">時刻形式のパターン (ステータスバー)</string>
     <string name="ui_title_clock_easy">簡単なセットアップ</string>
     <string name="alignment">揃え方です</string>
-    <string name="clock_easy_show_period">表示期間です</string>
-    <string name="clock_easy_show_week">曜日を表示します</string>
     <string name="status_bar_double_clicked_locked_screen">ロック画面をダブルクリックします</string>
     <string name="restore_the_font_of_the_clock_date_icon">復元時計日付アイコンフォントです</string>
     <string name="status_bar_use_the_native_notification_icon">ネイティブ通知アイコンを使用する</string>
     <string name="status_bar_use_the_native_notification_icon_tips">ステータスバー通知もネイティブになります。スライダー調整ステータスバー適用通知アイコンのサイズも</string>
-    <string name="clock_easy_show_month_day">曜日を表示します</string>
     <string name="show_years_title">年を表示</string>
     <string name="show_years_summary">例: 2026</string>
     <string name="show_month_title">月を表示</string>

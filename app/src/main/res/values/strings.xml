@@ -60,7 +60,7 @@
     <string name="ui_title_game_active_mode_title">Active Mode</string>
     <string name="ui_title_game_active_mode_title_tips">The active mode will be fully controlled manually by the user: It is automatically turned off during the first installation or the first time entering a certain game; after the user clicks the switch, this state will be permanently saved and will be maintained as the user  last setting for each subsequent entry into the game.</string>
     <string name="magnetic_sticker">Magnetic Sticker</string>
-    <string name="game_fuction_unfreeze_switch_tips">Supports the point-and-click and one-click combo functions for any game. You can freely record and record in any mode including Red Devil Moments.</string>
+    <string name="game_fuction_unfreeze_switch_tips">Unlocks advanced in-game options such as shoulder-key and one-click combo features for any game, and allows free recording in any mode including Red Magic Moments. Takes effect after a system reboot.</string>
     <string name="ui_title_ai_trigger">AI Trigger</string>
     <string name="ai_trigger_switch">AI trigger interval adjustment</string>
     <string name="ai_trigger_switch_tips">Shorten the template scan, click, cooldown and YOLO scan intervals of the AI trigger. New values take effect immediately.</string>
@@ -711,13 +711,10 @@
     <string name="clock_geek_time_format_pattern">Time format pattern (status bar)</string>
     <string name="ui_title_clock_easy">Easy setup</string>
     <string name="alignment">Alignment</string>
-    <string name="clock_easy_show_period">Display Period</string>
-    <string name="clock_easy_show_week">Display Week</string>
     <string name="status_bar_double_clicked_locked_screen">Double Clicked Locked Screen</string>
     <string name="restore_the_font_of_the_clock_date_icon">Restore the font of the clock date icon</string>
     <string name="status_bar_use_the_native_notification_icon">Use the native notification icon</string>
     <string name="status_bar_use_the_native_notification_icon_tips">The status bar notifications will also adopt the native style, and the slider can be used to adjust the size of the notification icons for status bar applications.</string>
-    <string name="clock_easy_show_month_day">Display Month And Day</string>
     <string name="show_years_title">Show Year</string>
     <string name="show_years_summary">e.g., \'26</string>
     <string name="show_month_title">Show Month</string>

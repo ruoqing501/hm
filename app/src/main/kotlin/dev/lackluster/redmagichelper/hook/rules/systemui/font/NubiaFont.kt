@@ -14,7 +14,6 @@ import dev.lackluster.redmagichelper.hook.compat.factory.current
 import dev.lackluster.redmagichelper.hook.compat.factory.field
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.type.java.BooleanType
-import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.hook.rules.systemui.test.TextViewAnalyzer
@@ -34,24 +33,12 @@ object NubiaFont : YukiBaseHooker() {
         Prefs.getFloat(Pref.Key.SystemUI.FontWeight.LOCK_SCREEN_FONT_SIZE_ZOOM, -1f)
     }
 
-    private val aodFonPath by lazy {
-        Prefs.getString(
-            Pref.Key.SystemUI.FontWeight.AOD_FONT_PATH,
-            "/system/fonts/AndroidClock.ttf"
-        )
-    }
-
-    private val aodFontZoom by lazy {
-        Prefs.getFloat(Pref.Key.SystemUI.FontWeight.AOD_FONT_ZOOM, -1f)
-    }
-
 
     override fun onHook() {
 //        lockScreenClockFontHooker()
 //        keyGuardShow()
         hasEnable(Pref.Key.SystemUI.FontWeight.LOCKSCREEN_CLOCK){
             defaultLockScreenSetting()
-//        hookAllAodClockFonts()
             hookAllLockScreenClockFonts()
         }
     }
@@ -117,48 +104,6 @@ object NubiaFont : YukiBaseHooker() {
     }
 
     /**
-     * Hook 所有 AOD 时钟的 updateClockFont方法
-     */
-    private fun hookAllAodClockFonts() {
-//        if (!Prefs.getBoolean(Pref.Key.SystemUI.FontWeight.AOD_CLOCK, false)) {
-//            return
-//        }
-
-        // AOD 时钟类的公共特征：updateClockFont(int index, int typeface)
-        val aodClockClasses = listOf(
-            "com.zte.feature.doze.AodClock.KeyguardAodClockStyle.AodLockScreenClockDefault",
-            "com.zte.feature.doze.AodClock.KeyguardAodClockStyle.AodLockScreenClockArtword",
-            "com.zte.feature.doze.AodClock.KeyguardAodClockStyle.AodLockScreenClockClip",
-            "com.zte.feature.doze.AodClock.KeyguardAodClockStyle.AodLockScreenClockHorizen",
-            "com.zte.feature.doze.AodClock.KeyguardAodClockStyle.AodLockScreenClockDual"
-        )
-
-        aodClockClasses.forEach { className ->
-            try {
-                val clazz = className.toClass()
-                clazz.method {
-                    name = "updateClockFont"
-                    param(IntType, IntType)
-                }.hook {
-                    after {
-                        try {
-                            applyAodFontSettings(instance)
-                        } catch (e: Exception) {
-                            YLog.debug(
-                                tag = TAG,
-                                msg = "AOD 时钟 ${className} 字体设置失败：${e.message}"
-                            )
-                        }
-                    }
-                }
-                YLog.debug(tag = TAG, msg = "成功 Hook AOD 时钟：$className")
-            } catch (e: Exception) {
-                YLog.debug(tag = TAG, msg = "找不到 AOD 时钟类：$className, ${e.message}")
-            }
-        }
-    }
-
-    /**
      * Hook 所有锁屏时钟的 updateClockFont方法
      */
     private fun hookAllLockScreenClockFonts() {
@@ -197,137 +142,6 @@ object NubiaFont : YukiBaseHooker() {
             }
 
 
-    }
-
-    /**
-     * 应用 AOD 字体设置
-     */
-    private fun applyAodFontSettings(clockInstance: Any) {
-        val clazz = clockInstance.javaClass
-
-        // 尝试获取 mClockView 字段（大多数 AOD 时钟都有这个字段）
-        val clockViewField: Field? = try {
-            clazz.getDeclaredField("mClockView")
-        } catch (e: NoSuchFieldException) {
-            try {
-                clazz.superclass?.getDeclaredField("mClockView")
-            } catch (e2: Exception) {
-                null
-            }
-        }
-
-        clockViewField?.let { field ->
-            field.isAccessible = true
-            val clockView = field.get(clockInstance) as? TextView ?: return
-
-            // 设置 AOD 自定义字体
-            clockView.typeface = Typeface.createFromFile(aodFonPath)
-
-            // 如果设置了字体缩放
-            if (aodFontZoom != -1f) {
-                val originalSize = clockView.textSize
-                clockView.setTextSize(
-                    android.util.TypedValue.COMPLEX_UNIT_PX,
-                    originalSize * aodFontZoom
-                )
-            }
-
-            YLog.debug(tag = TAG, msg = "AOD 时钟字体设置成功 - ${clazz.simpleName}")
-        }
-
-        // 特殊处理：AodLockScreenClockDual 有 mTextRoamClock 和 mTextHomeClock
-        if (clazz.simpleName == "AodLockScreenClockDual") {
-            try {
-                val textRoamClockField =
-                    clazz.getDeclaredField("mTextRoamClock").apply { isAccessible = true }
-                val textHomeClockField =
-                    clazz.getDeclaredField("mTextHomeClock").apply { isAccessible = true }
-
-                (textRoamClockField.get(clockInstance) as? TextView)?.let { clock ->
-                    clock.typeface = Typeface.createFromFile(aodFonPath)
-                    if (aodFontZoom != -1f) {
-                        clock.setTextSize(
-                            android.util.TypedValue.COMPLEX_UNIT_PX,
-                            clock.textSize * aodFontZoom
-                        )
-                    }
-                }
-
-                (textHomeClockField.get(clockInstance) as? TextView)?.let { clock ->
-                    clock.typeface = Typeface.createFromFile(aodFonPath)
-                    if (aodFontZoom != -1f) {
-                        clock.setTextSize(
-                            android.util.TypedValue.COMPLEX_UNIT_PX,
-                            clock.textSize * aodFontZoom
-                        )
-                    }
-                }
-
-                YLog.debug(tag = TAG, msg = "AOD 双时钟字体设置成功")
-            } catch (e: Exception) {
-                YLog.debug(tag = TAG, msg = "AOD 双时钟字段获取失败：${e.message}")
-            }
-        }
-
-        // 特殊处理：AodLockScreenClockClip 有多个时钟视图
-        if (clazz.simpleName == "AodLockScreenClockClip") {
-            try {
-                val fields = listOf("mClockHourView", "mClockMinuteView", "mClockMinuteMaskView")
-                fields.forEach { fieldName ->
-                    try {
-                        val field = clazz.getDeclaredField(fieldName).apply { isAccessible = true }
-                        (field.get(clockInstance) as? TextView)?.let { clock ->
-                            clock.typeface = Typeface.createFromFile(aodFonPath)
-                            if (aodFontZoom != -1f) {
-                                clock.setTextSize(
-                                    android.util.TypedValue.COMPLEX_UNIT_PX,
-                                    clock.textSize * aodFontZoom
-                                )
-                            }
-                        }
-                    } catch (e: Exception) {
-                        // 忽略单个字段找不到的情况
-                    }
-                }
-                YLog.debug(tag = TAG, msg = "AOD Clip 时钟字体设置成功")
-            } catch (e: Exception) {
-                YLog.debug(tag = TAG, msg = "AOD Clip 时钟字段获取失败：${e.message}")
-            }
-        }
-
-        // 特殊处理：AodLockScreenClockHorizen 有 mClockHours 和 mClockMinute
-        if (clazz.simpleName == "AodLockScreenClockHorizen") {
-            try {
-                val clockHoursField =
-                    clazz.getDeclaredField("mClockHours").apply { isAccessible = true }
-                val clockMinuteField =
-                    clazz.getDeclaredField("mClockMinute").apply { isAccessible = true }
-
-                (clockHoursField.get(clockInstance) as? TextView)?.let { clock ->
-                    clock.typeface = Typeface.createFromFile(aodFonPath)
-                    if (aodFontZoom != -1f) {
-                        clock.setTextSize(
-                            android.util.TypedValue.COMPLEX_UNIT_PX,
-                            clock.textSize * aodFontZoom
-                        )
-                    }
-                }
-
-                (clockMinuteField.get(clockInstance) as? TextView)?.let { clock ->
-                    clock.typeface = Typeface.createFromFile(aodFonPath)
-                    if (aodFontZoom != -1f) {
-                        clock.setTextSize(
-                            android.util.TypedValue.COMPLEX_UNIT_PX,
-                            clock.textSize * aodFontZoom
-                        )
-                    }
-                }
-
-                YLog.debug(tag = TAG, msg = "AOD 水平时钟字体设置成功")
-            } catch (e: Exception) {
-                YLog.debug(tag = TAG, msg = "AOD 水平时钟字段获取失败：${e.message}")
-            }
-        }
     }
 
     /**

@@ -248,6 +248,15 @@ class MainActivity : HyperXActivity() {
                 SafeSP.putAny(Pref.Key.SystemUI.MediaControl.ELM_PROGRESS_STYLE, newValue)
             }
         }
+        if (spVersion < 6) {
+            // 熄屏显秒的旧 key 值误写为 show_period,迁移到新值
+            if (!SafeSP.getBoolean(Pref.Key.SystemUI.LockScreen.SCREEN_OFF_SHOW_SECONDS, false)) {
+                val oldValue = SafeSP.getBoolean(Pref.OldKey.SystemUI.LockScreen.SCREEN_OFF_SHOW_SECONDS, false)
+                if (oldValue) {
+                    SafeSP.putAny(Pref.Key.SystemUI.LockScreen.SCREEN_OFF_SHOW_SECONDS, true)
+                }
+            }
+        }
         SafeSP.putAny(Pref.Key.Module.SP_VERSION, Pref.VERSION)
     }
 }

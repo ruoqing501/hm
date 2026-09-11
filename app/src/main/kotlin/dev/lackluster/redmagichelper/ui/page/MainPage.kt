@@ -28,6 +28,7 @@ import dev.lackluster.redmagichelper.R
 import dev.lackluster.redmagichelper.ui.MainActivity
 import dev.lackluster.redmagichelper.data.Constants
 import dev.lackluster.redmagichelper.data.Pages
+import dev.lackluster.redmagichelper.ui.component.BottomNavBar
 import dev.lackluster.redmagichelper.utils.ShellUtils
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -61,6 +62,11 @@ fun MainPage(navController: NavController, adjustPadding: PaddingValues, mode: B
         MainActivity.blurTintAlphaLight,
         MainActivity.blurTintAlphaDark,
         mode,
+        bottomBar = if (mode == BasePageDefaults.Mode.FULL) {
+            { BottomNavBar(navController, Pages.MAIN) }
+        } else {
+            null
+        },
         navigationIcon = {},
         actions = { padding ->
             val hapticFeedback = LocalHapticFeedback.current
@@ -138,7 +144,7 @@ fun MainPage(navController: NavController, adjustPadding: PaddingValues, mode: B
         }
         // 主页面
         item {
-            PreferenceGroup {
+            PreferenceGroup(last = true) {
                 // 游戏空间
                 TextPreference(
                     icon = ImageIcon(iconRes = R.drawable.ic_game_space),
@@ -204,29 +210,6 @@ fun MainPage(navController: NavController, adjustPadding: PaddingValues, mode: B
                     title = stringResource(R.string.page_other)
                 ) {
                     navController.navigateWithPopup(Pages.OTHER)
-                }
-            }
-        }
-        // 模块设置
-        item {
-            PreferenceGroup {
-                TextPreference(
-                    icon = ImageIcon(iconRes = R.drawable.ic_header_hyper_helper_gray),
-                    title = stringResource(R.string.page_module)
-                ) {
-                    navController.navigateWithPopup(Pages.MODULE_SETTINGS)
-                }
-            }
-        }
-        item {
-            PreferenceGroup(
-                last = true
-            ) {
-                TextPreference(
-                    icon = ImageIcon(iconRes = R.drawable.ic_header_about),
-                    title = stringResource(R.string.page_about)
-                ) {
-                    navController.navigateWithPopup(Pages.ABOUT)
                 }
             }
         }

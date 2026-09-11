@@ -1,7 +1,7 @@
 package dev.lackluster.redmagichelper.data
 
 object Pref {
-    const val VERSION = 5
+    const val VERSION = 6
     object Key {
         object App {
             const val SPLIT_VIEW = "app_disable_split"
@@ -278,7 +278,6 @@ object Pref {
                 const val LOW_SPEED_HIDE_KILO_BYTES = "low_speed_hide_kilo_bytes"
                 const val CLOCK_GEEK = "statusbar_clock_geek"
                 const val CLOCK_GEEK_FORMAT = "statusbar_clock_pattern"
-                const val CLOCK_SHOW_PERIOD = "statusbar_clock_show_period"
                 const val CLOCK_SHOW_WEEK = "statusbar_clock_show_week"
                 const val STATUS_BAR_DOUBLE_CLICKED_LOCKED_SCREEN = "status_bar_double_clicked_locked_screen"
                 const val STATUS_BAR_NETWORK_SPEED_REFRESH_SPEED = "status_bar_network_speed_refresh_speed"
@@ -353,10 +352,6 @@ object Pref {
             }
             object FontWeight {
                 const val FONT_PATH = "sb_font_path"
-                const val AOD_FONT_PATH = "aod_font_path"
-                const val AOD_FONT_ZOOM = "aod_font_zoom"
-                const val AOD_CLOCK = "aod_clock"
-                const val AOD_SHOW_SECONDS = "aod_show_seconds"
                 const val LOCK_SCREEN_FONT_SIZE_ZOOM = "lock_screen_font_size_zoom"
                 const val LOCKSCREEN_CLOCK = "sb_font_lockscreen_clock"
             }
@@ -449,7 +444,7 @@ object Pref {
                 const val CARRIER_TEXT = "systemui_lockscreen_carrier_text"
                 const val KEEP_NOTIFICATION = "systemui_lockscreen_keep_notif"
                 const val SCREEN_OFF_PERIOD = "systemui_screen_off_period"
-                const val SCREEN_OFF_SHOW_SECONDS = "systemui_screen_off_show_period"
+                const val SCREEN_OFF_SHOW_SECONDS = "systemui_screen_off_show_seconds"
             }
             object NotifCenter {
                 const val NOTIF_NO_WHITELIST = "systemui_notif_no_whitelist"
@@ -719,6 +714,9 @@ object Pref {
             object MediaControl {
                 const val SQUIGGLY_PROGRESS = "media_ctrl_squiggly_progress"
                 const val HIDE_APP_ICON = "media_ctrl_hide_app"
+            }
+            object LockScreen {
+                const val SCREEN_OFF_SHOW_SECONDS = "systemui_screen_off_show_period"
             }
             object NotifCenter {
                 const val CLOCK_COLOR_FIX = "statusbar_clock_color_fix"

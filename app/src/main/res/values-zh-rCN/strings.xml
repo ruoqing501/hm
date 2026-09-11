@@ -34,7 +34,7 @@
     <string name="ui_title_game_active_mode_title">活跃模式</string>
     <string name="ui_title_game_active_mode_title_tips">活跃模式将完全由用户手动控制：首次安装或首次进入某游戏时，默认关闭；用户点击开关后，该状态会永久记住，后续每次进入游戏都会保持用户最后的设置</string>
     <string name="magnetic_sticker">磁贴</string>
-    <string name="game_fuction_unfreeze_switch_tips">支持任意游戏的连点、一键连招功能，随心录制、红魔时刻任意模式下录制,重启系统后生效</string>
+    <string name="game_fuction_unfreeze_switch_tips">解锁任意游戏的肩键、一键连招等进阶功能选项，红魔时刻任意模式下随心录制，重启系统后生效</string>
     <string name="ui_title_ai_trigger">AI 触发器</string>
     <string name="ai_trigger_switch">AI 触发器间隔调整</string>
     <string name="ai_trigger_switch_tips">缩短 AI 触发器的模板扫描、点击、冷却与 YOLO 扫描间隔，修改后即时生效</string>
@@ -439,9 +439,6 @@
     <string name="ui_title_about_reference">引用</string>
     <string name="about_author_tips">没有简介或者签名</string>
     <string name="about_yuki">此模块使用 YukiHookAPI 构建</string>
-    <string name="clock_easy_show_period">显示时段</string>
-    <string name="clock_easy_show_week">显示星期</string>
-    <string name="clock_easy_show_month_day">显示月/日</string>
     <string name="show_years_title">显示年份</string>
     <string name="show_years_summary">例如: 26年</string>
     <string name="show_month_title">显示月份</string>

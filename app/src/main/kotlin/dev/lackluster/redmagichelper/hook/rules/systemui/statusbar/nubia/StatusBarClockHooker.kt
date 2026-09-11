@@ -19,9 +19,6 @@ import java.util.*
 
 object StatusBarClockHooker : YukiBaseHooker() {
     // 状态栏时钟相关设置
-    private val isPeriod by lazy {
-        Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PERIOD, false)
-    }
     private val isWeek by lazy {
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_WEEK, false)
     }
@@ -41,16 +38,13 @@ object StatusBarClockHooker : YukiBaseHooker() {
     private const val TARGET_RESOURCE_ID = "clock"
     private const val TARGET_CLASS_NAME = "Clock"
 
-    // 中文时段定义
-    private val chinesePeriods = listOf("凌晨", "上午", "中午", "下午", "傍晚", "晚上")
-
     // 时间格式常量
     private const val TIME_PATTERN = "^\\d{1,2}:\\d{2}(:\\d{2})?$"
     private const val TIME_WITH_AMPM_PATTERN = "^\\d{1,2}:\\d{2}(:\\d{2})?\\s*[AP]M$"
 
     override fun onHook() {
         // 如果所有功能都关闭，则不Hook
-        if (!isPeriod && !isWeek && !isMonthDay && statusBarPullDownPeriodTextType == 0) {
+        if (!isWeek && !isMonthDay && statusBarPullDownPeriodTextType == 0) {
             YLog.debug("[StatusBarClockHooker] 所有功能都已关闭，跳过Hook")
             return
         }
@@ -93,7 +87,7 @@ object StatusBarClockHooker : YukiBaseHooker() {
      * 处理状态栏时钟（直接修改文本）
      */
     private fun handleStatusBarClock(clockView: TextView, originalText: String) {
-        if (!isPeriod && !isWeek && !isMonthDay) return
+        if (!isWeek && !isMonthDay) return
 
         YLog.debug("[StatusBarClockHooker] 处理状态栏时钟: $originalText")
 
@@ -134,7 +128,7 @@ object StatusBarClockHooker : YukiBaseHooker() {
      * 处理状态栏时间文本
      */
     private fun processStatusBarTimeText(originalText: String, context: Context): String {
-        if (!isPeriod && !isWeek && !isMonthDay) return originalText
+        if (!isWeek && !isMonthDay) return originalText
 
         val now = Calendar.getInstance()
         val isZh = isZh(context)
@@ -142,7 +136,7 @@ object StatusBarClockHooker : YukiBaseHooker() {
 
         return buildString {
             if (isZh) {
-                // 中文格式：月日 星期 时段 时间
+                // 中文格式：月日 星期 时间
                 if (isMonthDay) {
                     append(getMonthDay(isZh, now.time))
                     append(" ")
@@ -151,18 +145,10 @@ object StatusBarClockHooker : YukiBaseHooker() {
                     append(getWeekday(isZh, now.time))
                     append(" ")
                 }
-                if (isPeriod && !containsPeriod(originalText, isZh)) {
-                    append(getPeriodText(context, isZh))
-                    append(" ")
-                }
                 append(timePart)
             } else {
-                // 英文格式：时间 时段 星期 月日
+                // 英文格式：时间 星期 月日
                 append(timePart)
-                if (isPeriod && !containsPeriod(originalText, isZh)) {
-                    append(" ")
-                    append(getPeriodText(context, isZh))
-                }
                 if (isWeek) {
                     append(" ")
                     append(getWeekday(isZh, now.time))
@@ -230,19 +216,6 @@ object StatusBarClockHooker : YukiBaseHooker() {
             SimpleDateFormat("M月d日", Locale.CHINA).format(date)
         } else {
             SimpleDateFormat("MM-dd", Locale.getDefault()).format(date)
-        }
-    }
-
-    /**
-     * 检查是否已经包含时段
-     */
-    private fun containsPeriod(text: String, isZh: Boolean): Boolean {
-        return if (isZh) {
-            chinesePeriods.any { period ->
-                text.contains(period, ignoreCase = true)
-            }
-        } else {
-            Regex("[AP]\\.?M\\.?", RegexOption.IGNORE_CASE).containsMatchIn(text)
         }
     }
 

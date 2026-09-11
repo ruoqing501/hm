@@ -32,7 +32,9 @@ import dev.lackluster.hyperx.compose.preference.SwitchPreference
 import dev.lackluster.hyperx.compose.preference.TextPreference
 import dev.lackluster.redmagichelper.BuildConfig
 import dev.lackluster.redmagichelper.R
+import dev.lackluster.redmagichelper.data.Pages
 import dev.lackluster.redmagichelper.ui.MainActivity
+import dev.lackluster.redmagichelper.ui.component.BottomNavBar
 import dev.lackluster.redmagichelper.data.Pref.Key.App
 import dev.lackluster.redmagichelper.data.Pref.Key.Module
 import dev.lackluster.redmagichelper.utils.BackupUtils
@@ -105,7 +107,12 @@ fun ModuleSettingsPage(navController: NavController, adjustPadding: PaddingValue
         MainActivity.blurEnabled,
         MainActivity.blurTintAlphaLight,
         MainActivity.blurTintAlphaDark,
-        mode
+        mode,
+        bottomBar = if (mode == BasePageDefaults.Mode.FULL) {
+            { BottomNavBar(navController, Pages.MODULE_SETTINGS) }
+        } else {
+            null
+        }
     ) {
         item {
             PreferenceGroup(

@@ -74,6 +74,7 @@ fun BasePage(
         }
     },
     actions: @Composable RowScope.(padding: PaddingValues) -> Unit = {},
+    bottomBar: (@Composable () -> Unit)? = null,
     content: LazyListScope.() -> Unit
 ) {
     val topAppBarBackground = MiuixTheme.colorScheme.background
@@ -116,6 +117,10 @@ fun BasePage(
             )
         },
         blurTopBar = blurEnabled.value,
+        bottomBar = bottomBar?.let { bar ->
+            { _: PaddingValues -> bar() }
+        },
+        blurBottomBar = blurEnabled.value,
         hazeStyle = HazeStyle(
             blurRadius = 66.dp,
             backgroundColor = topAppBarBackground,

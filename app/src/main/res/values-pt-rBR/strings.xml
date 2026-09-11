@@ -579,13 +579,10 @@
     <string name="clock_geek_time_format_pattern">Padrão de formato de hora (barra de status)</string>
     <string name="ui_title_clock_easy">Configuração fácil</string>
     <string name="alignment">Alignment</string>
-    <string name="clock_easy_show_period">Mostrar Period</string>
-    <string name="clock_easy_show_week">Mostrar Week</string>
     <string name="status_bar_double_clicked_locked_screen">Double Clicked Locked Screen</string>
     <string name="restore_the_font_of_the_clock_date_icon">Restore the font of the clock date icon</string>
     <string name="status_bar_use_the_native_notification_icon">Use the native notification icon</string>
     <string name="status_bar_use_the_native_notification_icon_tips">The status bar notifications will also adopt the native style, and the slider can be used to adjust the size of the notification icons for status bar applications.</string>
-    <string name="clock_easy_show_month_day">Mostrar Month Day</string>
     <string name="show_years_title">Show Year</string>
     <string name="show_years_summary">e.g., \'24</string>
     <string name="show_month_title">Show Month</string>

@@ -29,13 +29,6 @@ object ScreenOffPeriodModifier : YukiBaseHooker() {
         Prefs.getFloat(Pref.Key.SystemUI.ScreenOff.SCREEN_OFF_PERIOD_FONT_SIZE_SETTINGS, 0.6f)
     }
 
-
-
-    // 秒显示（开关的状态） - 新增开关
-    private val screenOffShowSeconds by lazy {
-        Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.SCREEN_OFF_SHOW_SECONDS, false)
-    }
-
     // 存储创建的时段TextView，避免重复创建
     private val periodTextViews = WeakHashMap<TextClock, TextView>()
 
@@ -44,8 +37,8 @@ object ScreenOffPeriodModifier : YukiBaseHooker() {
 
     @SuppressLint("PrivateApi", "SimpleDateFormat")
     override fun onHook() {
-        // 如果没有开启任何功能，直接返回
-        if (!screenOffShowPeriod && !Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.SCREEN_OFF_SHOW_SECONDS, false)) return
+        // 熄屏显秒由 AodSecondUpdate 实现，这里只管时段
+        if (!screenOffShowPeriod) return
 
         YLog.debug("[ScreenOffClockShowSeconds] 开始Hook锁屏时钟和日期显示功能")
         try {
@@ -157,53 +150,8 @@ object ScreenOffPeriodModifier : YukiBaseHooker() {
         YLog.debug("[ScreenOffClockShowSeconds] TextClock更新: 时间=$currentTime, 资源ID=$resourceIdName, 24小时制=$is24Hour, 中文环境=$isZh")
 
 
-        // 处理秒显示（直接修改TextClock格式）
-//        handleSecondsDisplay(textClock, is24Hour, isZh)
-
         // 处理时段显示（创建独立的TextView）
         handlePeriodDisplay(textClock, isZh)
-    }
-
-    /**
-     * 处理秒显示 - 直接修改TextClock格式
-     */
-    private fun handleSecondsDisplay(textClock: TextClock, is24Hour: Boolean, isZh: Boolean) {
-//        if (!screenOffShowSeconds) return
-        if (!Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.SCREEN_OFF_SHOW_SECONDS, false)) return
-
-        try {
-            // 获取当前格式
-            val currentFormat = if (is24Hour) {
-                textClock.format24Hour?.toString()
-            } else {
-                textClock.format12Hour?.toString()
-            }
-
-            // 检查当前格式是否已经包含秒
-            if (currentFormat != null && !containsSeconds(currentFormat)) {
-                // 构建带秒的格式
-                val secondsFormat = addSecondsToFormat(currentFormat, is24Hour, isZh)
-
-                if (secondsFormat != null && currentFormat != secondsFormat) {
-                    // 设置递归标志，防止无限递归
-                    setRecursiveFlag(textClock)
-
-                    try {
-                        if (is24Hour) {
-                            textClock.format24Hour = secondsFormat
-                        } else {
-                            textClock.format12Hour = secondsFormat
-                        }
-
-                        YLog.debug("[ScreenOffClockShowSeconds] 添加秒显示: $secondsFormat, 24小时制: $is24Hour")
-                    } finally {
-                        clearRecursiveFlag(textClock)
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            YLog.debug("[ScreenOffClockShowSeconds] 处理秒显示时出错: ${e.message}")
-        }
     }
 
     /**
@@ -426,146 +374,6 @@ object ScreenOffPeriodModifier : YukiBaseHooker() {
                 updatePeriodText(periodTextView, isZh)
             }
         }
-        // 处理秒显示
-        if (!screenOffShowSeconds) return
-        if (Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.SCREEN_OFF_SHOW_SECONDS, false)) {
-            if (originalFormat != null && !containsSeconds(originalFormat)) {
-                val secondsFormat = addSecondsToFormat(originalFormat, is24Hour, isZh)
-                if (secondsFormat != null && originalFormat != secondsFormat) {
-                    // 设置递归标志，防止无限递归
-                    setRecursiveFlag(textClock)
-
-                    try {
-                        if (is24Hour) {
-                            textClock.format24Hour = secondsFormat
-                        } else {
-                            textClock.format12Hour = secondsFormat
-                        }
-
-                        YLog.debug("[ScreenOffClockShowSeconds] 格式变化处理: 资源ID=$resourceIdName, 原格式='$originalFormat', 新格式='$secondsFormat'")
-                    } finally {
-                        clearRecursiveFlag(textClock)
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 添加秒到格式字符串
-     */
-//    private fun addSecondsToFormat(originalFormat: String, is24Hour: Boolean, isZh: Boolean): String? {
-//        try {
-//            // 分析原始格式，确定是否需要添加秒
-//            if (containsSeconds(originalFormat)) {
-//                return originalFormat
-//            }
-//
-//            // 构建带秒的格式
-//            return if (is24Hour) {
-//                // 24小时制
-//                if (originalFormat.contains("HH:mm")) {
-//                    originalFormat.replace("HH:mm", "HH:mm:ss")
-//                } else if (originalFormat.contains("H:mm")) {
-//                    originalFormat.replace("H:mm", "H:mm:ss")
-//                } else {
-//                    // 默认格式
-//                    "HH:mm:ss"
-//                }
-//            } else {
-//                // 12小时制
-//                val hasAmPm = containsAmPm(originalFormat)
-//                if (originalFormat.contains("hh:mm")) {
-//                    if (hasAmPm && !isZh) {
-//                        // 英文环境且已有AM/PM标记
-//                        originalFormat.replace("hh:mm", "hh:mm:ss")
-//                    } else {
-//                        originalFormat.replace("hh:mm", "hh:mm:ss")
-//                    }
-//                } else if (originalFormat.contains("h:mm")) {
-//                    if (hasAmPm && !isZh) {
-//                        originalFormat.replace("h:mm", "h:mm:ss")
-//                    } else {
-//                        originalFormat.replace("h:mm", "h:mm:ss")
-//                    }
-//                } else {
-//                    // 默认格式
-//                    if (hasAmPm && !isZh) {
-//                        "hh:mm:ss a"
-//                    } else {
-//                        "hh:mm:ss"
-//                    }
-//                }
-//            }
-//        } catch (e: Exception) {
-//            YLog.debug("[ScreenOffClockShowSeconds] 添加秒到格式时出错: ${e.message}")
-//            return originalFormat
-//        }
-//    }
-
-
-    /**
-     * 更健壮的秒显示格式添加方法
-     */
-    private fun addSecondsToFormat(originalFormat: String, is24Hour: Boolean, isZh: Boolean): String {
-        // 如果已经包含秒，直接返回
-        if (containsSecondsRobust(originalFormat)) {
-            return originalFormat
-        }
-
-        // 使用正则表达式更准确地识别时间模式
-        val timePattern = Regex("""[hH]{1,2}:mm\b""")
-        val matchResult = timePattern.find(originalFormat)
-
-        return if (matchResult != null) {
-            // 在找到的时间模式后添加秒
-            val timeStr = matchResult.value
-            val replacement = when {
-                timeStr.contains("HH") -> "HH:mm:ss"
-                timeStr.contains("H") -> "H:mm:ss"
-                timeStr.contains("hh") -> "hh:mm:ss"
-                timeStr.contains("h") -> "h:mm:ss"
-                else -> "HH:mm:ss"
-            }
-            originalFormat.replaceRange(matchResult.range, replacement)
-        } else {
-            // 没有找到标准时间模式，添加在末尾
-            val baseFormat = if (is24Hour) "HH:mm:ss" else "hh:mm:ss"
-            val amPmFormat = if (!is24Hour && !containsAmPm(originalFormat) && !isZh) {
-                " a"
-            } else ""
-            "$originalFormat $baseFormat$amPmFormat".trim()
-        }
-    }
-
-    /**
-     * 更健壮的秒显示检查
-     */
-    private fun containsSecondsRobust(format: String): Boolean {
-        if (format.isNullOrEmpty()) return false
-        // 检查多种秒表示方式
-        return format.contains(Regex(":[sS]{1,2}(?![\\w:])")) ||
-                format.contains(":ss") ||
-                format.contains(":s") ||
-                format.contains(":ss") ||
-                format.contains(":S") ||
-                format.contains(":SS")
-    }
-
-    /**
-     * 检查格式是否包含秒
-     */
-    private fun containsSeconds(format: String?): Boolean {
-        if (format.isNullOrEmpty()) return false
-        return format.contains(":ss") || format.contains(":s")
-    }
-
-    /**
-     * 检查格式是否包含AM/PM标记
-     */
-    private fun containsAmPm(format: String?): Boolean {
-        if (format.isNullOrEmpty()) return false
-        return format.contains(" a") || format.contains("A") || format.contains("a")
     }
 
     /**
@@ -575,14 +383,6 @@ object ScreenOffPeriodModifier : YukiBaseHooker() {
 
     private fun isRecursiveCall(textClock: TextClock): Boolean {
         return recursiveTextClocks[textClock] == true
-    }
-
-    private fun setRecursiveFlag(textClock: TextClock) {
-        recursiveTextClocks[textClock] = true
-    }
-
-    private fun clearRecursiveFlag(textClock: TextClock) {
-        recursiveTextClocks.remove(textClock)
     }
 
     /**

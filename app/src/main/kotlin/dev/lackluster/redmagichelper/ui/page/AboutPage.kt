@@ -63,6 +63,7 @@ import dev.lackluster.hyperx.compose.preference.ImagePreference
 import dev.lackluster.redmagichelper.data.Codes
 import dev.lackluster.redmagichelper.data.Pages
 import dev.lackluster.redmagichelper.data.Pref
+import dev.lackluster.redmagichelper.ui.component.BottomNavBar
 import kotlin.random.Random
 
 @Composable
@@ -78,7 +79,12 @@ fun AboutPage(navController: NavController, adjustPadding: PaddingValues, mode: 
         MainActivity.blurEnabled,
         MainActivity.blurTintAlphaLight,
         MainActivity.blurTintAlphaDark,
-        mode
+        mode,
+        bottomBar = if (mode == BasePageDefaults.Mode.FULL) {
+            { BottomNavBar(navController, Pages.ABOUT) }
+        } else {
+            null
+        }
     ) {
         item {
             AdaptiveHeaderCard(
