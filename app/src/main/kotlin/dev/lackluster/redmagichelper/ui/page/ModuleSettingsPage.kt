@@ -108,6 +108,7 @@ fun ModuleSettingsPage(navController: NavController, adjustPadding: PaddingValue
         MainActivity.blurTintAlphaLight,
         MainActivity.blurTintAlphaDark,
         mode,
+        navigationIcon = {},
         bottomBar = if (mode == BasePageDefaults.Mode.FULL) {
             { BottomNavBar(navController, Pages.MODULE_SETTINGS) }
         } else {

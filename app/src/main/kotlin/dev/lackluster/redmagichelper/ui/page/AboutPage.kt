@@ -80,6 +80,7 @@ fun AboutPage(navController: NavController, adjustPadding: PaddingValues, mode: 
         MainActivity.blurTintAlphaLight,
         MainActivity.blurTintAlphaDark,
         mode,
+        navigationIcon = {},
         bottomBar = if (mode == BasePageDefaults.Mode.FULL) {
             { BottomNavBar(navController, Pages.ABOUT) }
         } else {

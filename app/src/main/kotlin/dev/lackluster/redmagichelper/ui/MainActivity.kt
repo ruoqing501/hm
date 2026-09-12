@@ -1,6 +1,9 @@
 package dev.lackluster.redmagichelper.ui
 
 import android.os.Bundle
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -125,7 +128,11 @@ class MainActivity : HyperXActivity() {
                 }
             },
             otherPageBuilder = { navController, adjustPadding, mode ->
-                miuixComposable(Pages.MODULE_SETTINGS) { ModuleSettingsPage(navController, adjustPadding, mode) }
+                miuixComposable(
+                    Pages.MODULE_SETTINGS,
+                    enterTransition = { fadeIn(animationSpec = tween(200)) },
+                    exitTransition = { fadeOut(animationSpec = tween(200)) }
+                ) { ModuleSettingsPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.SEARCH) { SearchPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.SYSTEM_UI) { SystemUIPage(navController, adjustPadding, mode)}
                 miuixComposable(Pages.PACKAGE_INSTALLER) { PackageInstallerPage(navController, adjustPadding, mode) }
@@ -135,7 +142,11 @@ class MainActivity : HyperXActivity() {
                 miuixComposable(Pages.SYSTEM_THEME) { ThemePage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.SYSTEM_FRAMEWORK) { SystemFrameworkPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.OTHER) { OtherPage (navController, adjustPadding, mode) }
-                miuixComposable(Pages.ABOUT) { AboutPage(navController, adjustPadding, mode) }
+                miuixComposable(
+                    Pages.ABOUT,
+                    enterTransition = { fadeIn(animationSpec = tween(200)) },
+                    exitTransition = { fadeOut(animationSpec = tween(200)) }
+                ) { AboutPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.ANDROID_AUDIO) { AndroidAudioPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR_TIME_INDICATOR) { StatusBarTimeIndicatorPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR_DUAL) { StatusBarDualPage(navController, adjustPadding, mode) }

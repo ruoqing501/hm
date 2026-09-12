@@ -27,9 +27,9 @@ private val tabRoutes = listOf(
 @Composable
 fun BottomNavBar(navController: NavController, currentRoute: String) {
     val items = listOf(
-        NavigationItem(stringResource(R.string.page_main), MiuixIcons.Home),
-        NavigationItem(stringResource(R.string.page_module), MiuixIcons.Useful.Settings),
-        NavigationItem(stringResource(R.string.page_about), MiuixIcons.Useful.Info),
+        NavigationItem(stringResource(R.string.nav_home), MiuixIcons.Home),
+        NavigationItem(stringResource(R.string.nav_settings), MiuixIcons.Useful.Settings),
+        NavigationItem(stringResource(R.string.nav_about), MiuixIcons.Useful.Info),
     )
     val currentBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = currentBackStackEntry?.destination?.route ?: currentRoute
@@ -49,7 +49,8 @@ fun BottomNavBar(navController: NavController, currentRoute: String) {
                 }
             }
         },
-        color = Color.Transparent
+        color = Color.Transparent,
+        defaultWindowInsetsPadding = false
     )
 }
 

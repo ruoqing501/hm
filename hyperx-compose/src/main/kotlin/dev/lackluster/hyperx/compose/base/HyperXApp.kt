@@ -117,7 +117,11 @@ fun NormalLayout(
         startDestination = HyperXAppDefaults.PAGE_MAIN,
         cornerRadius = HyperXActivity.screenCornerRadius.intValue.dp
     ) {
-        miuixComposable(HyperXAppDefaults.PAGE_MAIN) { mainPageContent(navController, contentPadding, BasePageDefaults.Mode.FULL) }
+        miuixComposable(
+            HyperXAppDefaults.PAGE_MAIN,
+            enterTransition = { fadeIn(animationSpec = tween(200)) },
+            exitTransition = { fadeOut(animationSpec = tween(200)) }
+        ) { mainPageContent(navController, contentPadding, BasePageDefaults.Mode.FULL) }
         otherPageBuilder?.let { it(navController, contentPadding, BasePageDefaults.Mode.FULL) }
     }
 }
