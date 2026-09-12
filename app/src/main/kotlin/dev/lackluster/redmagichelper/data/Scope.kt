@@ -29,7 +29,6 @@ object Scope {
     const val SYSTEM_DESKTOP = "com.zte.mifavor.launcher"
     const val SYSTEM_WEATHER = "com.zte.mifavor.weather"
     const val REDMAGIC_MOMENT = "cn.nubia.gamehighlights"
-    const val ZTE_SCREENSHOT = "com.android.ztescreenshot"
 
     const val COMBO_ATTACK = "cn.nubia.gamehelpmodule"
     const val GAME_SPACE = "cn.nubia.gamelauncher"
@@ -48,7 +47,6 @@ object Scope {
     const val PLUGIN_TRIGGER = "com.zte.game.plugintrigger"
     const val GAME_LAB = "cn.nubia.gamelab"
     const val ZTE_RECOMMEND = "com.zte.recommend"
-    const val THEME_ADAPTER = "com.zte.beautifyadapter"
 //    const val REDMAGIC_SYSTEM_SETTINGS = "com.android.settings"
     const val SYSTEM_UI_PLUGIN = "miui.systemui.plugin"
     const val TAPLUS = "com.miui.contentextension"

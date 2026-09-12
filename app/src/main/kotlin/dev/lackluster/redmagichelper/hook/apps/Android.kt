@@ -22,7 +22,6 @@ import dev.lackluster.redmagichelper.hook.rules.android.nubia.RmWindowReplyLimit
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.ScreenOffAutomationHook
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.SignatureMismatchInstallHook
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.VolumeDialogHook
-import dev.lackluster.redmagichelper.hook.rules.android.nubia.VolumeStepHook
 
 object Android : YukiBaseHooker() {
     override fun onHook() {
@@ -79,9 +78,6 @@ object Android : YukiBaseHooker() {
         loadHooker(NubiaDisableSystemSignatureVerification)
         // 允许不同签名覆盖安装
         loadHooker(SignatureMismatchInstallHook)
-
-        // 声音步进调节
-        loadHooker(VolumeStepHook)
 
         // 音量增益（超过系统最大音量后用 LoudnessEnhancer 施加增益）
         loadHooker(AudioGainHook)

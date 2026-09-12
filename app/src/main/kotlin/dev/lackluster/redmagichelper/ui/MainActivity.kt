@@ -39,7 +39,6 @@ import dev.lackluster.redmagichelper.data.Pages
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.ui.dialog.MarketFilterTabDialog
 import dev.lackluster.redmagichelper.ui.dialog.FreeformExcludedAppsDialog
-import dev.lackluster.redmagichelper.ui.page.AndroidAudioPage
 import dev.lackluster.redmagichelper.ui.page.GameSpaceMenuPage
 import dev.lackluster.redmagichelper.ui.page.GameSpacePage
 import dev.lackluster.redmagichelper.ui.page.HealthStepsPage
@@ -147,7 +146,6 @@ class MainActivity : HyperXActivity() {
                     enterTransition = { fadeIn(animationSpec = tween(200)) },
                     exitTransition = { fadeOut(animationSpec = tween(200)) }
                 ) { AboutPage(navController, adjustPadding, mode) }
-                miuixComposable(Pages.ANDROID_AUDIO) { AndroidAudioPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR_TIME_INDICATOR) { StatusBarTimeIndicatorPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR_DUAL) { StatusBarDualPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR_GRID) { StatusBarGridPage(navController, adjustPadding, mode) }

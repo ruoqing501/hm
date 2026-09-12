@@ -113,8 +113,6 @@ fun OtherMenuPage(navController: NavController, adjustPadding: PaddingValues, mo
                     Scope.DOUBLE_APP,
                     // 文件浏览
                     Scope.NUBIA_FILE_BROWSER,
-                    // 截图
-                    Scope.ZTE_SCREENSHOT,
                    )
                 scopeArray.forEach { pkg ->
                     try {

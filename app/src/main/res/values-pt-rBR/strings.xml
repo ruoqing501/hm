@@ -417,7 +417,6 @@
     <string name="refresh_rate_unlock_165hz">Unlock the 165Hz option</string>
     <string name="refresh_rate_unlock_165hz_tips">The actual refresh rate is still 144Hz, but multiple options now allow the 165Hz option to be unlocked.</string>
     <string name="ui_title_android_screenshot">Screenshot</string>
-    <string name="ui_title_android_rercord_screen">Record Screen</string>
     <string name="ui_title_android_notification">Notification</string>
     <string name="ui_title_android_remove_intent_hijack">Remove Intent Hijack</string>
     <string name="android_remove_intent_hijack_content">Remove Intent Hijack</string>
@@ -459,20 +458,9 @@
     <string name="ui_title_android_window">Window</string>
     <string name="ui_title_android_airplane_mode">Airplane Mode</string>
     <string name="ui_title_android_audio">Audio</string>
-    <string name="ui_sub_title_android_audio">Opening it may cause the scrolling of the volume bar to become sluggish or result in abnormal Bluetooth volume.</string>
 
 
-    <string name="ui_title_alarm_volume_steps">Alarm</string>
-    <string name="ui_title_media_volume_steps">Media</string>
-    <string name="ui_title_notify_volume_steps">Notify</string>
-    <string name="ui_title_ring_volume_steps">Ring</string>
-    <string name="ui_title_vc_call_volume_steps">Viceo Call</string>
 
-    <string name="alarm_volume_steps">Alarm Volume Steps</string>
-    <string name="media_volume_steps">Media Volume Steps</string>
-    <string name="notify_volume_steps">Notify Volume Steps</string>
-    <string name="ring_volume_steps">Ring Volume Steps</string>
-    <string name="vc_call_volume_steps">Viceo Call Volume Steps</string>
     <string name="android_airplane_mode_keep_bluetooth">Keep Bluetooth</string>
     <string name="android_airplane_mode_keep_bluetooth_tips">When the flight mode is enabled, the Bluetooth function remains active regardless of whether there is any media playing.</string>
     <string name="airplane_mode_keep_wlan">Keep the status of WLAN and hotspot.</string>
@@ -620,7 +608,6 @@
     <string name="status_bar_display_temp_digital_mode_number_float">Decimals</string>
     <string name="clock_easy_pull_down_period_hide">Hide Period</string>
     <string name="clock_easy_pull_down_period_display">Display Period</string>
-    <string name="lock_screen_display_seconds">Display Seconds</string>
     <string name="ui_title_time_indicator">Clock marker</string>
     <string name="ui_title_status_bar_dual">Dual StatusBar</string>
     <string name="ui_title_status_bar_layout">Status Layout</string>
@@ -656,7 +643,6 @@
     <string name="ui_title_status_bar_dual_left">Left Side</string>
     <string name="ui_title_status_bar_dual_right">Right Side</string>
     <string name="ui_title_status_bar_dual_clock_across">Clock displays in two rows simultaneously</string>
-    <string name="lock_screen_display_period">Display Period</string>
     <string name="lock_screen_allow_adjust_volume">Allow Adjust Volume</string>
     <string name="lock_screen_allow_adjust_volume_tips">Even If There Is No Music Playing</string>
     <string name="lock_screen_hide_status_bar">Hide status bar</string>

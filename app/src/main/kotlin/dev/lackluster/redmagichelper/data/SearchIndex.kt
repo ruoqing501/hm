@@ -52,8 +52,6 @@ object SearchIndex {
         SearchEntry(R.string.systemui_lock_double_tap, null, Pages.SYSTEM_UI, R.string.page_systemui),
         SearchEntry(R.string.systemui_lock_flashlight_on, R.string.systemui_lock_flashlight_on_tips, Pages.SYSTEM_UI, R.string.page_systemui),
         SearchEntry(R.string.systemui_lock_carrier_text, null, Pages.SYSTEM_UI, R.string.page_systemui),
-        SearchEntry(R.string.lock_screen_display_seconds, null, Pages.SYSTEM_UI, R.string.page_systemui),
-        SearchEntry(R.string.lock_screen_display_period, null, Pages.SYSTEM_UI, R.string.page_systemui),
         SearchEntry(R.string.lock_screen_allow_adjust_volume, R.string.lock_screen_allow_adjust_volume_tips, Pages.SYSTEM_UI, R.string.page_systemui),
         SearchEntry(R.string.lock_screen_hide_status_bar, null, Pages.SYSTEM_UI, R.string.page_systemui),
         SearchEntry(R.string.lock_screen_display_charge_info, R.string.lock_screen_display_charge_info_tips, Pages.SYSTEM_UI, R.string.page_systemui),
@@ -136,7 +134,6 @@ object SearchIndex {
 
         // 主题
         SearchEntry(R.string.ui_title_theme_cancel_trial_login, R.string.ui_title_theme_cancel_trial_login_tips, Pages.SYSTEM_THEME, R.string.system_theme),
-        SearchEntry(R.string.ui_title_theme_unlimited_trial, R.string.ui_title_theme_unlimited_trial_tips, Pages.SYSTEM_THEME, R.string.system_theme),
 
         // 系统设置
         SearchEntry(R.string.display_system_settings_develop, null, Pages.SYSTEM_SETTINGS, R.string.system_settings),
@@ -225,12 +222,5 @@ object SearchIndex {
         SearchEntry(R.string.media_lyt_hide_time, null, Pages.MEDIA_CONTROL, R.string.page_media_control_style),
         SearchEntry(R.string.media_elm_thumb_style, null, Pages.MEDIA_CONTROL, R.string.page_media_control_style),
         SearchEntry(R.string.media_elm_prog_style, null, Pages.MEDIA_CONTROL, R.string.page_media_control_style),
-
-        // 音量步进(Android 音频)
-        SearchEntry(R.string.ui_title_alarm_volume_steps, null, Pages.ANDROID_AUDIO, R.string.ui_title_android_audio),
-        SearchEntry(R.string.ui_title_media_volume_steps, null, Pages.ANDROID_AUDIO, R.string.ui_title_android_audio),
-        SearchEntry(R.string.ui_title_notify_volume_steps, null, Pages.ANDROID_AUDIO, R.string.ui_title_android_audio),
-        SearchEntry(R.string.ui_title_ring_volume_steps, null, Pages.ANDROID_AUDIO, R.string.ui_title_android_audio),
-        SearchEntry(R.string.ui_title_vc_call_volume_steps, null, Pages.ANDROID_AUDIO, R.string.ui_title_android_audio),
     )
 }

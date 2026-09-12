@@ -220,12 +220,6 @@ fun SystemFrameworkPage(navController: NavController, adjustPadding: PaddingValu
                 stringResource(R.string.ui_title_android_audio),
                 first = true,
             ) {
-                TextPreference(
-                    title = stringResource(R.string.ui_title_volume_steps)
-                ) {
-                    // 导航到音量步进界面
-                    navController.navigateTo(Pages.ANDROID_AUDIO)
-                }
                 SwitchPreference(
                     title = stringResource(R.string.android_mute_volume_detection),
                     summary = stringResource(R.string.android_mute_volume_detection_tips),

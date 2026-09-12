@@ -26,7 +26,6 @@ object Pages {
     const val MENU = "MenuPage"
     const val GAMESPACE_MENU = "GameSpaceMenuPage"
     const val OTHER_MENU = "OtherMenuPage"
-    const val ANDROID_AUDIO = "AndroidAudioPage"
     const val NUBIA_ICON_TUNER = "NubiaIconTunerPage"
     const val SYSTEM_DESKTOP_RECENT_TASKS = "SystemDesktopRecentTasksPage"
     const val DESKTOP_ICON_CUSTOM = "DesktopIconCustomPage"

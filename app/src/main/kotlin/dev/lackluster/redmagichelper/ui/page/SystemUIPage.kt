@@ -507,16 +507,6 @@ fun SystemUIPage(
                 visible = true //默认显示锁屏卡片
             ) {
 
-                // 显示秒
-                SwitchPreference(
-                    title = stringResource(R.string.lock_screen_display_seconds),
-                    key = Pref.Key.SystemUI.LockScreen.DISPLAY_SECONDS
-                )
-                // 显示时段
-                SwitchPreference(
-                    title = stringResource(R.string.lock_screen_display_period),
-                    key = Pref.Key.SystemUI.LockScreen.DISPLAY_PERIOD
-                )
                 // 允许在锁屏调整音量
                 // 即使没有音乐播放
                 SwitchPreference(

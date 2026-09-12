@@ -23,7 +23,6 @@ import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaPluginTrigger
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaRecommend
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaSystemSettings
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaSystemUpdate
-import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaThemeAdapter
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaThemeUpdate
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaWeather
 import dev.lackluster.redmagichelper.hook.compat.XposedEnv
@@ -39,8 +38,6 @@ import dev.lackluster.redmagichelper.hook.rules.gamespace.NubiaTgkHelper
 import dev.lackluster.redmagichelper.hook.rules.mtpfilebrowser.MtpFileBrowser
 import dev.lackluster.redmagichelper.hook.rules.nfc.NfcService
 import dev.lackluster.redmagichelper.hook.rules.permissioncontroller.PermissionController
-import dev.lackluster.redmagichelper.hook.rules.screenshot.RecordScreenHook
-import dev.lackluster.redmagichelper.hook.rules.screenshot.ScreenshotLoggerHook
 import dev.lackluster.redmagichelper.utils.Prefs
 
 class HookEntry : XposedModule() {
@@ -110,7 +107,6 @@ class HookEntry : XposedModule() {
             Scope.SYSTEM_SETTINGS -> hookers += NubiaSystemSettings
             Scope.SYSTEM_UPDATE -> hookers += NubiaSystemUpdate
             Scope.SYSTEM_THEME -> hookers += NubiaThemeUpdate
-            Scope.THEME_ADAPTER -> hookers += NubiaThemeAdapter
             Scope.SYSTEM_DESKTOP -> hookers += DeskTop
             Scope.SYSTEM_WEATHER -> hookers += NubiaWeather
             Scope.GAME_ASSIST -> {
@@ -123,7 +119,6 @@ class HookEntry : XposedModule() {
             Scope.PERMISSION_CONTROLLER -> hookers += PermissionController
             Scope.DOUBLE_APP -> hookers += DoubleApp
             Scope.NUBIA_FILE_BROWSER -> hookers += MtpFileBrowser
-            Scope.ZTE_SCREENSHOT -> hookers += listOf(ScreenshotLoggerHook, RecordScreenHook)
             Scope.GAME_FLOAT -> if (gameFunctionUnfrozen) hookers += NubiaGameFloat
             Scope.REDMAGIC_MOMENT -> if (gameFunctionUnfrozen) hookers += NubiaHeightLights
             Scope.GAME_SPACE -> if (gameFunctionUnfrozen) hookers += listOf(NubiaGameSpace, NubiaTgkHelper)

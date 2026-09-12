@@ -100,8 +100,6 @@
     <string name="system_time_component_desktop_show_period_summary" >凌晨、早上、上午、中午、下午、傍晚、晚上</string>
     <string name="ui_title_theme_cancel_trial_login" >免登录试用</string>
     <string name="ui_title_theme_cancel_trial_login_tips" >不限制时间试用主题，可以不登录进行下载以及试用</string>
-    <string name="ui_title_theme_unlimited_trial" >保留本地试用主题</string>
-    <string name="ui_title_theme_unlimited_trial_tips" >阻断本地主题、字体、动态壁纸的试用到期重置与到期弹窗，试用结束后保持生效（同时作用于主题与主题适配服务）</string>
     <string name="system_update" >系统更新</string>
     <string name="system_update_mock_info" >伪装设备信息</string>
     <string name="system_update_mock_model" >伪装设备型号</string>
@@ -450,7 +448,6 @@
     <string name="status_bar_display_temp_hide_unit">隐藏单位 ℃</string>
     <string name="clock_easy_pull_down_period_hide">隐藏时段</string>
     <string name="clock_easy_pull_down_period_display">显示时段</string>
-    <string name="lock_screen_display_seconds">显示秒</string>
     <string name="ui_title_time_indicator">时钟指示器</string>
     <string name="ui_title_status_bar_layout">状态栏布局</string>
     <string name="ui_title_status_bar_dual">双排状态栏</string>
@@ -486,7 +483,6 @@
     <string name="ui_title_status_bar_dual_left">左侧双排</string>
     <string name="ui_title_status_bar_dual_right">右侧双排</string>
     <string name="ui_title_status_bar_dual_clock_across">时钟跨双排显示</string>
-    <string name="lock_screen_display_period">显示时段</string>
     <string name="lock_screen_allow_adjust_volume">允许在锁屏调整音量</string>
     <string name="lock_screen_allow_adjust_volume_tips">即使没有音乐在播放</string>
     <string name="lock_screen_hide_status_bar">隐藏状态栏</string>
@@ -781,7 +777,6 @@
     <string name="refresh_rate_unlock_165hz">解锁165hz选项</string>
     <string name="refresh_rate_unlock_165hz_tips">实际刷新率还是144hz，只是多个选项</string>
     <string name="ui_title_android_screenshot">截图</string>
-    <string name="ui_title_android_rercord_screen">录屏</string>
     <string name="ui_title_android_notification">通知</string>
     <string name="ui_title_android_remove_intent_hijack">意图劫持</string>
     <string name="android_remove_intent_hijack_content">意图劫持</string>
@@ -841,19 +836,7 @@
     <string name="android_mute_volume_detection_tips">连接蓝牙耳机等相关设备，音量检测被屏蔽（弹窗警告不显示）</string>
     <string name="ui_title_android_airplane_mode">飞行模式</string>
     <string name="ui_title_android_audio">声音</string>
-    <string name="ui_title_volume_steps">音量步进</string>
-    <string name="ui_sub_title_android_audio">打开可能会导致音量条的滚动卡顿或者蓝牙音量异常</string>
 
-    <string name="ui_title_alarm_volume_steps">闹钟</string>
-    <string name="ui_title_media_volume_steps">媒体</string>
-    <string name="ui_title_notify_volume_steps">通知</string>
-    <string name="ui_title_ring_volume_steps">铃声</string>
-    <string name="ui_title_vc_call_volume_steps">语音通话</string>
-    <string name="alarm_volume_steps">闹钟音量阶数</string>
-    <string name="media_volume_steps">媒体音量阶数</string>
-    <string name="notify_volume_steps">通知音量阶数</string>
-    <string name="ring_volume_steps">铃声音量阶数</string>
-    <string name="vc_call_volume_steps">语言通话音量阶数</string>
     <string name="android_airplane_mode_keep_bluetooth">保持蓝牙状态</string>
     <string name="android_airplane_mode_keep_bluetooth_tips">飞行模式开启时保持蓝牙状态，无论是否有媒体在播放</string>
     <string name="airplane_mode_keep_wlan">保持WLAN和热点的状态</string>

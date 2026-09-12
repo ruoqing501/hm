@@ -3,7 +3,6 @@ package dev.lackluster.redmagichelper.hook.apps
 import android.annotation.SuppressLint
 import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.UsbDebuggingHooker
-import dev.lackluster.redmagichelper.hook.rules.screenshot.StatusBarBroadcastController
 import dev.lackluster.redmagichelper.hook.rules.systemui.batteryicon.nubia.BatteryIconAdjuster
 import dev.lackluster.redmagichelper.hook.rules.systemui.batteryicon.nubia.BatteryLevelColorController
 import dev.lackluster.redmagichelper.hook.rules.systemui.features.AOSPSingleHandModeAdjust
@@ -15,8 +14,6 @@ import dev.lackluster.redmagichelper.hook.rules.systemui.screenoff.nubia.AodSeco
 import dev.lackluster.redmagichelper.hook.rules.systemui.lockscreen.LockScreenBatteryMsg
 import dev.lackluster.redmagichelper.hook.rules.systemui.lockscreen.nubia.HideLockScreenStatusBar
 import dev.lackluster.redmagichelper.hook.rules.systemui.lockscreen.nubia.LockScreenAllowAdjustVolume
-import dev.lackluster.redmagichelper.hook.rules.systemui.lockscreen.nubia.LockScreenClockPeriod
-import dev.lackluster.redmagichelper.hook.rules.systemui.lockscreen.nubia.LockScreenClockSeconds
 import dev.lackluster.redmagichelper.hook.rules.systemui.lockscreen.nubia.ModifyChargingAnimation
 import dev.lackluster.redmagichelper.hook.rules.systemui.statusbar.nubia.StatusBarDoubleTapToSleep
 import dev.lackluster.redmagichelper.hook.rules.systemui.nubia.StatusBarPullDownClock
@@ -45,8 +42,6 @@ import dev.lackluster.redmagichelper.hook.rules.systemui.volume.VolumeDialogHook
 object SystemUI : YukiBaseHooker() {
     @SuppressLint("UseCompatLoadingForDrawables", "UseKtx")
     override fun onHook() {
-        // 状态栏广播控制器（跨进程控制）
-        loadHooker(StatusBarBroadcastController)
         // 去除音量弹窗警告
         loadHooker(VolumeDialogHook)
         // 横竖屏检测
@@ -156,12 +151,6 @@ object SystemUI : YukiBaseHooker() {
 
          // 锁屏时钟字体
 //        loadHooker(LockScreenClockFont)
-
-        // 锁屏时钟显秒
-        loadHooker(LockScreenClockSeconds)
-
-        // 锁屏时钟时段
-        loadHooker(LockScreenClockPeriod)
 
         // 截图时隐藏状态栏
         //loadHooker(HideStatusBarBeforeScreenshot)

@@ -433,7 +433,6 @@
     <string name="status_bar_display_temp_digital_mode_number_float">ぶんすう</string>
     <string name="clock_easy_pull_down_period_hide">表示されません</string>
     <string name="clock_easy_pull_down_period_display">表示期間です</string>
-    <string name="lock_screen_display_seconds">秒を表示します</string>
     <string name="ui_title_time_indicator">時計インジケーター</string>
     <string name="ui_title_status_bar_dual">2列のステータスバーです</string>
     <string name="ui_title_status_bar_layout">ステータスバーのレイアウトです</string>
@@ -469,7 +468,6 @@
     <string name="ui_title_status_bar_dual_left">左側の二列です</string>
     <string name="ui_title_status_bar_dual_right">右側の二列です</string>
     <string name="ui_title_status_bar_dual_clock_across">時計は2列にまたがって表示されます</string>
-    <string name="lock_screen_display_period">表示期間です</string>
     <string name="lock_screen_allow_adjust_volume">音量の調節を許可します</string>
     <string name="lock_screen_allow_adjust_volume_tips">音楽が流れていなくてもです</string>
     <string name="lock_screen_hide_status_bar">ステータスバーを非表示にする</string>

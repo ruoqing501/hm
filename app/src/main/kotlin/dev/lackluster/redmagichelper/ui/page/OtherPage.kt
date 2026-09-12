@@ -334,31 +334,6 @@ fun OtherPage(navController: NavController, adjustPadding: PaddingValues, mode: 
                 }
             }
         }
-        // 截图
-        item {
-            PreferenceGroup(
-                title = stringResource(R.string.ui_title_android_screenshot),
-            ) {
-                // 截图时隐藏状态栏
-                SwitchPreference(
-                    title = stringResource(R.string.lock_screen_hide_status_bar),
-                    key = Pref.Key.Other.SCREENSHOT_HIDE_STATUS_BAR
-                )
-            }
-        }
-
-        // 录屏
-        item {
-            PreferenceGroup(
-                title = stringResource(R.string.ui_title_android_rercord_screen),
-            ) {
-                // 录屏时隐藏状态栏
-                SwitchPreference(
-                    title = stringResource(R.string.lock_screen_hide_status_bar),
-                    key = Pref.Key.Other.RERCORD_SCREEN_HIDE_STATUS_BAR
-                )
-            }
-        }
         // NFC 服务
         item {
             PreferenceGroup(

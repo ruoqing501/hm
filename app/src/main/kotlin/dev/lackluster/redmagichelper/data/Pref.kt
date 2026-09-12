@@ -12,8 +12,6 @@ object Pref {
         }
         object Other{
             const val MUTE_NFC_SOUND = "mute_nfc_sound"
-            const val SCREENSHOT_HIDE_STATUS_BAR = "screenshot_hide_status_bar"
-            const val RERCORD_SCREEN_HIDE_STATUS_BAR = "rercord_screen_hide_status_bar"
             const val NFC_ALLOW_SCREEN_OFF_RECOGNITION = "nfc_allow_screen_off_recognition"
             const val ALLOW_THIRDPARTY_LAUNCHER = "allow_thirdparty_launcher"
             const val DOUBLE_ANY_APP = "double_any_app"
@@ -79,20 +77,7 @@ object Pref {
             const val PIN_STA_MAC_DIALOG = "pin_sta_mac_dialog"
             const val PIN_AP_BSSID_DIALOG = "pin_ap_bssid_dialog"
 
-            const val ALARM_CLOCK_VOLUME_LEVEL_SWITCH = "alarm_clock_volume_level_switch"
-            const val MEDIA_CLOCK_VOLUME_LEVEL_SWITCH = "media_clock_volume_level_switch"
-            const val NOTIFICATION_CLOCK_VOLUME_LEVEL_SWITCH = "notification_clock_volume_level_switch"
-            const val RING_CLOCK_VOLUME_LEVEL_SWITCH = "ring_clock_volume_level_switch"
-            const val VOICE_CLOCK_VOLUME_LEVEL_SWITCH = "voice_clock_volume_level_switch"
-
-
-
             const val ANDROID_CLOCK_AUDIO = "android_clock_audio" //标题：声音
-            const val ALARM_CLOCK_VOLUME_LEVEL = "alarm_clock_volume_level"
-            const val MEDIA_CLOCK_VOLUME_LEVEL = "media_clock_volume_level"
-            const val NOTIFICATION_CLOCK_VOLUME_LEVEL = "notification_clock_volume_level"
-            const val RING_CLOCK_VOLUME_LEVEL = "ring_clock_volume_level"
-            const val VOICE_CLOCK_VOLUME_LEVEL = "voice_clock_volume_level"
         }
         object AudioGain {
             const val ENABLE = "audio_gain_enable"
@@ -433,8 +418,6 @@ object Pref {
                 const val LOCK_SCREEN_HIDE_STATUS_BAR = "lock_screen_hide_status_bar"
                 const val SHOW_CHARGING_INFO = "show_charging_info"
                 const val HIDE_DISTURB = "systemui_lockscreen_hide_disturb"
-                const val DISPLAY_SECONDS = "systemui_lockscreen_display_seconds"
-                const val DISPLAY_PERIOD = "systemui_lockscreen_display_period"
                 const val ALLOW_ADJUST_VOLUME = "systemui_lockscreen_allow_adjust_volume"
                 const val CARRIER_TEXT = "systemui_lockscreen_carrier_text"
                 const val KEEP_NOTIFICATION = "systemui_lockscreen_keep_notif"
@@ -588,7 +571,6 @@ object Pref {
         }
         object NubiaTheme{
             const val CANCEL_TRIAL_LOGIN = "cancel_trial_login"
-            const val UNLIMITED_TRIAL = "theme_unlimited_trial"
         }
         object Hints {
             const val MEDIA_ADVANCED_TEXTURES = "hint_media_adv_textures"
