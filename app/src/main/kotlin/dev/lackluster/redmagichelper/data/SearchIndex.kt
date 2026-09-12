@@ -13,8 +13,6 @@ object SearchIndex {
     val entries: List<SearchEntry> = listOf(
         // 游戏空间
         SearchEntry(R.string.game_fuction_unfreeze_switch, R.string.game_fuction_unfreeze_switch_tips, Pages.GAME_SPACE, R.string.page_game_space),
-        SearchEntry(R.string.tgk_rapid_fire_switch, R.string.tgk_rapid_fire_unlocked_tips, Pages.GAME_SPACE, R.string.page_game_space),
-        SearchEntry(R.string.tgk_rapid_fire_test_entry, null, Pages.GAME_SPACE, R.string.page_game_space),
         SearchEntry(R.string.ui_title_game_active_mode_title, R.string.ui_title_game_active_mode_title_tips, Pages.GAME_SPACE, R.string.page_game_space),
         SearchEntry(R.string.ui_title_game_space_super_resolution, null, Pages.GAME_SPACE, R.string.page_game_space),
         SearchEntry(R.string.ui_title_game_space_prevent_collapse, R.string.ui_title_game_space_prevent_collapse_tips, Pages.GAME_SPACE, R.string.page_game_space),

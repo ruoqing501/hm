@@ -148,11 +148,6 @@ object Pref {
             const val AI_TRIGGER_CLICK_MS = "ai_trigger_click_ms"
             const val AI_TRIGGER_COOLDOWN_MS = "ai_trigger_cooldown_ms"
             const val AI_TRIGGER_YOLO_SCAN_MS = "ai_trigger_yolo_scan_ms"
-            // 肩键极速连点(10~50 CPS,移植自 LS_Augment;令牌/会话由兼容性测试写入)
-            const val TGK_RAPID_FIRE_ENABLED = "tgk_rapid_fire_enabled"
-            const val TGK_RAPID_FIRE_CPS = "tgk_rapid_fire_cps"
-            const val TGK_RAPID_FIRE_COMPAT_TOKEN = "tgk_rapid_fire_compat_token"
-            const val TGK_RAPID_FIRE_TEST_SESSION = "tgk_rapid_fire_test_session"
         }
         object Fan {
             const val FIXED_ENABLED = "fan_fixed_enabled"

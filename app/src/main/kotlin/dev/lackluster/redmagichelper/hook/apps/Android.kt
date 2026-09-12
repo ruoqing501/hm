@@ -21,7 +21,6 @@ import dev.lackluster.redmagichelper.hook.rules.android.nubia.RmIntentHijack
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.RmWindowReplyLimits
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.ScreenOffAutomationHook
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.SignatureMismatchInstallHook
-import dev.lackluster.redmagichelper.hook.rules.android.nubia.TgkRapidFireSystemHook
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.VolumeDialogHook
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.VolumeStepHook
 
@@ -89,9 +88,6 @@ object Android : YukiBaseHooker() {
 
         // 熄屏自动隐藏应用
         loadHooker(ScreenOffAutomationHook)
-
-        // 肩键极速连点 system_server 侧(移植自 LS_Augment TgkRapidFireSystemHook)
-        loadHooker(TgkRapidFireSystemHook)
 
 
     }

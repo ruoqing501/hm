@@ -52,8 +52,3 @@
 -keep,allowoptimization,allowobfuscation public class * extends io.github.libxposed.api.XposedModule {
     public <init>();
 }
-
-# JNI bridge for the TGK rapid-fire native library (function names resolved by name)
--keep class dev.lackluster.redmagichelper.hook.natives.TgkRapidFireNative {
-    native <methods>;
-}

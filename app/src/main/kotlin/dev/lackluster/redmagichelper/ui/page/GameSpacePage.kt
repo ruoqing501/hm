@@ -37,8 +37,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.mutableIntStateOf
 import dev.lackluster.hyperx.compose.base.AlertDialog
 import dev.lackluster.hyperx.compose.base.AlertDialogMode
 import dev.lackluster.hyperx.compose.base.BasePage
@@ -55,9 +53,7 @@ import dev.lackluster.hyperx.compose.preference.TextPreference
 import dev.lackluster.redmagichelper.ui.component.RebootMenuItem
 import dev.lackluster.redmagichelper.data.Constants
 import dev.lackluster.redmagichelper.data.Pages
-import dev.lackluster.redmagichelper.hook.natives.RapidFireCompatibility
 import dev.lackluster.redmagichelper.utils.ShellUtils
-import dev.lackluster.redmagichelper.utils.rapidfire.RapidFireCompatTester
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.ListPopup
@@ -89,19 +85,6 @@ fun GameSpacePage(
     )
     val hapticFeedback = LocalHapticFeedback.current
     val context = LocalContext.current
-
-    // 肩键极速连点:兼容性测试的应用侧驱动(移植自 LS_Augment FeatureActivity 流程)
-    val rapidTester = remember { RapidFireCompatTester(context.applicationContext) }
-    var rapidTick by remember { mutableIntStateOf(0) }
-    var rapidPanelRequested by remember { mutableStateOf(false) }
-    val showRapidRebootDialog = remember { mutableStateOf(false) }
-    val showRapidFuseDialog = remember { mutableStateOf(false) }
-    DisposableEffect(Unit) {
-        rapidTester.updateListener = RapidFireCompatTester.UpdateListener { rapidTick++ }
-        rapidTester.toastListener = { makeText(context, it, LENGTH_LONG).show() }
-        rapidTester.refresh()
-        onDispose { rapidTester.destroy() }
-    }
 
 
     BasePage(
@@ -225,183 +208,6 @@ fun GameSpacePage(
                     key = Pref.Key.GameSpace.GAME_FUCTION_UNFREEZE_SWITCH
                 ) {
 
-                }
-            }
-        }
-        // 肩键极速连点(移植自 LS_Augment;兼容性测试通过后才解锁)
-        item {
-            @Suppress("UNUSED_VARIABLE")
-            val rapidStateTick = rapidTick
-            val session = rapidTester.session
-            val fused = rapidTester.fused
-            val unlocked = rapidTester.unlocked
-            val fingerprintReady = rapidTester.fingerprint != null
-            val now = System.currentTimeMillis()
-            val expired = !unlocked && session != null && session.isExpired(now)
-            val rapidState = when {
-                fused -> RapidFireCompatibility.State.FUSED
-                unlocked -> RapidFireCompatibility.State.PASSED
-                session == null -> RapidFireCompatibility.State.UNTESTED
-                expired -> RapidFireCompatibility.State.FAILED
-                else -> session.state
-            }
-            val sideText = stringResource(
-                if (rapidTester.captureLeft) R.string.tgk_rapid_fire_side_left
-                else R.string.tgk_rapid_fire_side_right
-            )
-            val capturing = !expired && rapidTester.captureInFlight && session != null &&
-                ((rapidTester.captureLeft &&
-                    rapidState == RapidFireCompatibility.State.WAIT_LEFT) ||
-                    (!rapidTester.captureLeft &&
-                        rapidState == RapidFireCompatibility.State.WAIT_RIGHT))
-            val statusText = when {
-                !fingerprintReady -> stringResource(R.string.tgk_rapid_fire_status_loading)
-                capturing -> {
-                    val feedback = rapidTester.captureFeedback
-                    when {
-                        feedback != null -> feedback
-                        rapidTester.captureDeadline == 0L ->
-                            stringResource(R.string.tgk_rapid_fire_capturing_prepare)
-                        else -> stringResource(
-                            R.string.tgk_rapid_fire_capturing,
-                            sideText,
-                            ((rapidTester.captureDeadline - now + 999L) / 1000L).coerceAtLeast(0L)
-                        )
-                    }
-                }
-                else -> {
-                    val base = when (rapidState) {
-                        RapidFireCompatibility.State.PREFLIGHT ->
-                            stringResource(R.string.tgk_rapid_fire_status_preflight)
-                        RapidFireCompatibility.State.NEEDS_RESTART ->
-                            stringResource(R.string.tgk_rapid_fire_status_needs_restart)
-                        RapidFireCompatibility.State.WAIT_LEFT ->
-                            stringResource(R.string.tgk_rapid_fire_status_wait_left)
-                        RapidFireCompatibility.State.WAIT_RIGHT ->
-                            stringResource(R.string.tgk_rapid_fire_status_wait_right)
-                        RapidFireCompatibility.State.VERIFYING -> {
-                            val remaining = if (session == null) 10L else
-                                ((RapidFireCompatibility.STABILITY_REQUIRED_MS -
-                                    (now - session.verifyingSince) + 999L) / 1000L)
-                                    .coerceAtLeast(0L)
-                            stringResource(R.string.tgk_rapid_fire_status_verifying, remaining)
-                        }
-                        RapidFireCompatibility.State.PASSED ->
-                            stringResource(R.string.tgk_rapid_fire_status_passed_stale)
-                        RapidFireCompatibility.State.FUSED ->
-                            stringResource(R.string.tgk_rapid_fire_status_fused)
-                        RapidFireCompatibility.State.FAILED ->
-                            stringResource(
-                                if (expired) R.string.tgk_rapid_fire_status_expired
-                                else R.string.tgk_rapid_fire_status_failed
-                            )
-                        else -> stringResource(R.string.tgk_rapid_fire_status_untested)
-                    }
-                    val feedback = rapidTester.captureFeedback
-                    if (feedback != null &&
-                        (rapidState == RapidFireCompatibility.State.WAIT_LEFT ||
-                            rapidState == RapidFireCompatibility.State.WAIT_RIGHT)
-                    ) "$feedback\n\n$base" else base
-                }
-            }
-            val actionText = when {
-                capturing -> stringResource(R.string.tgk_rapid_fire_action_capturing, sideText)
-                rapidState == RapidFireCompatibility.State.PREFLIGHT ->
-                    stringResource(R.string.tgk_rapid_fire_action_checking)
-                rapidState == RapidFireCompatibility.State.NEEDS_RESTART ->
-                    stringResource(R.string.tgk_rapid_fire_action_reboot)
-                rapidState == RapidFireCompatibility.State.WAIT_LEFT ->
-                    stringResource(
-                        if (session != null && session.physicalLeft > 0)
-                            R.string.tgk_rapid_fire_action_check_left
-                        else R.string.tgk_rapid_fire_action_capture_left
-                    )
-                rapidState == RapidFireCompatibility.State.WAIT_RIGHT ->
-                    stringResource(
-                        if (session != null && session.physicalRight > 0)
-                            R.string.tgk_rapid_fire_action_check_right
-                        else R.string.tgk_rapid_fire_action_capture_right
-                    )
-                rapidState == RapidFireCompatibility.State.VERIFYING ->
-                    stringResource(R.string.tgk_rapid_fire_action_verify)
-                rapidState == RapidFireCompatibility.State.FUSED ->
-                    stringResource(R.string.tgk_rapid_fire_action_clear_fuse)
-                rapidState == RapidFireCompatibility.State.PASSED ->
-                    stringResource(R.string.tgk_rapid_fire_action_retest)
-                rapidState == RapidFireCompatibility.State.FAILED ->
-                    stringResource(R.string.tgk_rapid_fire_action_restart)
-                else -> stringResource(R.string.tgk_rapid_fire_action_start)
-            }
-            val actionEnabled = fingerprintReady && !capturing &&
-                rapidState != RapidFireCompatibility.State.PREFLIGHT
-            val cancelVisible = session != null && session.active(now) && !unlocked
-
-            PreferenceGroup(
-                title = stringResource(R.string.ui_title_tgk_rapid_fire)
-            ) {
-                // 总开关(兼容性测试通过前禁用)
-                var enableRapidFire by remember {
-                    mutableStateOf(
-                        SafeSP.getBoolean(Pref.Key.GameSpace.TGK_RAPID_FIRE_ENABLED, false)
-                    )
-                }
-                SwitchPreference(
-                    title = stringResource(R.string.tgk_rapid_fire_switch),
-                    summary = stringResource(
-                        if (unlocked) R.string.tgk_rapid_fire_unlocked_tips
-                        else R.string.tgk_rapid_fire_locked_tips
-                    ) + "\n" + stringResource(R.string.tgk_rapid_fire_requires_unfreeze),
-                    key = Pref.Key.GameSpace.TGK_RAPID_FIRE_ENABLED,
-                    enabled = unlocked
-                ) {
-                    enableRapidFire = it
-                }
-                AnimatedVisibility(unlocked && enableRapidFire) {
-                    Column {
-                        SeekBarPreference(
-                            title = stringResource(R.string.tgk_rapid_fire_cps),
-                            key = Pref.Key.GameSpace.TGK_RAPID_FIRE_CPS,
-                            defValue = 20,
-                            min = 10,
-                            max = 50,
-                            format = "%d/s"
-                        )
-                        TextPreference(
-                            title = stringResource(R.string.tgk_rapid_fire_cps_tips)
-                        )
-                    }
-                }
-                if (!unlocked) {
-                    // 兼容性测试入口
-                    TextPreference(
-                        title = stringResource(R.string.tgk_rapid_fire_test_entry),
-                        onClick = {
-                            rapidPanelRequested = true
-                            rapidTester.refresh()
-                        }
-                    )
-                    if (rapidPanelRequested || session != null || fused) {
-                        TextPreference(title = statusText)
-                        TextPreference(
-                            title = actionText,
-                            enabled = actionEnabled,
-                            onClick = {
-                                when (rapidState) {
-                                    RapidFireCompatibility.State.NEEDS_RESTART ->
-                                        showRapidRebootDialog.value = true
-                                    RapidFireCompatibility.State.FUSED ->
-                                        showRapidFuseDialog.value = true
-                                    else -> rapidTester.onAction()
-                                }
-                            }
-                        )
-                        if (cancelVisible) {
-                            TextPreference(
-                                title = stringResource(R.string.tgk_rapid_fire_test_cancel),
-                                onClick = { rapidTester.cancelTest() }
-                            )
-                        }
-                    }
                 }
             }
         }
@@ -560,29 +366,5 @@ fun GameSpacePage(
             }
         }
 
-    }
-    // 肩键连点:重启设备确认(system_server 尚未加载当前模块)
-    AlertDialog(
-        visibility = showRapidRebootDialog,
-        title = stringResource(R.string.tgk_rapid_fire_reboot_title),
-        message = stringResource(R.string.tgk_rapid_fire_reboot_message),
-        mode = AlertDialogMode.NegativeAndPositive,
-        negativeText = stringResource(R.string.button_cancel),
-        positiveText = stringResource(R.string.tgk_rapid_fire_reboot_now)
-    ) {
-        showRapidRebootDialog.value = false
-        rapidTester.requestReboot()
-    }
-    // 肩键连点:清除熔断确认
-    AlertDialog(
-        visibility = showRapidFuseDialog,
-        title = stringResource(R.string.tgk_rapid_fire_fuse_title),
-        message = stringResource(R.string.tgk_rapid_fire_fuse_message),
-        mode = AlertDialogMode.NegativeAndPositive,
-        negativeText = stringResource(R.string.button_cancel),
-        positiveText = stringResource(R.string.tgk_rapid_fire_fuse_clear)
-    ) {
-        showRapidFuseDialog.value = false
-        rapidTester.clearFuse()
     }
 }

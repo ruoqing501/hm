@@ -36,7 +36,6 @@ import dev.lackluster.redmagichelper.hook.rules.gamehelpmodule.NubiaComboAttack
 import dev.lackluster.redmagichelper.hook.rules.gamehelpmodule.NubiaComboSpeed
 import dev.lackluster.redmagichelper.hook.rules.gamespace.NubiaGameSpace
 import dev.lackluster.redmagichelper.hook.rules.gamespace.NubiaTgkHelper
-import dev.lackluster.redmagichelper.hook.rules.gamespace.TgkRapidFireHook
 import dev.lackluster.redmagichelper.hook.rules.mtpfilebrowser.MtpFileBrowser
 import dev.lackluster.redmagichelper.hook.rules.nfc.NfcService
 import dev.lackluster.redmagichelper.hook.rules.permissioncontroller.PermissionController
@@ -127,7 +126,7 @@ class HookEntry : XposedModule() {
             Scope.ZTE_SCREENSHOT -> hookers += listOf(ScreenshotLoggerHook, RecordScreenHook)
             Scope.GAME_FLOAT -> if (gameFunctionUnfrozen) hookers += NubiaGameFloat
             Scope.REDMAGIC_MOMENT -> if (gameFunctionUnfrozen) hookers += NubiaHeightLights
-            Scope.GAME_SPACE -> if (gameFunctionUnfrozen) hookers += listOf(NubiaGameSpace, NubiaTgkHelper, TgkRapidFireHook)
+            Scope.GAME_SPACE -> if (gameFunctionUnfrozen) hookers += listOf(NubiaGameSpace, NubiaTgkHelper)
             Scope.COMBO_ATTACK -> if (gameFunctionUnfrozen) hookers += listOf(NubiaComboAttack, NubiaComboSpeed)
             Scope.NEO_STORE -> hookers += NubiaNeoStore
             Scope.ZTE_RECOMMEND -> hookers += NubiaRecommend
