@@ -205,6 +205,14 @@ fun ModuleSettingsPage(navController: NavController, adjustPadding: PaddingValue
                 ) {
                     MainActivity.blurEnabled.value = it
                 }
+                // 液态玻璃底栏（独立于模糊效果开关）
+                SwitchPreference(
+                    title = stringResource(R.string.module_ui_liquid_bottom_bar),
+                    key = App.LIQUID_BOTTOM_BAR,
+                    defValue = MainActivity.liquidBottomBarEnabled.value
+                ) {
+                    MainActivity.liquidBottomBarEnabled.value = it
+                }
                 AnimatedVisibility(
                     visible = MainActivity.blurEnabled.value
                 ) {

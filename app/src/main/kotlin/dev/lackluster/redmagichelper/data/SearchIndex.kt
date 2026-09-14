@@ -107,6 +107,7 @@ object SearchIndex {
         SearchEntry(R.string.android_allow_untrusted_touches, R.string.android_allow_untrusted_touches_tips, Pages.SYSTEM_FRAMEWORK, R.string.page_android),
         SearchEntry(R.string.android_long_power_key_wakeup_assist, R.string.android_long_power_key_wakeup_assist_tips, Pages.SYSTEM_FRAMEWORK, R.string.page_android),
         SearchEntry(R.string.android_block_telemetry_service, R.string.block_telemetry_service_tips, Pages.SYSTEM_FRAMEWORK, R.string.page_android),
+        SearchEntry(R.string.android_disable_phantom_process_limit, R.string.android_disable_phantom_process_limit_tips, Pages.SYSTEM_FRAMEWORK, R.string.page_android),
         SearchEntry(R.string.android_display_font_scale, R.string.android_display_font_scale_tips, Pages.SYSTEM_FRAMEWORK, R.string.page_android),
         SearchEntry(R.string.android_display_font_modify, R.string.android_display_font_modify_tips, Pages.SYSTEM_FRAMEWORK, R.string.page_android),
         SearchEntry(R.string.android_freeform_restriction, R.string.android_freeform_restriction_tips, Pages.SYSTEM_FRAMEWORK, R.string.page_android),

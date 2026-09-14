@@ -108,7 +108,10 @@ fun HazeScaffold(
                     end = contentPadding.calculateRightPadding(LayoutDirection.Ltr) +
                             adjustPadding.calculateRightPadding(LayoutDirection.Ltr),
                     bottom = contentPadding.calculateBottomPadding() +
-                            adjustPadding.calculateBottomPadding()
+                            adjustPadding.calculateBottomPadding() +
+                            // 有底栏时追加一段底部留白，让短列表也能把内容滚动到
+                            // 玻璃底栏下方，液态模糊/折射才有内容可采样
+                            if (bottomBar != null) 88.dp else 0.dp
                 ))
             }
         }

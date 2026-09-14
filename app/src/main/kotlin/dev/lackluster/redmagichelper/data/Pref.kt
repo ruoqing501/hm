@@ -6,6 +6,7 @@ object Pref {
         object App {
             const val SPLIT_VIEW = "app_disable_split"
             const val HAZE_BLUR = "app_haze_blur"
+            const val LIQUID_BOTTOM_BAR = "app_liquid_bottom_bar"
             const val HAZE_TINT_ALPHA_LIGHT = "app_haze_tint_alpha_light"
             const val HAZE_TINT_ALPHA_DARK = "app_haze_tint_alpha_dark"
             const val SKIP_ROOT_CHECK = "app_ignore_root"
@@ -64,6 +65,7 @@ object Pref {
             const val DISABLE_SOUND_WHEN_UNLOCKED = "disable_sound_when_unlocked"
             const val ANDROID_REMOVE_INTENT_HIJACK_CONTENT = "android_remove_intent_hijack_content"
             const val ANDROID_ALLOW_UNTRUSTED_TOUCHES = "android_allow_untrusted_touches"
+            const val ANDROID_DISABLE_PHANTOM_PROCESS_LIMIT = "android_disable_phantom_process_limit"
             const val ANDROID_DISABLE_SYSTEM_SIGNATURE_VERIFICATION = "android_disable_system_signature_verification"
             const val ANDROID_ALLOW_SIGNATURE_MISMATCH_INSTALL = "android_allow_signature_mismatch_install"
             const val ANDROID_LONG_POWER_KEY_WAKEUP_ASSIST = "android_long_power_key_wakeup_assist"

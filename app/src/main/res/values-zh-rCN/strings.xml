@@ -684,6 +684,7 @@
     <string name="home_refactor_launch_minus_mode_overlap">重叠模式</string>
     <string name="ui_title_module_ui">界面和显示</string>
     <string name="module_ui_blur">模糊效果</string>
+    <string name="module_ui_liquid_bottom_bar">液态玻璃底栏</string>
     <string name="module_ui_blur_tint_alpha_tips">不透明度应该是 0 到 100 之间的整数，值为 0 时最透明。</string>
     <string name="module_ui_split">自适应布局</string>
     <string name="about_miuix">此应用使用 Miuix 构建</string>
@@ -825,6 +826,8 @@
         没有默认数字助理自动回落到关机界面，
         注意：需要冻结魔姬助手(包名:com.zte.aiassistant)</string>
     <string name="android_block_telemetry_service">阻止启动遥测服务</string>
+    <string name="android_disable_phantom_process_limit">解除幻影子进程限制</string>
+    <string name="android_disable_phantom_process_limit_tips">关闭系统对幻影子进程（Phantom Process）的监控与查杀，避免后台子进程被系统强制终止</string>
     <string name="block_telemetry_service_tips">阻止系统唤醒遥测服务上传日志即com.zte.analytics</string>
     <string name="android_allow_untrusted_touches_tips">允许高可见度的view点击穿透,除非你知道你在干什么，否则不要打开</string>
     <string name="android_allow_untrusted_touches">允许不受信任的触摸</string>

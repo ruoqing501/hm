@@ -404,6 +404,22 @@ fun SystemFrameworkPage(navController: NavController, adjustPadding: PaddingValu
                     summary = stringResource(R.string.block_telemetry_service_tips),
                     key = Pref.Key.Android.ANDROID_BLOCK_TELEMETRY_SERVICE
                 )
+                // 解除幻影子进程限制
+                SwitchPreference(
+                    title = stringResource(R.string.android_disable_phantom_process_limit),
+                    summary = stringResource(R.string.android_disable_phantom_process_limit_tips),
+                    key = Pref.Key.Android.ANDROID_DISABLE_PHANTOM_PROCESS_LIMIT
+                ) { value ->
+                    if (value) {
+                        ShellUtils.tryExec("/system/bin/device_config set_sync_disabled_for_tests persistent", useRoot = true)
+                        ShellUtils.tryExec("/system/bin/device_config put activity_manager max_phantom_processes 2147483647", useRoot = true)
+                        ShellUtils.tryExec("settings put global settings_enable_monitor_phantom_procs false", useRoot = true)
+                    } else {
+                        ShellUtils.tryExec("/system/bin/device_config set_sync_disabled_for_tests none", useRoot = true)
+                        ShellUtils.tryExec("/system/bin/device_config delete activity_manager max_phantom_processes", useRoot = true)
+                        ShellUtils.tryExec("settings put global settings_enable_monitor_phantom_procs true", useRoot = true)
+                    }
+                }
             }
 
         }

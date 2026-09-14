@@ -304,6 +304,7 @@
     <string name="module_settings_custom_name">Custom entry title</string>
     <string name="ui_title_module_ui">Interface and display</string>
     <string name="module_ui_blur">Blur effect</string>
+    <string name="module_ui_liquid_bottom_bar">Liquid glass bottom bar</string>
     <string name="module_ui_blur_tint_alpha_light">Opacity of tinted colors in Light mode</string>
     <string name="module_ui_blur_tint_alpha_dark">Opacity of tinted colors in Dark mode</string>
     <string name="module_ui_blur_tint_alpha_tips">Opacity should be an integer between 0 and 100, with 0 being the value that represents the highest transparency.</string>
@@ -518,6 +519,8 @@
     <string name="custom_browser_package_tips">Please enter the custom browser package name\nby default\ncn.nubia.browser</string>
     <string name="aosp_singlehandmode_offest">Single-hand mode offsets pixels. Positive numbers move upwards, and negative numbers move downwards.</string>
     <string name="android_block_telemetry_service">Block Telemetry Service</string>
+    <string name="android_disable_phantom_process_limit">Disable Phantom Process Limit</string>
+    <string name="android_disable_phantom_process_limit_tips">Disable system monitoring and killing of phantom processes, preventing background child processes from being force-stopped</string>
     <string name="block_telemetry_service_tips">Prevent the system from waking up the telemetry service to upload logs, namely com.zte.analytics</string>
     <string name="android_long_power_key_wakeup_assist">Long Power key Wakeup Assist</string>
     <string name="android_long_power_key_wakeup_assist_tips">It is necessary to enable the function of starting the voice assistant by long-pressing the power button in the settings. Replace the default voice assistant with the default digital assistant. If there is no default digital assistant, it will automatically return to the shutdown interface.</string>

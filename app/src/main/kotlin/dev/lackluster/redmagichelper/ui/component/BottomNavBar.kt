@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +45,8 @@ import dev.lackluster.hyperx.compose.base.LocalLiquidBackdrop
 import dev.lackluster.redmagichelper.R
 import dev.lackluster.redmagichelper.data.Pages
 import dev.lackluster.redmagichelper.ui.MainActivity
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.NavigationBar
 import top.yukonga.miuix.kmp.basic.NavigationItem
@@ -86,10 +89,11 @@ fun BottomNavBar(navController: NavController, currentRoute: String) {
     val hazeState = LocalBottomBarHazeState.current
     val hazeStyle = LocalBottomBarHazeStyle.current
     val blurEnabled = MainActivity.blurEnabled.value
+    val liquidEnabled = MainActivity.liquidBottomBarEnabled.value
 
     when {
-        // 液态玻璃底栏：Backdrop 可用且用户开启了模糊
-        liquidBackdrop != null && blurEnabled -> {
+        // 液态玻璃底栏：Backdrop 可用且用户开启了液态底栏（独立于模糊开关）
+        liquidBackdrop != null && liquidEnabled -> {
             LiquidBottomNavBar(
                 backdrop = liquidBackdrop,
                 items = items,
@@ -144,8 +148,10 @@ private fun LiquidBottomNavBar(
     onClick: (Int) -> Unit
 ) {
     val density = LocalDensity.current
-    val barShape = RoundedCornerShape(28.dp)
-    val dropletShape = RoundedCornerShape(24.dp)
+    val scope = rememberCoroutineScope()
+    val barShape = RoundedCornerShape(32.dp)
+    val dropletShape = RoundedCornerShape(26.dp)
+    val dropletTint = MiuixTheme.colorScheme.primary
 
     // 效果参数（Backdrop effects 需要 px，先按 density 换算好）
     val barBlur = with(density) { 6.dp.toPx() }
@@ -159,8 +165,8 @@ private fun LiquidBottomNavBar(
         modifier = Modifier
             .fillMaxWidth()
             // 悬浮胶囊：两侧留白，酷安同款浮起观感
-            .padding(horizontal = 56.dp, vertical = 8.dp)
-            .height(56.dp),
+            .padding(horizontal = 48.dp, vertical = 8.dp)
+            .height(64.dp),
         contentAlignment = Alignment.Center
     ) {
         val itemCount = items.size
@@ -200,16 +206,51 @@ private fun LiquidBottomNavBar(
                         onClick((offset.x / itemWidthPx).toInt().coerceIn(0, itemCount - 1))
                     }
                 }
-                // 按住拖动滑动切换（液态拖拽手势）
+                // 按住左右拖动：水滴实时跟随手指，松手后吸附到最近项并切换
                 .pointerInput(itemCount) {
-                    detectHorizontalDragGestures { change, _ ->
-                        change.consume()
-                        onClick((change.position.x / itemWidthPx).toInt().coerceIn(0, itemCount - 1))
-                    }
+                    detectHorizontalDragGestures(
+                        onDragStart = {
+                            scope.launch { selectionAnim.stop() }
+                        },
+                        onDragEnd = {
+                            // 无论是否触发切换（落点可能仍是当前项），都弹回目标位置
+                            val target = selectionAnim.value.roundToInt().coerceIn(0, itemCount - 1)
+                            scope.launch {
+                                selectionAnim.animateTo(
+                                    targetValue = target.toFloat(),
+                                    animationSpec = spring(dampingRatio = 0.72f, stiffness = 320f)
+                                )
+                            }
+                            onClick(target)
+                        },
+                        onDragCancel = {
+                            scope.launch {
+                                selectionAnim.animateTo(
+                                    targetValue = selectionAnim.value.roundToInt()
+                                        .coerceIn(0, itemCount - 1).toFloat(),
+                                    animationSpec = spring(dampingRatio = 0.72f, stiffness = 320f)
+                                )
+                            }
+                        },
+                        onHorizontalDrag = { change, _ ->
+                            change.consume()
+                            scope.launch {
+                                selectionAnim.snapTo(
+                                    (change.position.x / itemWidthPx)
+                                        .coerceIn(0f, (itemCount - 1).toFloat())
+                                )
+                            }
+                        }
+                    )
                 }
         ) {
             // —— 选中项“水滴”透镜（先绘制，图标在其上方） ——
-            val dropletX = with(density) { (itemWidthPx * selectionAnim.value).toDp() }
+            // 弹簧欠阻尼会过冲出界，padding 为负会直接崩溃，必须钳制范围
+            val dropletX = with(density) {
+                (itemWidthPx * selectionAnim.value)
+                    .coerceIn(0f, barWidthPx - itemWidthPx)
+                    .toDp()
+            }
             Box(
                 modifier = Modifier
                     .padding(start = dropletX)
@@ -226,6 +267,8 @@ private fun LiquidBottomNavBar(
                             lens(dropletLensHeight, dropletLensAmount, depthEffect = true)
                         },
                         onDrawSurface = {
+                            // 主题色轻染色 + 高光，让水滴滑动清晰可见
+                            drawRect(dropletTint.copy(alpha = 0.16f))
                             drawRect(Color.White.copy(alpha = 0.10f))
                         }
                     )

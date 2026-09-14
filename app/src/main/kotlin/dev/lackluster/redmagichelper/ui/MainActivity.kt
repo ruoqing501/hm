@@ -69,6 +69,7 @@ class MainActivity : HyperXActivity() {
         val moduleActive: MutableState<Boolean> = mutableStateOf(false)
         val moduleEnabled: MutableState<Boolean> = mutableStateOf(false)
         val blurEnabled: MutableState<Boolean> = mutableStateOf(true)
+        val liquidBottomBarEnabled: MutableState<Boolean> = mutableStateOf(true)
         val blurTintAlphaLight: MutableFloatState = mutableFloatStateOf(0.6f)
         val blurTintAlphaDark: MutableFloatState = mutableFloatStateOf(0.5f)
         val splitEnabled: MutableState<Boolean> = mutableStateOf(Device.isPad)
@@ -180,6 +181,7 @@ class MainActivity : HyperXActivity() {
             moduleActive.value = true
             moduleEnabled.value = SafeSP.getBoolean(Pref.Key.Module.ENABLED, false)
             blurEnabled.value = SafeSP.getBoolean(Pref.Key.App.HAZE_BLUR, true)
+            liquidBottomBarEnabled.value = SafeSP.getBoolean(Pref.Key.App.LIQUID_BOTTOM_BAR, true)
             blurTintAlphaLight.floatValue =
                 SafeSP.getInt(Pref.Key.App.HAZE_TINT_ALPHA_LIGHT, 60) / 100f
             blurTintAlphaDark.floatValue =
@@ -202,6 +204,7 @@ class MainActivity : HyperXActivity() {
             moduleActive.value = false
             moduleEnabled.value = false
             blurEnabled.value = true
+            liquidBottomBarEnabled.value = true
             blurTintAlphaLight.floatValue = 0.6f
             blurTintAlphaDark.floatValue = 0.5f
             splitEnabled.value = Device.isPad

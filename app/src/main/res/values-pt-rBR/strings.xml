@@ -255,6 +255,7 @@
     <string name="module_settings_custom_name">Nome nas Configurações personalizado</string>
     <string name="ui_title_module_ui">Interface e exibição</string>
     <string name="module_ui_blur">Efeito do blur</string>
+    <string name="module_ui_liquid_bottom_bar">Barra inferior de vidro líquido</string>
     <string name="module_ui_blur_tint_alpha_light">Opacidade das cores coloridas no Modo claro</string>
     <string name="module_ui_blur_tint_alpha_dark">Opacidade das cores coloridas no Modo escuro</string>
     <string name="module_ui_blur_tint_alpha_tips">A opacidade deve ser um número inteiro de 0 a 100, sendo 0 o valor que representa a maior transparência.</string>
@@ -448,6 +449,8 @@
     <string name="aosp_singlehandmode_offest">Single-hand mode offsets pixels. Positive numbers move upwards, and negative numbers move downwards.</string>
     <string name="android_long_power_key_wakeup_assist">Long Power key Wakeup Assist</string>
     <string name="android_block_telemetry_service">Block Telemetry Service</string>
+    <string name="android_disable_phantom_process_limit">Disable Phantom Process Limit</string>
+    <string name="android_disable_phantom_process_limit_tips">Disable system monitoring and killing of phantom processes, preventing background child processes from being force-stopped</string>
     <string name="block_telemetry_service_tips">Prevent the system from waking up the telemetry service to upload logs, namely com.zte.analytics</string>
     <string name="android_long_power_key_wakeup_assist_tips">It is necessary to enable the function of starting the voice assistant by long-pressing the power button in the settings. Replace the default voice assistant with the default digital assistant. If there is no default digital assistant, it will automatically return to the shutdown interface.</string>
     <string name="android_allow_untrusted_touches_tips">Allow click-through for highly visible views only if you know what you are doing. Otherwise, do not enable it.</string>
