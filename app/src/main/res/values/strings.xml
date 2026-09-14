@@ -17,6 +17,9 @@
     <string name="common_others">Others</string>
     <string name="mtp_service">MTP Service</string>
     <string name="hide_mtp_category_browse">Hide the categorized browsing in MTP</string>
+    <string name="scope_baidu_ime">Baidu IME (OEM)</string>
+    <string name="baidu_ime_no_clipboard_limit">Unlimited clipboard copy/paste length</string>
+    <string name="baidu_ime_no_clipboard_limit_tips">Remove the 7000-character truncation and 300-entry limit of the clipboard history</string>
     <string name="hide_mtp_category_browse_tips">When connecting the computer, the categorized browsing no longer appears.</string>
     <string name="rename_mtp_storage_root_name">Rename the name of the MTP storage device</string>
     <string name="rename_mtp_storage_root_name_tips">It is not the device name, but the name for path browsing. It is only useful for path browsing.</string>

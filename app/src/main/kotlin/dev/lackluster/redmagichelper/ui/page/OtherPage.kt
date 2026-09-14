@@ -363,6 +363,19 @@ fun OtherPage(navController: NavController, adjustPadding: PaddingValues, mode: 
                 )
             }
         }
+        // 百度输入法定制版
+        item {
+            PreferenceGroup(
+                title = stringResource(R.string.scope_baidu_ime),
+            ) {
+                // 复制粘贴字数无限制
+                SwitchPreference(
+                    title = stringResource(R.string.baidu_ime_no_clipboard_limit),
+                    summary = stringResource(R.string.baidu_ime_no_clipboard_limit_tips),
+                    key = Pref.Key.Other.BAIDU_IME_NO_CLIPBOARD_LIMIT
+                )
+            }
+        }
         // 应用中心
         item {
             PreferenceGroup(

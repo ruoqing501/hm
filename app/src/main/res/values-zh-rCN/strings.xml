@@ -7,6 +7,9 @@
     <string name="common_others">其它</string>
     <string name="mtp_service">MTP服务</string>
     <string name="hide_mtp_category_browse">隐藏MTP中分类浏览</string>
+    <string name="scope_baidu_ime">百度输入法定制版</string>
+    <string name="baidu_ime_no_clipboard_limit">复制粘贴字数无限制</string>
+    <string name="baidu_ime_no_clipboard_limit_tips">解除剪贴板 7000 字截断与 300 条历史上限</string>
     <string name="hide_mtp_category_browse_tips">连接电脑时，不再显示分类浏览</string>
     <string name="rename_mtp_storage_root_name">重命名MTP存储设备名</string>
     <string name="rename_mtp_storage_root_name_tips">不是设备名，是路径浏览的名字，只对路径浏览有用</string>

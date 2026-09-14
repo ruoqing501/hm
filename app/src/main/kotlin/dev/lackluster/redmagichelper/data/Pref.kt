@@ -22,6 +22,7 @@ object Pref {
             const val MTP_RENAME_ROOT_NAME = "mtp_rename_root_name"
             const val SCREEN_OFF_HIDE_ENABLED = "screen_off_hide_enabled"
             const val SCREEN_OFF_HIDE_TARGETS = "screen_off_hide_targets"
+            const val BAIDU_IME_NO_CLIPBOARD_LIMIT = "baidu_ime_no_clipboard_limit"
         }
         object Module {
             const val ENABLED = "enable_module"

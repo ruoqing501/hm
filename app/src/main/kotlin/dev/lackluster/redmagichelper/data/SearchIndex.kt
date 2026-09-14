@@ -162,6 +162,7 @@ object SearchIndex {
 
         // 其他
         SearchEntry(R.string.hide_mtp_category_browse, R.string.hide_mtp_category_browse_tips, Pages.OTHER, R.string.page_other),
+        SearchEntry(R.string.baidu_ime_no_clipboard_limit, R.string.baidu_ime_no_clipboard_limit_tips, Pages.OTHER, R.string.page_other),
         SearchEntry(R.string.rename_mtp_storage_root_name, R.string.rename_mtp_storage_root_name_tips, Pages.OTHER, R.string.page_other),
         SearchEntry(R.string.mute_nfc_sound, null, Pages.OTHER, R.string.page_other),
         SearchEntry(R.string.nfc_allow_screen_off_recognition, null, Pages.OTHER, R.string.page_other),

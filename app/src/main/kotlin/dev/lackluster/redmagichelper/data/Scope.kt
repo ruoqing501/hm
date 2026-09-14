@@ -47,6 +47,7 @@ object Scope {
     const val PLUGIN_TRIGGER = "com.zte.game.plugintrigger"
     const val GAME_LAB = "cn.nubia.gamelab"
     const val ZTE_RECOMMEND = "com.zte.recommend"
+    const val BAIDU_IME = "com.baidu.input_oem"
 //    const val REDMAGIC_SYSTEM_SETTINGS = "com.android.settings"
     const val SYSTEM_UI_PLUGIN = "miui.systemui.plugin"
     const val TAPLUS = "com.miui.contentextension"
