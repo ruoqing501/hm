@@ -106,7 +106,7 @@ object TimePickerPeriod : YukiBaseHooker() {
                         }
 
                         // 如果是来自TimePickerZTE且原始数组大小为2（AM/PM），则替换为7个时段
-                        if (isTimePickerContext && originalValues != null && originalValues.size == 2) {
+                        if (isTimePickerContext && originalValues.size == 2) {
                             val periodValues = arrayOf("凌晨", "早上", "上午", "中午", "下午", "傍晚", "晚上")
                             this.args(0).set(periodValues)
                             YLog.debug("[TimePickerPeriod] setDisplayedValues - 替换为: ${periodValues.contentToString()}")

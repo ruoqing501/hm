@@ -126,7 +126,7 @@ object CustomTextClockHook : YukiBaseHooker() {
      * 判断当前系统语言是否为中文
      */
     private fun isZh(): Boolean {
-        val locale = appContext?.resources?.configuration?.locale ?: return false
+        val locale = appContext?.resources?.configuration?.locales?.get(0) ?: return false
         return locale.language == "zh"
     }
 

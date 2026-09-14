@@ -35,7 +35,6 @@ object AodSecondUpdate : YukiBaseHooker() {
     override fun onHook() {
         hasEnable(Pref.Key.SystemUI.LockScreen.SCREEN_OFF_SHOW_SECONDS) {
             YLog.info("$TAG hooking...")
-            if (appClassLoader == null) return@hasEnable
 
             // 1. 处理包含 mScreenOffClock 的时钟控件
             handleScreenOffClockClasses()

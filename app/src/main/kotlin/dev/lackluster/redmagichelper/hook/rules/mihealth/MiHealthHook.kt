@@ -113,7 +113,7 @@ object MiHealthHook : YukiBaseHooker() {
         insertFinder.hook {
             before {
                 val entities = args[1] as? List<*>
-                if (GENERATED.get() || args[0] != "steps" || entities == null) return@before
+                if (GENERATED.get() == true || args[0] != "steps" || entities == null) return@before
                 val c = ensure() ?: return@before
                 var guard: StepLedger.Guard? = null
                 var pin: Controller.AccountPin? = null
@@ -125,7 +125,7 @@ object MiHealthHook : YukiBaseHooker() {
                 }
                 try {
                     pin = c.pinAccount()
-                    c.transform(entities, LOCAL.get())
+                    c.transform(entities, LOCAL.get() ?: false)
                 } catch (e: Throwable) {
                     c.error("保存适配失败", e)
                 }
@@ -363,7 +363,7 @@ object MiHealthHook : YukiBaseHooker() {
                     .getConstructor(String::class.java, Array<Any>::class.java)
                     .newInstance(
                         "SELECT * FROM step_record WHERE key=? AND sid=? AND time=?",
-                        arrayOf("steps", "rmh-check", day + 60)
+                        arrayOf<Any>("steps", "rmh-check", day + 60)
                     )
                 @Suppress("UNCHECKED_CAST")
                 val saved = TargetReflection.call(dao, "getDailyRecord", query) as List<*>
@@ -522,7 +522,7 @@ object MiHealthHook : YukiBaseHooker() {
                 .getConstructor(String::class.java, Array<Any>::class.java)
                 .newInstance(
                     "SELECT * FROM step_record WHERE key=? AND time>=? AND time<? AND isDeleted=0",
-                    arrayOf("steps", bucket, bucket + gap)
+                    arrayOf<Any>("steps", bucket, bucket + gap)
                 )
             @Suppress("UNCHECKED_CAST")
             val records = TargetReflection.call(dao, "getDailyRecord", query) as List<*>

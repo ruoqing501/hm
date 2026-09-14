@@ -151,7 +151,7 @@ internal class StepLedger(context: Context) {
             }
             d.execSQL(
                 "UPDATE events SET admitted=1 WHERE account=? AND id=? AND time<=?",
-                arrayOf(p.account, p.id, now)
+                arrayOf<Any>(p.account, p.id, now)
             )
             d.setTransactionSuccessful()
         } finally {

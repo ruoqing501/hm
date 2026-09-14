@@ -178,14 +178,10 @@ object HideStoreHint : YukiBaseHooker() {
         hasEnable(Pref.Key.NubiaPackageInstaller.HIDE_STORE_INSTALL_PROMPT) {
             YLog.debug("[HideStoreHint] 开始执行隐藏商店安装提示钩子")
 
-            if (appClassLoader == null) {
-                YLog.error("[HideStoreHint] appClassLoader 为空，无法继续")
-                return@hasEnable
-            }
             YLog.debug("[HideStoreHint] appClassLoader 获取成功")
 
             // 获取 PackageInstallerActivity 类
-            val packageInstallerActivityClass = "com.android.packageinstaller.PackageInstallerActivity".toClassOrNull(appClassLoader!!)
+            val packageInstallerActivityClass = "com.android.packageinstaller.PackageInstallerActivity".toClassOrNull(appClassLoader)
                 ?: run {
                     YLog.error("[HideStoreHint] 无法加载 PackageInstallerActivity 类")
                     return@hasEnable

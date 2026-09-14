@@ -82,7 +82,7 @@ object AudioGainHook : YukiBaseHooker() {
         }.hook {
             after {
                 val c = ensureController(instanceOrNull) ?: return@after
-                if (internalCall.get()) return@after
+                if (internalCall.get() == true) return@after
                 (args(0).any() as? List<*>)?.let { c.playback(ArrayList(it)) }
             }
         }
@@ -95,7 +95,7 @@ object AudioGainHook : YukiBaseHooker() {
             }.hook {
                 after {
                     val c = ensureController(instanceOrNull) ?: return@after
-                    if (internalCall.get() || pending.get() != null) return@after
+                    if (internalCall.get() == true || pending.get() != null) return@after
                     val streamType = args(0).int()
                     if (!AudioGainPolicy.streamSupported(streamType) || !c.enabled() || !trusted(c.context)) return@after
                     val route = c.route(streamType)
@@ -119,7 +119,7 @@ object AudioGainHook : YukiBaseHooker() {
         }.hook {
             before {
                 val c = ensureController(instanceOrNull) ?: return@before
-                if (internalCall.get()) return@before
+                if (internalCall.get() == true) return@before
                 val streamType = args(0).int()
                 if (!AudioGainPolicy.streamSupported(streamType) || !c.enabled() || !trusted(c.context)) return@before
                 val route = c.route(streamType)
@@ -162,7 +162,7 @@ object AudioGainHook : YukiBaseHooker() {
         }.hook {
             before {
                 val c = ensureController(instanceOrNull) ?: return@before
-                if (internalCall.get()) return@before
+                if (internalCall.get() == true) return@before
                 val streamType = args(0).int()
                 if (!AudioGainPolicy.streamSupported(streamType) || !c.enabled() || !trusted(c.context)) return@before
                 val route = c.route(streamType)

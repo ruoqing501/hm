@@ -82,12 +82,12 @@ object AppIconCustomizationHook : YukiBaseHooker() {
                 m.isAccessible = true
                 m.hook {
                     before {
-                        val depth = Controller.WRITING.get()
+                        val depth = Controller.WRITING.get() ?: 0
                         Controller.WRITING.set(depth + 1)
                         if (depth == 0) controller.restore(instanceOrNull)
                     }
                     after {
-                        val depth = Controller.WRITING.get() - 1
+                        val depth = (Controller.WRITING.get() ?: 1) - 1
                         Controller.WRITING.set(depth)
                         if (depth == 0) controller.apply(instanceOrNull)
                     }
@@ -200,7 +200,7 @@ object AppIconCustomizationHook : YukiBaseHooker() {
         }
 
         fun apply(value: Any?) {
-            if (value == null || WRITING.get() > 0 || !infoClass.isInstance(value)) return
+            if (value == null || (WRITING.get() ?: 0) > 0 || !infoClass.isInstance(value)) return
             runCatching {
                 reloadIfChanged()
                 if (itemTypeField.getInt(value) != 0) return

@@ -216,6 +216,7 @@ object AudioGainPanelHook : YukiBaseHooker() {
             paint.colorFilter = colorFilter
         }
 
+        @Deprecated("Deprecated in Java")
         override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
     }
 }

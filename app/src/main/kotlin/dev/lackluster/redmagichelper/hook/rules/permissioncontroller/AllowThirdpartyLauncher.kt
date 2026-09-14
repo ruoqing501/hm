@@ -15,8 +15,6 @@ object AllowThirdpartyLauncher : YukiBaseHooker() {
 
     override fun onHook() {
         hasEnable(Pref.Key.Other.ALLOW_THIRDPARTY_LAUNCHER) {
-            if (appClassLoader == null) return@hasEnable
-
             val ctsMethod = findIsCtsMethod(dexKitBridge)
             val dACFClazzName = "com.android.permissioncontroller.role.ui.DefaultAppChildFragment"
             val meName = "onRoleChanged"

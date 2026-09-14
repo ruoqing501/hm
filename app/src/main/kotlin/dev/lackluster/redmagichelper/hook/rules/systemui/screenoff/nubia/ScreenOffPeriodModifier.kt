@@ -389,7 +389,7 @@ object ScreenOffPeriodModifier : YukiBaseHooker() {
      * 检查是否为中文环境
      */
     private fun isZh(context: Context): Boolean {
-        val locale = context.resources.configuration.locale
+        val locale = context.resources.configuration.locales.get(0)
         val language = locale.language
         return language.endsWith("zh")
     }

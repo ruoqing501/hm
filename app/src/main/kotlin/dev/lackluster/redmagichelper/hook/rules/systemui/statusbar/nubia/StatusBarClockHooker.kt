@@ -223,7 +223,7 @@ object StatusBarClockHooker : YukiBaseHooker() {
      * 检查是否为中文环境
      */
     private fun isZh(context: Context): Boolean {
-        val locale = context.resources.configuration.locale
+        val locale = context.resources.configuration.locales[0]
         return locale.language.endsWith("zh")
     }
 

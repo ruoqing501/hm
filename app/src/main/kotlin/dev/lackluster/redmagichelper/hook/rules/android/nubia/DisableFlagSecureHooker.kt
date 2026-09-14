@@ -215,10 +215,8 @@ object DisableFlagSecureHooker : YukiBaseHooker() {
                         name = "mSecureContentPolicy"
                     }.get(argsObj)
 
-                    if (securePolicyField != null) {
-                        securePolicyField.set(1) // 1 表示允许捕获安全内容
-                        YLog.debug("[DisableFlagSecureHooker:设置mSecureContentPolicy为1]")
-                    }
+                    securePolicyField.set(1) // 1 表示允许捕获安全内容
+                    YLog.debug("[DisableFlagSecureHooker:设置mSecureContentPolicy为1]")
                 }
             }
         }
@@ -234,10 +232,8 @@ object DisableFlagSecureHooker : YukiBaseHooker() {
                         name = "mSecureContentPolicy"
                     }.get(argsObj)
 
-                    if (securePolicyField != null) {
-                        securePolicyField.set(1)
-                        YLog.debug("[DisableFlagSecureHooker:设置mSecureContentPolicy为1]")
-                    }
+                    securePolicyField.set(1)
+                    YLog.debug("[DisableFlagSecureHooker:设置mSecureContentPolicy为1]")
                 }
             }
         }
@@ -271,7 +267,7 @@ object DisableFlagSecureHooker : YukiBaseHooker() {
                         try {
                             val field = captureArgsClass.field {
                                 name = fieldName
-                            }.get(argsObj)
+                            }.getOrNull(argsObj)
 
                             if (field != null) {
                                 if (fieldName == "mSecureContentPolicy") {
@@ -301,7 +297,7 @@ object DisableFlagSecureHooker : YukiBaseHooker() {
                         try {
                             val field = captureArgsClass.field {
                                 name = fieldName
-                            }.get(argsObj)
+                            }.getOrNull(argsObj)
 
                             if (field != null) {
                                 if (fieldName == "mSecureContentPolicy") {

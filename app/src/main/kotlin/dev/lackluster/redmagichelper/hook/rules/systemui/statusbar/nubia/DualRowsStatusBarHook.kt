@@ -365,7 +365,7 @@ object DualRowsStatusBarHook : YukiBaseHooker() {
                 // 获取原始高度（像素）
                 val originalHeightPx = systemIcons.layoutParams?.height ?: return@after
                 val metrics = sbView.resources.displayMetrics
-                val originalHeightSp = originalHeightPx / metrics.scaledDensity
+                val originalHeightSp = originalHeightPx / (metrics.density * sbView.resources.configuration.fontScale)
 
                 // 打印原始高度
                 YLog.debug(tag = TAG, msg = "Original system_icons height: ${originalHeightPx}px (${"%.2f".format(originalHeightSp)}sp)")

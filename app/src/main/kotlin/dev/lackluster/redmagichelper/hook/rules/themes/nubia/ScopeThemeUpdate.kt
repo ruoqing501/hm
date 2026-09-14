@@ -88,7 +88,7 @@ object ScopeThemeUpdate : YukiBaseHooker() {
                         param(IntType, beanClass)
                     }.get().newInstance(0, mBean) as? Runnable
                     if (saveTask != null) {
-                        val util = commonExecUtilClass.newInstance()
+                        val util = commonExecUtilClass.getConstructor().newInstance()
                         commonExecUtilClass.method {
                             name = "setFuncAndExec"
                             param(Runnable::class.java, StringClass)

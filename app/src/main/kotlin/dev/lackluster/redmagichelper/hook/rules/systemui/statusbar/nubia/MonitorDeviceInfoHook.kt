@@ -1211,9 +1211,12 @@ object StatusBarTemperatureHook : YukiBaseHooker() {
         try {
             val darkIconDispatcherClass = "com.android.systemui.plugins.DarkIconDispatcher".toClass()
             val dependencyClass = "com.android.systemui.Dependency".toClass()
-            val darkReceiverInterface = darkIconDispatcherClass.classLoader.loadClass(
+            val darkReceiverInterface = darkIconDispatcherClass.classLoader?.loadClass(
                 "com.android.systemui.plugins.DarkIconDispatcher\$DarkReceiver"
-            )
+            ) ?: run {
+                YLog.warn(tag = TAG, msg = "DarkIconDispatcher classLoader is null")
+                return
+            }
 
             // 通过 Dependency.get 获取 DarkIconDispatcher 实例
             val getMethod = dependencyClass.getDeclaredMethod("get", Class::class.java).apply {
