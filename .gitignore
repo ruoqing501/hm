@@ -1,0 +1,3 @@
+# 签名密钥与密码，禁止提交
+keystore.properties
+keystore/

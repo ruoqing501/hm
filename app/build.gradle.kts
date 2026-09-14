@@ -52,13 +52,19 @@ android {
     lint { checkReleaseBuilds = false }
     val properties = Properties()
     runCatching { properties.load(project.rootProject.file("local.properties").inputStream()) }
-    val ksPath = properties.getProperty("KEYSTORE_PATH") ?: System.getenv("KEYSTORE_PATH")
-    val ksPWD = properties.getProperty("KEYSTORE_PWD") ?: System.getenv("KEYSTORE_PWD")
-    val kAlias = properties.getProperty("KEY_ALIAS") ?: System.getenv("KEY_ALIAS")
-    val kPWD = properties.getProperty("KEY_PWD") ?: System.getenv("KEY_PWD")
+    // 签名配置优先读项目根目录的 keystore.properties（已 gitignore），
+    // 其次 local.properties，最后环境变量
+    val keystoreProperties = Properties()
+    runCatching { keystoreProperties.load(project.rootProject.file("keystore.properties").inputStream()) }
+    fun signingProp(key: String) =
+        keystoreProperties.getProperty(key) ?: properties.getProperty(key) ?: System.getenv(key)
+    val ksPath = signingProp("KEYSTORE_PATH")
+    val ksPWD = signingProp("KEYSTORE_PWD")
+    val kAlias = signingProp("KEY_ALIAS")
+    val kPWD = signingProp("KEY_PWD")
     signingConfigs {
         register("release") {
-            storeFile = file(ksPath)
+            storeFile = rootProject.file(ksPath)
             storePassword = ksPWD
             keyAlias =kAlias
             keyPassword = kPWD
