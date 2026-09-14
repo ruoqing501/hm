@@ -280,6 +280,28 @@ fun PackageInstallerPage(navController: NavController, adjustPadding: PaddingVal
                     summary = stringResource(R.string.no_permission_or_store_prompts_for_cts_testing),
                     key = Pref.Key.NubiaPackageInstaller.CTS_TEST_INSTALLER  //唯一id
                 )
+                SwitchPreference(
+                    title = stringResource(R.string.android_disable_system_signature_verification),
+                    key = Pref.Key.Android.ANDROID_DISABLE_SYSTEM_SIGNATURE_VERIFICATION
+                )
+                // 允许不同签名覆盖安装（仅放行签名不一致的覆盖更新，默认关闭，仅用于可信 APK）
+                SwitchPreference(
+                    title = stringResource(R.string.android_allow_signature_mismatch_install),
+                    summary = stringResource(R.string.android_allow_signature_mismatch_install_tips),
+                    key = Pref.Key.Android.ANDROID_ALLOW_SIGNATURE_MISMATCH_INSTALL
+                )
+            }
+        }
+        // 红魔-意图劫持
+        item {
+            PreferenceGroup(
+                title = stringResource(R.string.ui_title_android_remove_intent_hijack),
+            ) {
+                SwitchPreference(
+                    title = stringResource(R.string.android_remove_intent_hijack_content),
+                    summary = stringResource(R.string.android_remove_intent_hijack_content_tips),
+                    key = Pref.Key.Android.ANDROID_REMOVE_INTENT_HIJACK_CONTENT
+                )
             }
         }
     }

@@ -767,16 +767,6 @@ fun SystemUIPage(
 
             }
         }
-        // 红魔-开发者选项
-        item {
-            PreferenceGroup(stringResource(R.string.system_settings_develop_title)) {
-                // USB调试始终允许授权 USB debugging always enabled (authorized users)
-                SwitchPreference(
-                    title = stringResource(R.string.usb_debugging_always_enabled_authorized_users),
-                    key = Pref.Key.NubiaSystemSettings.SYSTEM_SETTINGS_USB_DEBUGGING_AUTO_ALLOW
-                )
-            }
-        }
         // 特色功能
         item {
             PreferenceGroup(

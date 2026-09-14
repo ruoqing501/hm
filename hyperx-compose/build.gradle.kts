@@ -56,8 +56,7 @@ dependencies {
     api("top.yukonga.miuix.kmp:miuix:0.5.2")
     api("dev.chrisbanes.haze:haze:1.7.1")
     // 液态玻璃引擎（酷安 16.6 底部菜单栏同款）
-    // 若该版本解析失败，请到 https://github.com/Kyant0/backdrop/releases 查询最新 tag 并替换
-    api("com.github.Kyant0:backdrop:0.5.3")
+    api("io.github.kyant0:backdrop:1.0.6")
     api("androidx.compose.foundation:foundation:1.10.2")
     api("androidx.activity:activity-compose:1.12.3")
     api("androidx.navigation:navigation-compose:2.9.7")

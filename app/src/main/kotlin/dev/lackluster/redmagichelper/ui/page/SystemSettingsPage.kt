@@ -152,6 +152,11 @@ fun SystemSettingsPage(navController: NavController, adjustPadding: PaddingValue
                     title = stringResource(R.string.disable_usb_installation_and_switch_account_verification),
                     key = Pref.Key.NubiaSystemSettings.DISABLE_USB_INSTALLATION_AND_SWITCH_ACCOUNT_VERIFICATION, //唯一id
                 )
+                // USB调试始终允许授权 USB debugging always enabled (authorized users)
+                SwitchPreference(
+                    title = stringResource(R.string.usb_debugging_always_enabled_authorized_users),
+                    key = Pref.Key.NubiaSystemSettings.SYSTEM_SETTINGS_USB_DEBUGGING_AUTO_ALLOW
+                )
                 // 锁定屏幕刷新率
                 // 开启 settings put system lock_refresh_rate 1
                 // 关闭 settings put system lock_refresh_rate 0
