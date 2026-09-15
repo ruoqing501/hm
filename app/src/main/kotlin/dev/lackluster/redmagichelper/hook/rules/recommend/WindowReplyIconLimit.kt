@@ -8,7 +8,7 @@ import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.param.HookParam
 import dev.lackluster.redmagichelper.hook.compat.type.java.BooleanType
 import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 import dev.lackluster.redmagichelper.utils.nubia.Deoptimizer
 
 /**
@@ -32,10 +32,8 @@ object WindowReplyIconLimit : YukiBaseHooker() {
     private val parkedState = ThreadLocal<ParkedState?>()
 
     override fun onHook() {
-        hasEnable(Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW_NUMBER) {
-            hookIconManager()
-            hookIconService()
-        }
+        hookIconManager()
+        hookIconService()
     }
 
     private fun hookIconManager() {
@@ -49,6 +47,7 @@ object WindowReplyIconLimit : YukiBaseHooker() {
             returnType = BooleanType
         }.ignored().give()?.hook {
             after {
+                if (!Prefs.getBoolean(Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW_NUMBER, false)) return@after
                 if (result == true) {
                     YLog.debug("$TAG iconShowIsError 返回 true，改写为 false")
                     result = false
@@ -72,6 +71,7 @@ object WindowReplyIconLimit : YukiBaseHooker() {
             returnType = IntType
         }.ignored().give()?.hook {
             before {
+                if (!Prefs.getBoolean(Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW_NUMBER, false)) return@before
                 runCatching { parkIconsForNewIcon(this) }
                     .onFailure { error ->
                         YLog.error("$TAG 寄放图标条目失败，回滚", error)

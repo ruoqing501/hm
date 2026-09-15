@@ -9,28 +9,26 @@ import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.hook.compat.type.java.LongType
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 
 object DisableFlagSecureHookerZygoteInit : YukiBaseHooker() {
 
 
     override fun onHook() {
-        // 总开关
         // 8. hook SurfaceControl.nativeSetFlags（增强开关）
-        hasEnable(Pref.Key.Android.DISABLE_FLAG_SECURE_ENHANCED) {
-            YLog.debug("DisableFlagSecureHookerZygoteInit")
-            "android.view.SurfaceControl".toClassOrNull()?.apply {
-                method {
-                    name = "nativeSetFlags"
-                    param(LongType, LongType, IntType, IntType)  // 明确参数类型
-                }.hook {
-                    before {
-                        if (this.args.size > 3) {
-                            val flags = this.args(2).int()
-                            val mask = this.args(3).int()
-                            if (mask == 64) { // SKIP_SCREENSHOT
-                                this.args(2).set(0)
-                            }
+        YLog.debug("DisableFlagSecureHookerZygoteInit")
+        "android.view.SurfaceControl".toClassOrNull()?.apply {
+            method {
+                name = "nativeSetFlags"
+                param(LongType, LongType, IntType, IntType)  // 明确参数类型
+            }.hook {
+                before {
+                    if (!Prefs.getBoolean(Pref.Key.Android.DISABLE_FLAG_SECURE_ENHANCED, false)) return@before
+                    if (this.args.size > 3) {
+                        val flags = this.args(2).int()
+                        val mask = this.args(3).int()
+                        if (mask == 64) { // SKIP_SCREENSHOT
+                            this.args(2).set(0)
                         }
                     }
                 }

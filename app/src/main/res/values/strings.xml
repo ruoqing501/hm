@@ -324,6 +324,7 @@
     <string name="module_unknown_failure">Unknown error</string>
     <!-- SystemUIPage -->
     <string name="ui_title_systemui_status_bar">Status bar</string>
+    <string name="ui_title_status_bar">Status bar</string>
     <string name="ui_title_systemui_status_bar_network_speed">Status bar network speed</string>
     <string name="status_bar_icon">Status bar icon</string>
     <string name="systemui_statusbar_notif_count">Customize the maximum number of notifications to display</string>
@@ -476,6 +477,7 @@
     <string name="refresh_rate_unlock_165hz">Unlock the 165Hz option</string>
     <string name="refresh_rate_unlock_165hz_tips">The actual refresh rate is still 144Hz, but multiple options now allow the 165Hz option to be unlocked.</string>
     <string name="ui_title_android_screenshot">Screenshot</string>
+    <string name="ui_title_android_rercord_screen">Record Screen</string>
     <string name="ui_title_android_notification">Notification</string>
     <string name="ui_title_android_remove_intent_hijack">Remove Intent Hijack</string>
     <string name="android_remove_intent_hijack_content">Remove Intent Hijack</string>

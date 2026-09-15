@@ -242,6 +242,7 @@
     <string name="module_unknown_failure">不明なエラー</string>
     <!-- SystemUIPage -->
     <string name="ui_title_systemui_status_bar">ステータスバー</string>
+    <string name="ui_title_status_bar">ステータスバー</string>
     <string name="ui_title_systemui_status_bar_network_speed">ステータスバーのネットワーク速度</string>
     <string name="status_bar_icon">ステータスバーアイコンです</string>
     <string name="systemui_statusbar_notif_count">通知の最大表示数をカスタマイズする</string>

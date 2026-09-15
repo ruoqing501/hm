@@ -16,7 +16,6 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.LongType
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.DexKit.dexKitBridge
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 import org.luckypray.dexkit.DexKitBridge
 import java.lang.reflect.Method
 import java.text.DecimalFormat
@@ -36,55 +35,30 @@ object StatusBarNetworkSpeedAdjuster : YukiBaseHooker() {
     private var mLastDownSpeed: Double = 0.0
 
     // 配置项
-    private val dualRowEnabled by lazy {
+    private val dualRowEnabled get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DUAL_ROW_NETWORK_SPEED, false)
-    }
-    private val dualRowSize by lazy {
+    private val dualRowSize get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_NETWORK_SPEED_DUAL_ROW_SIZE, 6)
-    }
-    private val dualRowWidth by lazy {
+    private val dualRowWidth get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_NETWORK_SPEED_DUAL_ROW_WIDTH, 35)
-    }
-    private val lowSpeedHideKb by lazy {
+    private val lowSpeedHideKb get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.LOW_SPEED_HIDE_KILO_BYTES, -1)
-    }
-    private val digitLen by lazy {
+    private val digitLen get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_NETWORK_SPEED_DUAL_ROW_DIGIT_LEN, 3)
-    }
-    private val hideUnitPerSec by lazy {
+    private val hideUnitPerSec get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.SPEED_UNIT_HIDE_PER_SECOND, false)
-    }
-    private val refreshSpeedEnabled by lazy {
+    private val refreshSpeedEnabled get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_NETWORK_SPEED_REFRESH_SPEED, false)
-    }
 
-    // 网格重排开启时，网速显示由 StatusBarGridHook 接管，整体跳过避免重复显示
-    private val gridLayoutEnabled by lazy {
+    // 网格重排开启时，网速显示由 StatusBarGridHook 接管，跳过避免重复显示（回调内实时读取）
+    private val gridLayoutEnabled get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBarGrid.SWITCH, false)
-    }
 
     override fun onHook() {
-        if (gridLayoutEnabled) {
-            YLog.info("$TAG 状态栏网格重排已启用，跳过网速调整")
-            return
-        }
-        //// 网速秒刷新
-        //if (refreshSpeedEnabled) {
-        //    networkSpeedSeconds()
-        //}
-        //
-        //// 双排网速
-        //if (dualRowEnabled) {
-        //    statusBarDualRowNetworkSpeed()
-        //}
         // 网速秒刷新
-        hasEnable(Pref.Key.SystemUI.StatusBar.STATUS_BAR_NETWORK_SPEED_REFRESH_SPEED){
-            networkSpeedSeconds()
-        }
+        networkSpeedSeconds()
         // 双排网速
-        hasEnable(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DUAL_ROW_NETWORK_SPEED){
-            statusBarDualRowNetworkSpeed()
-        }
+        statusBarDualRowNetworkSpeed()
     }
 
     // ========================= 网速秒刷新 =========================
@@ -105,6 +79,7 @@ object StatusBarNetworkSpeedAdjuster : YukiBaseHooker() {
         // hook postDelayed
         postDelayedMethod.hook {
             before {
+                if (!refreshSpeedEnabled || gridLayoutEnabled) return@before
                 if (args.size < 2) return@before
                 val runnable = args[0] as? Runnable ?: return@before
                 val delay = args[1] as? Long ?: return@before
@@ -154,6 +129,7 @@ object StatusBarNetworkSpeedAdjuster : YukiBaseHooker() {
             name = "init"
         }?.hook {
             after {
+                if (!dualRowEnabled || gridLayoutEnabled) return@after
                 val instance = this.instance
                 // 获取字段
                 val speedText = instance.current().field { name = "mSpeedText" }.cast<TextView>()
@@ -195,6 +171,7 @@ object StatusBarNetworkSpeedAdjuster : YukiBaseHooker() {
                 param(stateClass)
             }.hook {
                 before {
+                    if (!dualRowEnabled || gridLayoutEnabled) return@before
                     // 获取 NetSpeedState 对象
 //                    val netState = this.args[0].any() ?: return@before
                     val netState = this.args[0] ?: return@before
@@ -232,6 +209,7 @@ object StatusBarNetworkSpeedAdjuster : YukiBaseHooker() {
             name = "updateNetSpeed"
         }?.hook {
             before {
+                if (!dualRowEnabled || gridLayoutEnabled) return@before
                 // 设置一个无意义的 mLevel 值，并阻止原方法执行
                 this.instance.current().field { name = "mLevel" }.set(114514L)
                 this.result = null

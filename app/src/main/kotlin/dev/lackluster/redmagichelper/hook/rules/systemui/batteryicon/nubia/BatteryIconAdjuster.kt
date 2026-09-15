@@ -29,21 +29,17 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.FloatType
 object BatteryIconAdjuster : YukiBaseHooker() {
     private const val TAG = "BatteryIconAdjuster"
 
-    private val battery_style by lazy {
+    private val battery_style get() =
         Prefs.getInt(Pref.Key.SystemUI.IconTurner.BATTERY_STYLE, 0)
-    }
 
-    private val battery_percentage_symbol_style by lazy {
+    private val battery_percentage_symbol_style get() =
         Prefs.getInt(Pref.Key.SystemUI.IconTurner.BATTERY_PERCENTAGE_SYMBOL_STYLE, 0)
-    }
 
-    private val status_bar_battery_layout_width by lazy {
+    private val status_bar_battery_layout_width get() =
         Prefs.getInt(Pref.Key.SystemUI.IconTurner.STATUS_BAR_BATTERY_LAYOUT_WIDTH, 30)
-    }
 
-    private val battery_color_switch by lazy {
+    private val battery_color_switch get() =
         Prefs.getBoolean(Pref.Key.SystemUI.IconTurner.BATTERY_ICON_COLOR_SWITCH, false)
-    }
 
 
 
@@ -53,18 +49,7 @@ object BatteryIconAdjuster : YukiBaseHooker() {
 //            1, 4 -> loadHooker(BatteryIconPercentSwapHook) // 提前加载
 //        }
         loadHooker(BatteryIconPercentSwapHook) // 提前加载
-        if(battery_style == 1) {
-            hideBatteryIconPercentage() // 隐藏电量百分比
-
-        }
-        if(battery_style == 2) {
-            hideBatteryIconPercentage() // 隐藏电量百分比
-
-        }
-        if(battery_style == 4) {
-            YLog.debug("$TAG Swapping battery icon and text")
-            hideBatteryIconPercentage() // 隐藏电量百分比
-        }
+        hideBatteryIconPercentage() // 隐藏电量百分比
 
 //        updateBatteryLayout()
           updateBatteryColor() // 根据系统，更新电量颜色
@@ -76,25 +61,24 @@ object BatteryIconAdjuster : YukiBaseHooker() {
     // 隐藏电量百分比
     private fun hideBatteryIconPercentage() {
 //        hasEnable(Pref.Key.SystemUI.StatusBar.HIDE_BATTERY_PERCENTAGE_ICON) {
-        if(battery_percentage_symbol_style==1){
-            val bVLayout = "com.zte.mifavor.views.MFVBatteryViewLayout".toClassOrNull()
-            val updateLevel = bVLayout?.method {
-                name = "updateBatteryLevelText"
-            }
-            updateLevel?.hook {
-                before {
-                    // 仅处理目标区域 不包含AOD熄屏界面
-                    if (!isTargetBatteryLayout(instance as View)) return@before
-                    val mCurrentUsedBatteryLevelView =
-                        bVLayout.getDeclaredField("mCurrentUsedBatteryLevelView")
-                            .get(instance) as TextView
-                    //typo? LOL
-                    val mBatteryLevel =
-                        bVLayout.getDeclaredField("mBateryLevel").getInt(instance)
+        val bVLayout = "com.zte.mifavor.views.MFVBatteryViewLayout".toClassOrNull()
+        val updateLevel = bVLayout?.method {
+            name = "updateBatteryLevelText"
+        }
+        updateLevel?.hook {
+            before {
+                if (battery_style !in listOf(1, 2, 4) || battery_percentage_symbol_style != 1) return@before
+                // 仅处理目标区域 不包含AOD熄屏界面
+                if (!isTargetBatteryLayout(instance as View)) return@before
+                val mCurrentUsedBatteryLevelView =
+                    bVLayout.getDeclaredField("mCurrentUsedBatteryLevelView")
+                        .get(instance) as TextView
+                //typo? LOL
+                val mBatteryLevel =
+                    bVLayout.getDeclaredField("mBateryLevel").getInt(instance)
 
-                    mCurrentUsedBatteryLevelView.text = mBatteryLevel.toString()
-                    result = null
-                }
+                mCurrentUsedBatteryLevelView.text = mBatteryLevel.toString()
+                result = null
             }
         }
 
@@ -120,16 +104,13 @@ object BatteryIconAdjuster : YukiBaseHooker() {
     }
 
     private fun updateBatteryColor() {
-       val battery_style by lazy {
-            Prefs.getInt(Pref.Key.SystemUI.IconTurner.BATTERY_STYLE, 0)
-        }
-        if(battery_style !=0) return
         val batteryLayoutClass = "com.zte.mifavor.views.MFVBatteryViewLayout".toClassOrNull() ?: return
         batteryLayoutClass.method {
             name = "onDarkChanged"
             param(ArrayListClass, FloatType, IntType)
         }.hook {
             after {
+                if (battery_style != 0) return@after
                 val instance = this.instance as  View
                 val showMode = instance.current().field { name = "mShowMode" }.int()
                 if (showMode == 0) {

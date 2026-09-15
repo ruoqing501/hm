@@ -18,6 +18,7 @@ import dev.lackluster.redmagichelper.hook.rules.gameassist.NubiaSuperResolution.
 import dev.lackluster.redmagichelper.hook.rules.gameassist.NubiaSuperResolution.disableSuperResolutionBiabloCheck
 import dev.lackluster.redmagichelper.hook.rules.gameassist.NubiaSuperResolution.preventAutoCloseSuperResolutionOnPowerSaving
 import dev.lackluster.redmagichelper.hook.rules.gameassist.NubiaSuperResolution.preventAutoDisableBiabloWhenSuperResOn
+import dev.lackluster.redmagichelper.utils.Prefs
 import dev.lackluster.redmagichelper.utils.factory.hasEnable
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -26,6 +27,9 @@ object HideGameChickenModeDialog : YukiBaseHooker() {
     private const val TAG = "HideGameChickenModeDialog"
     // 关键：用于通信的全局状态标志
     private val isBiabloModeChanging = AtomicBoolean(false)
+
+    private fun superResolutionSwitchEnabled() =
+        Prefs.getBoolean(Pref.Key.GameSpace.GAME_SPACE_SUPER_RESOLUTION_SWITCH, false)
 
     override fun onHook() {
         // 1. Hook 破坏神模式点击事件（设置防折叠标志）
@@ -71,19 +75,19 @@ object HideGameChickenModeDialog : YukiBaseHooker() {
                     // 判断是否是破坏神模式
                     if (tileLabel.contains("破坏神模式")) {
 
-                        hasEnable(Pref.Key.GameSpace.GAME_SPACE_PREVENT_COLLAPSE){
+                        hasEnable(Pref.Key.GameSpace.GAME_SPACE_PREVENT_COLLAPSE, extraCondition = ::superResolutionSwitchEnabled){
                             isBiabloModeChanging.set(true)
 
                         }
                         // 2. 拦截破坏神模式设置，阻止弹窗并模拟确认操作
-                        hasEnable(Pref.Key.GameSpace.GAME_SPACE_DEVIL_MODE_HIDE_PROMPT){
+                        hasEnable(Pref.Key.GameSpace.GAME_SPACE_DEVIL_MODE_HIDE_PROMPT, extraCondition = ::superResolutionSwitchEnabled){
                             interceptBiabloModeSetting()
                         }
 //                        // 3. 拦截因破坏神模式切换而触发的面板折叠
 //                        preventPanelCollapseOnBiabloChange()
                         // 4. 当超竞模式开启的时候，允许破坏神模式切换
                         // 解除超境画质与破坏神模式的互斥,允许在开启破坏神模式时，允许开启超境画质
-                        hasEnable(Pref.Key.GameSpace.GAME_SPACE_DEVIL_MODE_ENABLE_SUPER_RESOLUTION){
+                        hasEnable(Pref.Key.GameSpace.GAME_SPACE_DEVIL_MODE_ENABLE_SUPER_RESOLUTION, extraCondition = ::superResolutionSwitchEnabled){
                             disableBiabloSuperResolutionCheck()
                             disableSuperResolutionBiabloCheck()
                             preventAutoDisableBiabloWhenSuperResOn()
@@ -94,7 +98,7 @@ object HideGameChickenModeDialog : YukiBaseHooker() {
                         YLog.debug(tag = TAG, msg = "检测到破坏神模式点击，设置防折叠标志")
                     }
                     if (tileLabel.contains("超境画质")) {
-                        hasEnable(Pref.Key.GameSpace.GAME_SPACE_PREVENT_COLLAPSE){
+                        hasEnable(Pref.Key.GameSpace.GAME_SPACE_PREVENT_COLLAPSE, extraCondition = ::superResolutionSwitchEnabled){
                             isBiabloModeChanging.set(true)
 
                         }
@@ -171,11 +175,14 @@ object HideGameChickenModeDialog : YukiBaseHooker() {
                     val reason = args[0] as? String
                     // 检查标志：是否因为正在切换破坏神模式？
                     if (isBiabloModeChanging.get()) {
-                        YLog.debug(tag = TAG, msg = "拦截因切换而触发的面板折叠，reason: $reason")
-                        hasEnable(Pref.Key.GameSpace.GAME_SPACE_PREVENT_COLLAPSE){
+                        if (!superResolutionSwitchEnabled() ||
+                            !Prefs.getBoolean(Pref.Key.GameSpace.GAME_SPACE_PREVENT_COLLAPSE, false)
+                        ) {
                             isBiabloModeChanging.set(false)
-
+                            return@before
                         }
+                        YLog.debug(tag = TAG, msg = "拦截因切换而触发的面板折叠，reason: $reason")
+                        isBiabloModeChanging.set(false)
                         this.result = null // 阻止原方法执行，取消折叠
                         return@before
                     }

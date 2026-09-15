@@ -8,7 +8,7 @@ import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
 import dev.lackluster.redmagichelper.hook.compat.type.java.UnitType
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 
 /**
 活跃模式
@@ -25,32 +25,32 @@ object ActiveMode : YukiBaseHooker() {
     private const val TAG = "GameAssistActiveMode"
 
     override fun onHook() {
-        hasEnable( Pref.Key.GameSpace.ACIVE_MODE_SWITCH){
-            // ========== 1. 禁止重置所有保存的活跃模式配置 ==========
-            "cn.nubia.gameassist.dessert.policy.ActiveModeController".toClass().method {
-                name = "resetActiveModeSharedPreAllKey"
-                returnType = UnitType
-            }.hook {
-                before {
-                    YLog.debug(tag = TAG, msg = "Blocked resetActiveModeSharedPreAllKey")
+        // ========== 1. 禁止重置所有保存的活跃模式配置 ==========
+        "cn.nubia.gameassist.dessert.policy.ActiveModeController".toClass().method {
+            name = "resetActiveModeSharedPreAllKey"
+            returnType = UnitType
+        }.hook {
+            before {
+                if (!Prefs.getBoolean(Pref.Key.GameSpace.ACIVE_MODE_SWITCH, false)) return@before
+                YLog.debug(tag = TAG, msg = "Blocked resetActiveModeSharedPreAllKey")
+                result = null
+            }
+        }
+        // ========== 2. 阻止 onLauncherFirstPackage 触发的配置删除 ==========
+        "cn.nubia.gameassist.dessert.policy.ActiveModeController".toClass().method {
+            name = "removeActiveModeSharedPreKey"
+            param(StringClass)
+        }.hook {
+            before {
+                if (!Prefs.getBoolean(Pref.Key.GameSpace.ACIVE_MODE_SWITCH, false)) return@before
+                val stackTrace = Thread.currentThread().stackTrace
+                // 检查调用栈中是否包含 onLauncherFirstPackage（即桌面启动触发的删除）
+                if (stackTrace.any { it.methodName.contains("onLauncherFirstPackage") }) {
+                    YLog.debug(tag = TAG, msg = "Block removeActiveModeSharedPreKey triggered by onLauncherFirstPackage")
                     result = null
                 }
             }
-            // ========== 2. 阻止 onLauncherFirstPackage 触发的配置删除 ==========
-            "cn.nubia.gameassist.dessert.policy.ActiveModeController".toClass().method {
-                name = "removeActiveModeSharedPreKey"
-                param(StringClass)
-            }.hook {
-                before {
-                    val stackTrace = Thread.currentThread().stackTrace
-                    // 检查调用栈中是否包含 onLauncherFirstPackage（即桌面启动触发的删除）
-                    if (stackTrace.any { it.methodName.contains("onLauncherFirstPackage") }) {
-                        YLog.debug(tag = TAG, msg = "Block removeActiveModeSharedPreKey triggered by onLauncherFirstPackage")
-                        result = null
-                    }
-                }
-            }
-            // 注意：不再添加任何自动开启逻辑，完全依赖系统原本的 updateCurrApp() 读取保存的状态
         }
+        // 注意：不再添加任何自动开启逻辑，完全依赖系统原本的 updateCurrApp() 读取保存的状态
     }
 }

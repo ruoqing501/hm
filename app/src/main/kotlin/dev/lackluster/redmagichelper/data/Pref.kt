@@ -13,6 +13,8 @@ object Pref {
         }
         object Other{
             const val MUTE_NFC_SOUND = "mute_nfc_sound"
+            const val SCREENSHOT_HIDE_STATUS_BAR = "screenshot_hide_status_bar"
+            const val RERCORD_SCREEN_HIDE_STATUS_BAR = "rercord_screen_hide_status_bar"
             const val NFC_ALLOW_SCREEN_OFF_RECOGNITION = "nfc_allow_screen_off_recognition"
             const val ALLOW_THIRDPARTY_LAUNCHER = "allow_thirdparty_launcher"
             const val DOUBLE_ANY_APP = "double_any_app"

@@ -14,27 +14,18 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.LongType
 import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 
 object ScopeSystemUpdate : YukiBaseHooker() {
     private const val TAG = "ScopeSystemUpdate"
 
-    // 两个开关的值（在 hook 时读取一次，若需动态变化可改为每次 before 中读取）
-    private val disableUpdate by lazy { Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.DISABLE_SYSTEM_UPDATE, false) }
-    private val copyUrl by lazy { Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.UPDATE_PACKAGE_ADDRESS, false) }
+    // 两个开关的值（每次 before 中读取，开关切换即时生效）
+    private val disableUpdate
+        get() = Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.DISABLE_SYSTEM_UPDATE, false)
+    private val copyUrl
+        get() = Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.UPDATE_PACKAGE_ADDRESS, false)
 
     override fun onHook() {
-        // 只要任一开关开启，就注册 hook
-
-        // 分别获取两个开关的状态并进行逻辑或运算
-        if( disableUpdate || copyUrl){
-            YLog.debug("$TAG hooking applyPayload (" +
-                    "disableUpdate=${disableUpdate}, " +
-                    "updatePackageAddress=${copyUrl})")
-            hookApplyPayload()
-        }else{
-            YLog.debug("$TAG hooking 功能均为开启，跳过")
-        }
+        hookApplyPayload()
     }
 
     private fun hookApplyPayload() {

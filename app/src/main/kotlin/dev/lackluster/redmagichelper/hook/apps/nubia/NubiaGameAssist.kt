@@ -2,22 +2,17 @@ package dev.lackluster.redmagichelper.hook.apps.nubia
 
 
 import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
-import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.hook.rules.gameassist.ActiveMode
 import dev.lackluster.redmagichelper.hook.rules.gameassist.AiTriggerYoloScan
 import dev.lackluster.redmagichelper.hook.rules.gameassist.HideGameChickenModeDialog
 import dev.lackluster.redmagichelper.hook.rules.gameassist.NubiaSuperResolution
 
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
-
 // 努比亚专属 Hook
 object NubiaGameAssist : YukiBaseHooker(){
     override fun onHook() {
-        // 启用超境模式
-        hasEnable(Pref.Key.GameSpace.GAME_SPACE_SUPER_RESOLUTION_SWITCH){
-            loadHooker(HideGameChickenModeDialog)
-            loadHooker(NubiaSuperResolution)
-        }
+        // 启用超境模式（总开关在各 hooker 回调内实时判断）
+        loadHooker(HideGameChickenModeDialog)
+        loadHooker(NubiaSuperResolution)
 
 
 

@@ -12,30 +12,28 @@ import dev.lackluster.redmagichelper.hook.compat.factory.field
 import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 import kotlin.math.abs
 
 object StatusBarDoubleTapToSleep : YukiBaseHooker() {
 
     @SuppressLint("PrivateApi")
     override fun onHook() {
-        hasEnable(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DOUBLE_CLICKED_LOCKED_SCREEN) {
-            YLog.debug("[StatusBarDoubleTapToSleep] 开始Hook状态栏双击睡眠功能")
+        YLog.debug("[StatusBarDoubleTapToSleep] 开始Hook状态栏双击睡眠功能")
 
-            // Hook PhoneStatusBarView 类的 onFinishInflate 方法
-            "com.android.systemui.statusbar.phone.PhoneStatusBarView".toClass().apply {
-                method {
-                    name = "onFinishInflate"
-                }.hook {
-                    after {
-                        // 添加双击睡眠功能
-                        addDoubleTapToSleep(this.instance as ViewGroup)
-                    }
+        // Hook PhoneStatusBarView 类的 onFinishInflate 方法
+        "com.android.systemui.statusbar.phone.PhoneStatusBarView".toClass().apply {
+            method {
+                name = "onFinishInflate"
+            }.hook {
+                after {
+                    // 添加双击睡眠功能
+                    addDoubleTapToSleep(this.instance as ViewGroup)
                 }
             }
-
-            YLog.debug("[StatusBarDoubleTapToSleep] Hook状态栏双击睡眠功能完成")
         }
+
+        YLog.debug("[StatusBarDoubleTapToSleep] Hook状态栏双击睡眠功能完成")
     }
 
     /**
@@ -48,6 +46,9 @@ object StatusBarDoubleTapToSleep : YukiBaseHooker() {
         var currentTouchY: Float = 0f
 
         viewGroup.setOnTouchListener { v, event ->
+            if (!Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DOUBLE_CLICKED_LOCKED_SCREEN, false)) {
+                return@setOnTouchListener false
+            }
             if (event.action != MotionEvent.ACTION_DOWN) {
                 return@setOnTouchListener false
             }

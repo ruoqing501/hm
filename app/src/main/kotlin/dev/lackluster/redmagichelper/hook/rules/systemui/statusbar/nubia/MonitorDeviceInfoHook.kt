@@ -33,130 +33,104 @@ import kotlin.collections.component2
 object StatusBarTemperatureHook : YukiBaseHooker() {
 
     // ========================= 设备温度设置 =========================
-    private val status_bar_display_temperature_switch by lazy {
+    private val status_bar_display_temperature_switch get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_TEMPERATURE_SWITCH, false)
-    }
-    private val status_bar_display_temp_battery by lazy {
+    private val status_bar_display_temp_battery get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_TEMP_BATTERY, false)
-    }
-    private val status_bar_display_temp_cpu by lazy {
+    private val status_bar_display_temp_cpu get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_TEMP_CPU, false)
-    }
-    private val status_bar_display_temp_gpu by lazy {
+    private val status_bar_display_temp_gpu get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_TEMP_GPU, false)
-    }
-    private val status_bar_display_temp_font_size by lazy {
+    private val status_bar_display_temp_font_size get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_TEMP_FONT_SIZE, 8)
-    }
-    private val status_bar_display_temp_hide_unit by lazy {
+    private val status_bar_display_temp_hide_unit get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_TEMP_HIDE_UNIT, false)
-    }
-    private val status_bar_display_temp_display_mode by lazy {
+    private val status_bar_display_temp_display_mode get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_TEMP_DISPLAY_MODE, 0)
-    }
-    private val status_bar_temperature_location by lazy {
+    private val status_bar_temperature_location get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_TEMPERATURE_LOCATION, 0)
-    }
 
     // ========================= 电池信息设置 =========================
-    private val status_bar_display_battery_info by lazy {
+    private val status_bar_display_battery_info get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO, false)
-    }
-    private val status_bar_battery_info_location by lazy {
+    private val status_bar_battery_info_location get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_BATTERY_INFO_LOCATION, 0)
-    }
-    private val is_battery_info_temperature by lazy {
+    private val is_battery_info_temperature get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_OPTION1, false)
-    }
-    private val is_battery_info_electricity by lazy {
+    private val is_battery_info_electricity get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_OPTION2, false)
-    }
-    private val is_battery_info_power by lazy {
+    private val is_battery_info_power get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_OPTION3, false)
-    }
-    private val status_bar_display_battery_info_font_size by lazy {
+    private val status_bar_display_battery_info_font_size get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_FONT_SIZE, 8)
-    }
 
     // 电池信息-值为false的时候，则为单排模式，值为true的时候，则为双排模式
-    private val status_bar_display_battery_info_layout by lazy {
+    private val status_bar_display_battery_info_layout get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_LAYOUT, false)
-    }
 
     // 电池信息-双排模式下，显示的位置0表示：电池温度（上排）+功耗（下排） 1表示：电流（上排）+功率（下排）
-    private val status_bar_display_battery_info_dual_display_mode by lazy {
+    private val status_bar_display_battery_info_dual_display_mode get() =
         Prefs.getInt(
             Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_DUAL_DISPLAY_MODE,
             0
         )
-    }
 
     // 电池信息-双排模式下，显示的位置: 左侧 ，右侧 ，居中
-    private val status_bar_battery_info_location_dual by lazy {
+    private val status_bar_battery_info_location_dual get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_BATTERY_INFO_LOCATION_DUAL, 0)
-    }
 
     // 电池信息-双排模式下，字体大小
-    private val status_bar_display_battery_info_font_size_dual by lazy {
+    private val status_bar_display_battery_info_font_size_dual get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_FONT_SIZE_DUAL, 8)
-    }
 
     // 电池信息-双排模式下，隐藏标题前缀
-    private val status_bar_display_battery_info_hide_title_dual by lazy {
+    private val status_bar_display_battery_info_hide_title_dual get() =
         Prefs.getBoolean(
             Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_HIDE_TITLE_DUAL,
             false
         )
-    }
 
     // 电池信息-单排模式下，隐藏标题前缀
-    private val status_bar_display_battery_info_hide_title_single by lazy {
+    private val status_bar_display_battery_info_hide_title_single get() =
         Prefs.getBoolean(
             Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_HIDE_TITLE_SINGLE,
             false
         )
-    }
 
     // 电池信息-单排模式下，是否为充电模式 0 表示任何场景 1表示充电
-    private val status_bar_display_battery_info_is_charge_mode_single by lazy {
+    private val status_bar_display_battery_info_is_charge_mode_single get() =
         Prefs.getInt(
             Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_IS_CHARGE_MODE_SINGLE,
             0
         )
-    }
 
     // 电池信息-双排模式下，是否为充电模式  0 表示任何场景 1表示充电
-    private val status_bar_display_battery_info_is_charge_mode_dual by lazy {
+    private val status_bar_display_battery_info_is_charge_mode_dual get() =
         Prefs.getInt(
             Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_IS_CHARGE_MODE_DUAL,
             0
         )
-    }
 
 
     // 电池信息-单排模式下，温度显示模式 0 表示整数， 1表示显示小数，保留1为小数
-    private val status_bar_display_battery_info_temp_mode_single by lazy {
+    private val status_bar_display_battery_info_temp_mode_single get() =
         Prefs.getInt(
             Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_TEMP_MODE_SINGLE,
             0
         )
-    }
 
     // 电池信息-双排模式下，温度显示模式 0 表示整数， 1表示显示小数，保留1为小数
-    private val status_bar_display_battery_info_temp_mode_dual by lazy {
+    private val status_bar_display_battery_info_temp_mode_dual get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_TEMP_MODE_DUAL, 0)
-    }
 
 
     // 电池信息-单排模式下，设置固定宽度以防相邻元素左右抖动
-    private val status_bar_battery_info_fixed_width_single by lazy {
+    private val status_bar_battery_info_fixed_width_single get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_BATTERY_INFO_FIXED_WIDTH_SINGLE, -1)
-    }
 
     // 电池信息-双排模式下，设置固定宽度以防相邻元素左右抖动
-    private val status_bar_battery_info_fixed_width_dual by lazy {
+    private val status_bar_battery_info_fixed_width_dual get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_BATTERY_INFO_FIXED_WIDTH_DUAL, -1)
-    }
 
 
     // ========================= 常量定义 =========================
@@ -212,20 +186,19 @@ object StatusBarTemperatureHook : YukiBaseHooker() {
         TempItem(GPU_TITLE, GPU_TEMP_PATH, 1000, TAG_TEMP_GPU)
     )
 
-    // 网格重排开启时，温度/电池信息由 StatusBarGridHook 自绘，整体跳过避免重复显示
-    private val gridLayoutEnabled by lazy {
+    // 网格重排开启时，温度/电池信息由 StatusBarGridHook 自绘，整体跳过避免重复显示（回调内实时读取）
+    private val gridLayoutEnabled get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBarGrid.SWITCH, false)
-    }
 
     override fun onHook() {
-        if (gridLayoutEnabled) {
-            YLog.info(tag = TAG, msg = "状态栏网格重排已启用，跳过温度/电池信息挂载")
-            return
-        }
         "com.android.systemui.statusbar.phone.PhoneStatusBarView".toClass().method {
             name = "onFinishInflate"
         }.hook {
             after {
+                if (gridLayoutEnabled) {
+                    YLog.info(tag = TAG, msg = "状态栏网格重排已启用，跳过温度/电池信息挂载")
+                    return@after
+                }
                 val statusBarView = instance as ViewGroup
 
 

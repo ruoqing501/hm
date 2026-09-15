@@ -44,7 +44,8 @@ import kotlin.math.roundToInt
  * 若被 SELinux 拒绝（readLong 返回 null），对应指标降级显示 "—"。电池数据亦可由
  * Intent 广播获得，此处为与 LS_Augment 行为一致沿用 sysfs，失败时已 fail-closed。
  *
- * 配置读取遵循项目约定：进程启动时读取一次，修改后需重启系统界面。
+ * 配置读取遵循项目约定：开关与布局配置在回调/布局阶段实时读取，切换即时生效；
+ * 新增的指标文本（CPU/GPU/电池/网速）在开启开关或重建状态栏视图后挂载。
  */
 @SuppressLint("DiscouragedApi")
 object StatusBarGridHook : YukiBaseHooker() {
@@ -91,23 +92,22 @@ object StatusBarGridHook : YukiBaseHooker() {
         ComponentDef(ID_NETWORK, G.NETWORK_ZONE, G.NETWORK_ORDER, G.NETWORK_SIZE, G.NETWORK_VISIBLE, 5, 9, 9, false),
     )
 
-    private val gridEnabled by lazy { Prefs.getBoolean(G.SWITCH, false) }
-    private val notificationTwoRows by lazy { Prefs.getBoolean(G.NOTIFICATION_TWO_ROWS, true) }
-    private val systemTwoRows by lazy { Prefs.getBoolean(G.SYSTEM_TWO_ROWS, true) }
-    private val dualRowGapDp by lazy { Prefs.getInt(G.DUAL_ROW_GAP, 0).coerceIn(0, 8) }
-    private val marginLeftDp by lazy { Prefs.getInt(G.MARGIN_LEFT, 0).coerceIn(0, 40) }
-    private val marginRightDp by lazy { Prefs.getInt(G.MARGIN_RIGHT, 0).coerceIn(0, 40) }
-    private val marginTopDp by lazy { Prefs.getInt(G.MARGIN_TOP, 0).coerceIn(0, 12) }
-    private val marginBottomDp by lazy { Prefs.getInt(G.MARGIN_BOTTOM, 0).coerceIn(0, 12) }
+    private val gridEnabled get() = Prefs.getBoolean(G.SWITCH, false)
+    private val notificationTwoRows get() = Prefs.getBoolean(G.NOTIFICATION_TWO_ROWS, true)
+    private val systemTwoRows get() = Prefs.getBoolean(G.SYSTEM_TWO_ROWS, true)
+    private val dualRowGapDp get() = Prefs.getInt(G.DUAL_ROW_GAP, 0).coerceIn(0, 8)
+    private val marginLeftDp get() = Prefs.getInt(G.MARGIN_LEFT, 0).coerceIn(0, 40)
+    private val marginRightDp get() = Prefs.getInt(G.MARGIN_RIGHT, 0).coerceIn(0, 40)
+    private val marginTopDp get() = Prefs.getInt(G.MARGIN_TOP, 0).coerceIn(0, 12)
+    private val marginBottomDp get() = Prefs.getInt(G.MARGIN_BOTTOM, 0).coerceIn(0, 12)
     // 0=默认(双排上下行) 1=单排仅上行 2=单排仅下载 3=单排上行+下行 4=双排上行/下行
-    private val networkDisplayMode by lazy {
+    private val networkDisplayMode get() =
         when (Prefs.getInt(G.NETWORK_DISPLAY_MODE, 0)) {
             1, 2, 3, 4 -> Prefs.getInt(G.NETWORK_DISPLAY_MODE, 0)
             else -> 4
         }
-    }
 
-    private val items: Map<String, GridItem> by lazy {
+    private val items: Map<String, GridItem> get() =
         COMPONENTS.associate { def ->
             def.id to GridItem(
                 zone = Prefs.getInt(def.zoneKey, def.defZone).coerceIn(0, ZONES.size - 1),
@@ -116,19 +116,16 @@ object StatusBarGridHook : YukiBaseHooker() {
                 visible = Prefs.getBoolean(def.visibleKey, def.defVisible)
             )
         }
-    }
 
     // 沿用现有"通知图标最大数量"设置；0 表示不限制
-    private val notificationMax by lazy {
+    private val notificationMax get() =
         if (Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.NOTIFICATION_COUNT, false)) {
             Prefs.getInt(Pref.Key.SystemUI.StatusBar.NOTIFICATION_COUNT_ICON, 3).coerceIn(0, 20)
         } else 0
-    }
 
     private val states = WeakHashMap<ViewGroup, State>()
 
     override fun onHook() {
-        if (!gridEnabled) return
         val rootClass = ROOT_CLASS.toClassOrNull()
         if (rootClass == null) {
             YLog.warn(tag = TAG, msg = "PhoneStatusBarView not found, grid disabled")
@@ -371,6 +368,8 @@ object StatusBarGridHook : YukiBaseHooker() {
         var attached = false
         var applying = false
         var broken = false
+        // 是否正在应用网格布局（开关关闭时还原并停止指标线程）
+        var gridActive = false
         var thread: HandlerThread? = null
 
         @Volatile
@@ -388,13 +387,13 @@ object StatusBarGridHook : YukiBaseHooker() {
             if (attached) return
             attached = true
             root.viewTreeObserver.addOnPreDrawListener(preDrawListener)
-            startMetrics()
             root.requestLayout()
             root.invalidate()
         }
 
         fun detach() {
             attached = false
+            gridActive = false
             main.removeCallbacksAndMessages(null)
             stopMetrics()
             restore()
@@ -423,6 +422,19 @@ object StatusBarGridHook : YukiBaseHooker() {
             if (id == ID_NOTIFICATIONS) notificationTwoRows else systemTwoRows
 
         fun layout() {
+            if (!gridEnabled) {
+                // 开关已关闭：还原几何并停止指标线程，等待再次开启
+                if (gridActive) {
+                    gridActive = false
+                    stopMetrics()
+                    restore()
+                }
+                return
+            }
+            if (!gridActive) {
+                gridActive = true
+                startMetrics()
+            }
             if (broken || applying || root.width == 0 || root.height == 0) return
             applying = true
             try {

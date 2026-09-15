@@ -18,7 +18,6 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
 import dev.lackluster.redmagichelper.hook.compat.type.java.UnitType
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 import kotlin.math.roundToInt
 
 // 一键连招 1~10 倍速 + 资格放行 (包名: cn.nubia.gamehelpmodule)
@@ -52,12 +51,10 @@ object NubiaComboSpeed : YukiBaseHooker() {
     private val replacedSourcePath = ThreadLocal<String?>()
 
     override fun onHook() {
-        hasEnable(Pref.Key.GameSpace.GAME_SPACE_COMBO_SPEED_ENABLED) {
-            installEligibilityHooks()
-            installEngineHooks()
-            installProviderHooks()
-            installPreviewHook()
-        }
+        installEligibilityHooks()
+        installEngineHooks()
+        installProviderHooks()
+        installPreviewHook()
     }
 
     private fun configured(): Boolean =

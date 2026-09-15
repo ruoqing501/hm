@@ -11,23 +11,21 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
 import dev.lackluster.redmagichelper.utils.factory.getResID
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 
 object NoVibrateVolKeyLongPress : YukiBaseHooker() {
     private const val TAG = "NoVibrateVolKeyLongPress"
 
 
     override fun onHook() {
-        hasEnable(Pref.Key.SystemUI.StatusBar.NO_VIBRATE_VOLKEY_LONG_PRESS) {
-            "com.zte.adapt.mifavor.volume.VolumeDialogImplAdapt".toClassOrNull()?.method {
-                name = "richTapVibrateForVolumeKeyLongPress"
-            }?.hook {
-                before {
-                    result = null
-                    YLog.debug("$TAG richTapVibrateForVolumeKeyLongPress")
-                }
-
+        "com.zte.adapt.mifavor.volume.VolumeDialogImplAdapt".toClassOrNull()?.method {
+            name = "richTapVibrateForVolumeKeyLongPress"
+        }?.hook {
+            before {
+                if (!Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.NO_VIBRATE_VOLKEY_LONG_PRESS, false)) return@before
+                result = null
+                YLog.debug("$TAG richTapVibrateForVolumeKeyLongPress")
             }
+
         }
     }
 }

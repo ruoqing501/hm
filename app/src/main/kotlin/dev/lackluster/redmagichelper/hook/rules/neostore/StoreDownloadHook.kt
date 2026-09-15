@@ -5,7 +5,6 @@ import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 
 // 努比亚应用中心：自定义同时下载数量
 object StoreDownloadHook : YukiBaseHooker() {
@@ -13,10 +12,8 @@ object StoreDownloadHook : YukiBaseHooker() {
     private const val TAG = "StoreDownloadHook"
 
     override fun onHook() {
-        hasEnable(Pref.Key.NeoStore.STORE_DOWNLOAD_ENABLED) {
-            hookConfigMgrCount()
-            hookDownloadServiceResize()
-        }
+        hookConfigMgrCount()
+        hookDownloadServiceResize()
     }
 
     private val downloadCount: Int
@@ -33,6 +30,7 @@ object StoreDownloadHook : YukiBaseHooker() {
                 returnType = IntType
             }.hook {
                 before {
+                    if (!Prefs.getBoolean(Pref.Key.NeoStore.STORE_DOWNLOAD_ENABLED, false)) return@before
                     result = downloadCount
                 }
             }
@@ -49,6 +47,7 @@ object StoreDownloadHook : YukiBaseHooker() {
                 param(IntType)
             }.hook {
                 before {
+                    if (!Prefs.getBoolean(Pref.Key.NeoStore.STORE_DOWNLOAD_ENABLED, false)) return@before
                     args[0] = downloadCount
                 }
             }

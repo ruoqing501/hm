@@ -54,6 +54,7 @@ import dev.lackluster.redmagichelper.ui.page.StatusBarTimeIndicatorPage
 import dev.lackluster.redmagichelper.ui.page.SystemDesktopPage
 import dev.lackluster.redmagichelper.ui.page.SystemDesktopRecentTasksPage
 import dev.lackluster.redmagichelper.ui.page.SystemPageFontPage
+import dev.lackluster.redmagichelper.ui.page.SystemUIStatusBarPage
 import dev.lackluster.redmagichelper.ui.page.SystemSettingsPage
 import dev.lackluster.redmagichelper.ui.page.SystemUpdatePage
 import dev.lackluster.redmagichelper.ui.page.ThemePage
@@ -152,6 +153,7 @@ class MainActivity : HyperXActivity() {
                 miuixComposable(Pages.STATUS_BAR_DISPLAY_BATTERY_INFO) { StatusBarDisplayBatteryInfoPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR_LAYOUT) { StatusBaLayoutPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.SYSTEM_PAGE_FONT) { SystemPageFontPage(navController, adjustPadding, mode) }
+                miuixComposable(Pages.STATUS_BAR) { SystemUIStatusBarPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.GAME_SPACE) { GameSpacePage(navController, adjustPadding, mode) }
 
                 miuixComposable(Pages.SYSTEM_DESKTOP_RECENT_TASKS) { SystemDesktopRecentTasksPage(navController, adjustPadding, mode) }

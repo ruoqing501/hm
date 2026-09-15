@@ -8,7 +8,6 @@ import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.hook.compat.type.java.LongType
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 
 /**
  * AI 触发器间隔调整（移植自 LS_Augment AiTriggerSpeedHook 的 plugintrigger 部分）。
@@ -43,11 +42,9 @@ object AiTriggerSpeedHook : YukiBaseHooker() {
     private const val MIN_TOUCH_DOWN_MS = 10L
 
     override fun onHook() {
-        hasEnable(Pref.Key.GameSpace.AI_TRIGGER_SWITCH) {
-            hookHandlerSend()
-            hookPolicyCooldown()
-            hookPolicyIntervalSend()
-        }
+        hookHandlerSend()
+        hookPolicyCooldown()
+        hookPolicyIntervalSend()
     }
 
     private fun enabled() = Prefs.getBoolean(Pref.Key.GameSpace.AI_TRIGGER_SWITCH, false)

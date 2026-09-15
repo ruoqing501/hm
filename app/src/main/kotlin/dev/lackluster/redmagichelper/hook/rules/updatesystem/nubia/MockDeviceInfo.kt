@@ -11,7 +11,6 @@ import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.DexKit.dexKitBridge
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 import org.luckypray.dexkit.DexKitBridge
 import org.luckypray.dexkit.query.enums.StringMatchType
 import java.lang.reflect.Method
@@ -21,110 +20,91 @@ object MockDeviceInfo : YukiBaseHooker() {
     private const val TAG = "MockDeviceInfo"
 
     // 开关：模拟设备型号
-    private val system_update_mock_model by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_MODEL, false)
-    }
+    private val system_update_mock_model
+        get() = Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_MODEL, false)
 
     // 输入：模拟设备型号的值
-    private val system_update_mock_model_update by lazy {
-        Prefs.getString(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_MODEL_UPDATE, "NX809J")
-    }
+    private val system_update_mock_model_update
+        get() = Prefs.getString(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_MODEL_UPDATE, "NX809J")
 
     // 开关：模拟IMEI
-    private val system_update_mock_imei_sw by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_IMEI_SW, false)
-    }
+    private val system_update_mock_imei_sw
+        get() = Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_IMEI_SW, false)
 
     // 输入：模拟IMEI的值
-    private val system_update_mock_imei by lazy {
-//        Prefs.getString(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_IMEI, "004400152020000")
-        Prefs.getString(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_IMEI, "004400152020000")
-    }
+    private val system_update_mock_imei
+        get() = Prefs.getString(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_IMEI, "004400152020000")
 
     // 开关：模拟地区
-    private val system_update_mock_local_sw by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_LOCAL_SW, false)
-    }
+    private val system_update_mock_local_sw
+        get() = Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_LOCAL_SW, false)
 
     // 输入：模拟地区的值
-    private val system_update_mock_local by lazy {
-        Prefs.getString(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_LOCAL, "zh_CN")
-    }
+    private val system_update_mock_local
+        get() = Prefs.getString(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_LOCAL, "zh_CN")
 
     // 开关：模拟签名
-    private val system_update_mock_sign_sw by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_SIGN_SW, false)
-    }
+    private val system_update_mock_sign_sw
+        get() = Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_SIGN_SW, false)
 
     // 输入：模拟签名的值
-    private val system_update_mock_sign by lazy {
-        Prefs.getString(
+    private val system_update_mock_sign
+        get() = Prefs.getString(
             Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_SIGN,
             "a2e44d1795185b8e3281444007effb7f_WNJ.REDMAGIC.FOTA.16.0.000.000.2509092231"
         )
-    }
 
     // 开关：模拟指纹
-    private val system_update_mock_fingerprint_sw by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_FINGERPRINT_SW, false)
-    }
+    private val system_update_mock_fingerprint_sw
+        get() = Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_FINGERPRINT_SW, false)
 
     // 输入：模拟指纹的值
-    private val system_update_mock_fingerprint by lazy {
-        Prefs.getString(
+    private val system_update_mock_fingerprint
+        get() = Prefs.getString(
             Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_FINGERPRINT,
             "REDMAGIC/NX809J/NX809J:16/BQ2A.250705.001-BP2A.250605.031.A3/20250924.081558:user/release-keys"
         )
-    }
 
     // 开关：模拟构建显示版本
-    private val system_update_mock_build_display_sw by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_BUILD_DISPLAY_SW, false)
-    }
+    private val system_update_mock_build_display_sw
+        get() = Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_BUILD_DISPLAY_SW, false)
 
     // 输入：模拟构建显示版本的值
-    private val system_update_mock_build_display by lazy {
-        Prefs.getString(
+    private val system_update_mock_build_display
+        get() = Prefs.getString(
             Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_BUILD_DISPLAY,
             "RedMagicOS11.0.11MR1"
         )
-    }
 
     // 开关：模拟系统内部版本
-    private val system_update_mock_system_inner_version_sw by lazy {
-        Prefs.getBoolean(
+    private val system_update_mock_system_inner_version_sw
+        get() = Prefs.getBoolean(
             Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_SYSTEM_INNER_VERSION_SW,
             false
         )
-    }
 
     // 输入：模拟系统内部版本的值
-    private val system_update_mock_system_inner_version by lazy {
-        Prefs.getString(
+    private val system_update_mock_system_inner_version
+        get() = Prefs.getString(
             Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_SYSTEM_INNER_VERSION,
             "GEN_CN_NX809JV1.0.0B11MR1"
         )
-    }
 
     // 开关：模拟变体ID
-    private val system_update_mock_variant_id_sw by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_VARIANT_ID_SW, false)
-    }
+    private val system_update_mock_variant_id_sw
+        get() = Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_VARIANT_ID_SW, false)
 
     // 输入：模拟变体ID的值
-    private val system_update_mock_variant_id by lazy {
-        Prefs.getString(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_VARIANT_ID, "GEN_CN")
-    }
+    private val system_update_mock_variant_id
+        get() = Prefs.getString(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_VARIANT_ID, "GEN_CN")
 
     // 开关：模拟制造商
-    private val system_update_mock_manufacture_sw by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_MANUFACTURE_SW, false)
-    }
+    private val system_update_mock_manufacture_sw
+        get() = Prefs.getBoolean(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_MANUFACTURE_SW, false)
 
     // 输入：模拟制造商的值
-    private val system_update_mock_manufacture by lazy {
-        Prefs.getString(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_MANUFACTURE, "ZTE")
-    }
+    private val system_update_mock_manufacture
+        get() = Prefs.getString(Pref.Key.NubiaSystemUpdate.SYSTEM_UPDATE_MOCK_MANUFACTURE, "ZTE")
 
     override fun onHook() {
         // Hook逻辑待实现

@@ -9,14 +9,10 @@ import dev.lackluster.redmagichelper.utils.Prefs
 
 object StatusBarPullDownClock : YukiBaseHooker() {
     // 下拉状态栏时间[索引0表示第1个选项]
-    private val statusBarPullDownClockTextType by lazy {
+    private val statusBarPullDownClockTextType get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN, 0)
-    }
 
     override fun onHook() {
-        // 如果默认第1个选项【不显秒】，则不进行hook处理
-        if (statusBarPullDownClockTextType == 0) return
-
         // 尝试两个可能的类名，因为不同系统版本可能不同
         val ccHeaderClazz = "com.zte.controlcenter.widget.CCHeaderView".toClassOrNull()
             ?: return
@@ -25,6 +21,9 @@ object StatusBarPullDownClock : YukiBaseHooker() {
             name = "onFinishInflate"
         }.hook {
             after {
+                // 默认第1个选项【不显秒】时不处理
+                if (statusBarPullDownClockTextType == 0) return@after
+
                 // 获取 ClockView 字段
                 val clockView = this.instance.current().field {
                     name = "mClockView"

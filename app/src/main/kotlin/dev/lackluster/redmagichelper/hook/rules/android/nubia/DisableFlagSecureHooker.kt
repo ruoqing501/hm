@@ -7,184 +7,187 @@ import dev.lackluster.redmagichelper.hook.compat.factory.field
 import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 
 object DisableFlagSecureHooker : YukiBaseHooker() {
+
+    private fun isHookEnabled() = Prefs.getBoolean(Pref.Key.Android.DISABLE_FLAG_SECURE_ENHANCED, false)
 
     override fun onHook() {
         YLog.debug("[DisableFlagSecureHooker:开始Hook禁用FLAG_SECURE功能]")
 
-        // 总开关
-        hasEnable(Pref.Key.Android.DISABLE_FLAG_SECURE_ENHANCED) {
-            YLog.debug("[DisableFlagSecureHooker:总开关已启用]")
+        // 1. hook WindowState.isSecureLocked
+        val windowStateClass = "com.android.server.wm.WindowState".toClassOrNull()
+        if (windowStateClass == null) {
+            YLog.debug("[DisableFlagSecureHooker:WindowState类未找到，跳过hook isSecureLocked]")
+        } else {
+            YLog.debug("[DisableFlagSecureHooker:找到WindowState类，准备hook isSecureLocked方法]")
+            windowStateClass.method {
+                name = "isSecureLocked"
+            }.hook {
+                before {
+                    if (!isHookEnabled()) return@before
+                    YLog.debug("[DisableFlagSecureHooker:进入isSecureLocked方法hook]")
 
-            // 1. hook WindowState.isSecureLocked
-            val windowStateClass = "com.android.server.wm.WindowState".toClassOrNull()
-            if (windowStateClass == null) {
-                YLog.debug("[DisableFlagSecureHooker:WindowState类未找到，跳过hook isSecureLocked]")
-            } else {
-                YLog.debug("[DisableFlagSecureHooker:找到WindowState类，准备hook isSecureLocked方法]")
-                windowStateClass.method {
-                    name = "isSecureLocked"
-                }.hook {
-                    before {
-                        YLog.debug("[DisableFlagSecureHooker:进入isSecureLocked方法hook]")
-
-                        // 原代码中的逻辑
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                            YLog.debug("[DisableFlagSecureHooker:Android U+版本，执行堆栈检查]")
-                            val stackTrace = Throwable().stackTrace
-                            var match = false
-                            for (i in 2 until minOf(stackTrace.size, 8)) {
-                                val methodName = stackTrace[i].methodName
-                                if (methodName == "setInitialSurfaceControlProperties" || methodName == "createSurfaceLocked") {
-                                    YLog.debug("[DisableFlagSecureHooker:匹配到阻止方法，跳过hook]")
-                                    match = true
-                                    break
-                                }
-                            }
-                            if (match) {
-                                return@before
-                            }
-                        } else {
-                            YLog.debug("[DisableFlagSecureHooker:Android T及以下版本，执行堆栈检查]")
-                            val stackTrace = Throwable().stackTrace
-                            for (i in 4 until minOf(stackTrace.size, 8)) {
-                                val methodName = stackTrace[i].methodName
-                                if (methodName == "setInitialSurfaceControlProperties" || methodName == "createSurfaceLocked") {
-                                    YLog.debug("[DisableFlagSecureHooker:匹配到阻止方法，跳过hook]")
-                                    return@before
-                                }
+                    // 原代码中的逻辑
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        YLog.debug("[DisableFlagSecureHooker:Android U+版本，执行堆栈检查]")
+                        val stackTrace = Throwable().stackTrace
+                        var match = false
+                        for (i in 2 until minOf(stackTrace.size, 8)) {
+                            val methodName = stackTrace[i].methodName
+                            if (methodName == "setInitialSurfaceControlProperties" || methodName == "createSurfaceLocked") {
+                                YLog.debug("[DisableFlagSecureHooker:匹配到阻止方法，跳过hook]")
+                                match = true
+                                break
                             }
                         }
-                        YLog.debug("[DisableFlagSecureHooker:堆栈检查通过，设置isSecureLocked返回false]")
+                        if (match) {
+                            return@before
+                        }
+                    } else {
+                        YLog.debug("[DisableFlagSecureHooker:Android T及以下版本，执行堆栈检查]")
+                        val stackTrace = Throwable().stackTrace
+                        for (i in 4 until minOf(stackTrace.size, 8)) {
+                            val methodName = stackTrace[i].methodName
+                            if (methodName == "setInitialSurfaceControlProperties" || methodName == "createSurfaceLocked") {
+                                YLog.debug("[DisableFlagSecureHooker:匹配到阻止方法，跳过hook]")
+                                return@before
+                            }
+                        }
+                    }
+                    YLog.debug("[DisableFlagSecureHooker:堆栈检查通过，设置isSecureLocked返回false]")
+                    result = false
+                }
+            }
+        }
+
+        // 2. hook ScreenCapture相关方法
+        // Android 16(Vanilla Ice Cream)及以上版本使用新的字段名和类结构
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            YLog.debug("[DisableFlagSecureHooker:Android V+版本，处理ScreenCaptureInternal]")
+            // Android 16+ 使用 ScreenCaptureInternal
+            hookScreenCaptureInternal()
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            YLog.debug("[DisableFlagSecureHooker:Android U版本，处理ScreenCapture]")
+            // Android 14-15 使用 ScreenCapture
+            hookScreenCaptureU()
+        } else {
+            YLog.debug("[DisableFlagSecureHooker:Android T及以下版本，处理SurfaceControl]")
+            // Android 13及以下使用 SurfaceControl
+            hookScreenCaptureT()
+        }
+
+        // 3. hook DisplayControl.createDisplay（或createVirtualDisplay）
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            YLog.debug("[DisableFlagSecureHooker:Android V+版本，尝试hook DisplayControl.createVirtualDisplay]")
+            val displayControlClass = "com.android.server.display.DisplayControl".toClassOrNull()
+            if (displayControlClass == null) {
+                YLog.debug("[DisableFlagSecureHooker:DisplayControl类未找到]")
+            } else {
+                displayControlClass.method {
+                    name = "createVirtualDisplay"
+                }.hook {
+                    before {
+                        if (!isHookEnabled()) return@before
+                        YLog.debug("[DisableFlagSecureHooker:进入createVirtualDisplay方法hook]")
+                        if (this.args.size > 1) {
+                            this.args(1).setTrue()
+                        }
+                    }
+                }
+            }
+        } else {
+            YLog.debug("[DisableFlagSecureHooker:Android V以下版本，尝试hook SurfaceControl.createDisplay]")
+            val surfaceControlClass = "android.view.SurfaceControl".toClassOrNull()
+            if (surfaceControlClass == null) {
+                YLog.debug("[DisableFlagSecureHooker:SurfaceControl类未找到]")
+            } else {
+                surfaceControlClass.method {
+                    name = "createDisplay"
+                }.hook {
+                    before {
+                        if (!isHookEnabled()) return@before
+                        YLog.debug("[DisableFlagSecureHooker:进入createDisplay方法hook]")
+                        if (this.args.size > 1) {
+                            this.args(1).setTrue()
+                        }
+                    }
+                }
+            }
+        }
+
+        // 4. hook VirtualDisplayAdapter.createVirtualDisplayLocked
+        YLog.debug("[DisableFlagSecureHooker:尝试hook VirtualDisplayAdapter.createVirtualDisplayLocked]")
+        val virtualDisplayAdapterClass = "com.android.server.display.VirtualDisplayAdapter".toClassOrNull()
+        if (virtualDisplayAdapterClass == null) {
+            YLog.debug("[DisableFlagSecureHooker:VirtualDisplayAdapter类未找到]")
+        } else {
+            virtualDisplayAdapterClass.method {
+                name = "createVirtualDisplayLocked"
+            }.hook {
+                before {
+                    if (!isHookEnabled()) return@before
+                    YLog.debug("[DisableFlagSecureHooker:进入createVirtualDisplayLocked方法hook]")
+                    if (this.args.size > 2) {
+                        val caller = this.args(2).int()
+                        if (caller >= 10000 && this.args(1).any() == null) {
+                            return@before
+                        }
+
+                        for (i in 3 until this.args.size) {
+                            val arg = this.args(i).any()
+                            if (arg is Int) {
+                                val flags = arg or DisplayManager.VIRTUAL_DISPLAY_FLAG_SECURE
+                                this.args(i).set(flags)
+                                return@before
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 5. hook ActivityTaskManagerService.registerScreenCaptureObserver（U以上）
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            YLog.debug("[DisableFlagSecureHooker:Android U+版本，尝试hook ActivityTaskManagerService.registerScreenCaptureObserver]")
+            val atmsClass = "com.android.server.wm.ActivityTaskManagerService".toClassOrNull()
+            if (atmsClass == null) {
+                YLog.debug("[DisableFlagSecureHooker:ActivityTaskManagerService类未找到]")
+            } else {
+                atmsClass.method {
+                    name = "registerScreenCaptureObserver"
+                }.hook {
+                    before {
+                        if (!isHookEnabled()) return@before
+                        result = null
+                    }
+                }
+            }
+        }
+
+        // 6. hook WindowManagerService.registerScreenRecordingCallback（V以上）
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            YLog.debug("[DisableFlagSecureHooker:Android V+版本，尝试hook WindowManagerService.registerScreenRecordingCallback]")
+            val wmsClass = "com.android.server.wm.WindowManagerService".toClassOrNull()
+            if (wmsClass == null) {
+                YLog.debug("[DisableFlagSecureHooker:WindowManagerService类未找到]")
+            } else {
+                wmsClass.method {
+                    name = "registerScreenRecordingCallback"
+                }.hook {
+                    before {
+                        if (!isHookEnabled()) return@before
                         result = false
                     }
                 }
             }
+        }
 
-            // 2. hook ScreenCapture相关方法
-            // Android 16(Vanilla Ice Cream)及以上版本使用新的字段名和类结构
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                YLog.debug("[DisableFlagSecureHooker:Android V+版本，处理ScreenCaptureInternal]")
-                // Android 16+ 使用 ScreenCaptureInternal
-                hookScreenCaptureInternal()
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                YLog.debug("[DisableFlagSecureHooker:Android U版本，处理ScreenCapture]")
-                // Android 14-15 使用 ScreenCapture
-                hookScreenCaptureU()
-            } else {
-                YLog.debug("[DisableFlagSecureHooker:Android T及以下版本，处理SurfaceControl]")
-                // Android 13及以下使用 SurfaceControl
-                hookScreenCaptureT()
-            }
+        // 7. hook ScreenshotHardwareBuffer.containsSecureLayers
+        hookScreenshotHardwareBuffer()
 
-            // 3. hook DisplayControl.createDisplay（或createVirtualDisplay）
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                YLog.debug("[DisableFlagSecureHooker:Android V+版本，尝试hook DisplayControl.createVirtualDisplay]")
-                val displayControlClass = "com.android.server.display.DisplayControl".toClassOrNull()
-                if (displayControlClass == null) {
-                    YLog.debug("[DisableFlagSecureHooker:DisplayControl类未找到]")
-                } else {
-                    displayControlClass.method {
-                        name = "createVirtualDisplay"
-                    }.hook {
-                        before {
-                            YLog.debug("[DisableFlagSecureHooker:进入createVirtualDisplay方法hook]")
-                            if (this.args.size > 1) {
-                                this.args(1).setTrue()
-                            }
-                        }
-                    }
-                }
-            } else {
-                YLog.debug("[DisableFlagSecureHooker:Android V以下版本，尝试hook SurfaceControl.createDisplay]")
-                val surfaceControlClass = "android.view.SurfaceControl".toClassOrNull()
-                if (surfaceControlClass == null) {
-                    YLog.debug("[DisableFlagSecureHooker:SurfaceControl类未找到]")
-                } else {
-                    surfaceControlClass.method {
-                        name = "createDisplay"
-                    }.hook {
-                        before {
-                            YLog.debug("[DisableFlagSecureHooker:进入createDisplay方法hook]")
-                            if (this.args.size > 1) {
-                                this.args(1).setTrue()
-                            }
-                        }
-                    }
-                }
-            }
-
-            // 4. hook VirtualDisplayAdapter.createVirtualDisplayLocked
-            YLog.debug("[DisableFlagSecureHooker:尝试hook VirtualDisplayAdapter.createVirtualDisplayLocked]")
-            val virtualDisplayAdapterClass = "com.android.server.display.VirtualDisplayAdapter".toClassOrNull()
-            if (virtualDisplayAdapterClass == null) {
-                YLog.debug("[DisableFlagSecureHooker:VirtualDisplayAdapter类未找到]")
-            } else {
-                virtualDisplayAdapterClass.method {
-                    name = "createVirtualDisplayLocked"
-                }.hook {
-                    before {
-                        YLog.debug("[DisableFlagSecureHooker:进入createVirtualDisplayLocked方法hook]")
-                        if (this.args.size > 2) {
-                            val caller = this.args(2).int()
-                            if (caller >= 10000 && this.args(1).any() == null) {
-                                return@before
-                            }
-
-                            for (i in 3 until this.args.size) {
-                                val arg = this.args(i).any()
-                                if (arg is Int) {
-                                    val flags = arg or DisplayManager.VIRTUAL_DISPLAY_FLAG_SECURE
-                                    this.args(i).set(flags)
-                                    return@before
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // 5. hook ActivityTaskManagerService.registerScreenCaptureObserver（U以上）
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                YLog.debug("[DisableFlagSecureHooker:Android U+版本，尝试hook ActivityTaskManagerService.registerScreenCaptureObserver]")
-                val atmsClass = "com.android.server.wm.ActivityTaskManagerService".toClassOrNull()
-                if (atmsClass == null) {
-                    YLog.debug("[DisableFlagSecureHooker:ActivityTaskManagerService类未找到]")
-                } else {
-                    atmsClass.method {
-                        name = "registerScreenCaptureObserver"
-                    }.hook {
-                        before {
-                            result = null
-                        }
-                    }
-                }
-            }
-
-            // 6. hook WindowManagerService.registerScreenRecordingCallback（V以上）
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                YLog.debug("[DisableFlagSecureHooker:Android V+版本，尝试hook WindowManagerService.registerScreenRecordingCallback]")
-                val wmsClass = "com.android.server.wm.WindowManagerService".toClassOrNull()
-                if (wmsClass == null) {
-                    YLog.debug("[DisableFlagSecureHooker:WindowManagerService类未找到]")
-                } else {
-                    wmsClass.method {
-                        name = "registerScreenRecordingCallback"
-                    }.hook {
-                        before {
-                            result = false
-                        }
-                    }
-                }
-            }
-
-            // 7. hook ScreenshotHardwareBuffer.containsSecureLayers
-            hookScreenshotHardwareBuffer()
-
-            YLog.debug("[DisableFlagSecureHooker:所有hook点处理完成]")
-        } ?: YLog.debug("[DisableFlagSecureHooker:总开关未启用，跳过所有hook]")
+        YLog.debug("[DisableFlagSecureHooker:所有hook点处理完成]")
 
         YLog.debug("[DisableFlagSecureHooker:Hook过程结束]")
     }
@@ -208,6 +211,7 @@ object DisableFlagSecureHooker : YukiBaseHooker() {
             name = "nativeCaptureDisplay"
         }.hook {
             before {
+                if (!isHookEnabled()) return@before
                 val captureArgs = this.args().first()
                 captureArgs.let { argsObj ->
                     // Android 16+ 使用 mSecureContentPolicy 字段
@@ -226,6 +230,7 @@ object DisableFlagSecureHooker : YukiBaseHooker() {
             name = "nativeCaptureLayers"
         }.hook {
             before {
+                if (!isHookEnabled()) return@before
                 val captureArgs = this.args().first()
                 captureArgs.let { argsObj ->
                     val securePolicyField = captureArgsClass.field {
@@ -261,6 +266,7 @@ object DisableFlagSecureHooker : YukiBaseHooker() {
             name = "nativeCaptureDisplay"
         }.hook {
             before {
+                if (!isHookEnabled()) return@before
                 val captureArgs = this.args().first()
                 captureArgs.let { argsObj ->
                     for (fieldName in possibleFieldNames) {
@@ -291,6 +297,7 @@ object DisableFlagSecureHooker : YukiBaseHooker() {
             name = "nativeCaptureLayers"
         }.hook {
             before {
+                if (!isHookEnabled()) return@before
                 val captureArgs = this.args().first()
                 captureArgs.let { argsObj ->
                     for (fieldName in possibleFieldNames) {
@@ -336,6 +343,7 @@ object DisableFlagSecureHooker : YukiBaseHooker() {
             name = "nativeCaptureDisplay"
         }.hook {
             before {
+                if (!isHookEnabled()) return@before
                 val captureArgs = this.args().first()
                 captureArgs.let { argsObj ->
                     val captureSecureLayersField = captureArgsClass.field {
@@ -362,6 +370,7 @@ object DisableFlagSecureHooker : YukiBaseHooker() {
             name = "nativeCaptureLayers"
         }.hook {
             before {
+                if (!isHookEnabled()) return@before
                 val captureArgs = this.args().first()
                 captureArgs.let { argsObj ->
                     val captureSecureLayersField = captureArgsClass.field {
@@ -401,6 +410,7 @@ object DisableFlagSecureHooker : YukiBaseHooker() {
             name = "containsSecureLayers"
         }.hook {
             before {
+                if (!isHookEnabled()) return@before
                 result = false
             }
         }

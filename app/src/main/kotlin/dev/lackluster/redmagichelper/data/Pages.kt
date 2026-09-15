@@ -9,6 +9,7 @@ object Pages {
     const val GAME_SPACE = "GameSpacePage"
     const val STATUS_BAR_TIME_INDICATOR = "StatusBarTimeIndicatorPage"
     const val SYSTEM_PAGE_FONT = "SystemPageFontPage"
+    const val STATUS_BAR = "SystemUIStatusBarPage"
     const val STATUS_BAR_DUAL= "StatusBarDualPage"
     const val STATUS_BAR_GRID= "StatusBarGridPage"
     const val STATUS_BAR_LAYOUT= "StatusBarLayoutPage"

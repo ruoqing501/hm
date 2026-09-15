@@ -5,7 +5,7 @@ import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 import dev.lackluster.redmagichelper.utils.nubia.Deoptimizer
 import java.lang.reflect.Member
 
@@ -15,23 +15,25 @@ object RmIntentHijack : YukiBaseHooker() {
     
 
     override fun onHook() {
-        hasEnable(Pref.Key.Android.ANDROID_REMOVE_INTENT_HIJACK_CONTENT) {
-            // 获取 ResolveIntentHelper 类
-            val resolveIntentHelperClass = "com.android.server.pm.ResolveIntentHelper".toClassOrNull()
-                ?: run {
-                    YLog.error("$TAG 无法找到 ResolveIntentHelper 类")
-                    return@hasEnable
-                }
-
-            YLog.info("$TAG 开始 Hook ResolveIntentHelper 类")
-
-            // Hook isCtsTesting 方法，强制返回 true
-            resolveIntentHelperClass.method {
-                name = "isCtsTesting"
-            }.hook {
-                replaceToTrue()
-                YLog.debug("$TAG Hook isCtsTesting 方法，强制返回 true")
+        // 获取 ResolveIntentHelper 类
+        val resolveIntentHelperClass = "com.android.server.pm.ResolveIntentHelper".toClassOrNull()
+            ?: run {
+                YLog.error("$TAG 无法找到 ResolveIntentHelper 类")
+                return
             }
+
+        YLog.info("$TAG 开始 Hook ResolveIntentHelper 类")
+
+        // Hook isCtsTesting 方法，强制返回 true
+        resolveIntentHelperClass.method {
+            name = "isCtsTesting"
+        }.hook {
+            before {
+                if (!Prefs.getBoolean(Pref.Key.Android.ANDROID_REMOVE_INTENT_HIJACK_CONTENT, false)) return@before
+                result = true
+            }
+            YLog.debug("$TAG Hook isCtsTesting 方法，强制返回 true")
+        }
 
 //            // 使用YukiHookAPI的before/after hook机制处理chooseBestActivity方法
 //            resolveIntentHelperClass.method {
@@ -46,8 +48,7 @@ object RmIntentHijack : YukiBaseHooker() {
 //                    YLog.debug("$TAG chooseBestActivity 方法执行完成")
 //                }
 //            }
-            Deoptimizer.deoptimizeMethod(TAG,resolveIntentHelperClass, "chooseBestActivity")
+        Deoptimizer.deoptimizeMethod(TAG,resolveIntentHelperClass, "chooseBestActivity")
 
-        }
     }
 }

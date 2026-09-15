@@ -6,7 +6,6 @@ import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.type.java.LongType
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 import java.util.concurrent.ThreadPoolExecutor
 
 /**
@@ -27,10 +26,8 @@ object AiTriggerSpeedHook : YukiBaseHooker() {
     private const val MIN_TEMPLATE_SCAN_MS = 80L
 
     override fun onHook() {
-        hasEnable(Pref.Key.GameSpace.AI_TRIGGER_SWITCH) {
-            hookPostDelayed()
-            listOf(SGAME_TOY, COMMON_TOY).forEach { hookToy(it) }
-        }
+        hookPostDelayed()
+        listOf(SGAME_TOY, COMMON_TOY).forEach { hookToy(it) }
     }
 
     private fun enabled() = Prefs.getBoolean(Pref.Key.GameSpace.AI_TRIGGER_SWITCH, false)

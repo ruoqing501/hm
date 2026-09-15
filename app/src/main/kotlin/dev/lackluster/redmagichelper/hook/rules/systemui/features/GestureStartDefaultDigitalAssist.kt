@@ -15,7 +15,7 @@ import dev.lackluster.redmagichelper.hook.rules.updatesystem.nubia.MockDeviceInf
 import dev.lackluster.redmagichelper.hook.rules.updatesystem.nubia.MockDeviceInfo.findDeviceModel
 import dev.lackluster.redmagichelper.utils.DexKit
 import dev.lackluster.redmagichelper.utils.DexKit.dexKitBridge
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 import org.luckypray.dexkit.DexKitBridge
 import org.luckypray.dexkit.result.ClassData
 import java.lang.reflect.Method
@@ -24,11 +24,9 @@ object GestureStartDefaultDigitalAssist : YukiBaseHooker() {
     private const val TAG = "GestureStartDefaultDigitalAssist"
 
     override fun onHook() {
-        hasEnable(Pref.Key.SystemUI.StatusBar.GESTURE_USE_DEFAULT_DIGITAL_ASSIST) {
-            YLog.debug("$TAG start")
-            handleGetAssistInfoForUserMethod()
-            handleHandleStartAssist()
-        }
+        YLog.debug("$TAG start")
+        handleGetAssistInfoForUserMethod()
+        handleHandleStartAssist()
     }
     /*
     * 获取类的方法
@@ -52,6 +50,7 @@ object GestureStartDefaultDigitalAssist : YukiBaseHooker() {
         findGetAssistInfoForUser(dexKitBridge)?.let { method ->
             method.hook {
                 before {
+                    if (!Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.GESTURE_USE_DEFAULT_DIGITAL_ASSIST, false)) return@before
                     result = args[0]
                 }
             }
@@ -76,6 +75,7 @@ object GestureStartDefaultDigitalAssist : YukiBaseHooker() {
         findHandleStartAssist(dexKitBridge)?.let { method ->
             method.hook {
                 before {
+                    if (!Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.GESTURE_USE_DEFAULT_DIGITAL_ASSIST, false)) return@before
                     result = false
                 }
             }

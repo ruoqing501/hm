@@ -18,30 +18,29 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.hook.rules.systemui.test.TextViewAnalyzer
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 import java.lang.reflect.Field
 import java.text.SimpleDateFormat
 import java.util.Date
 
 object NubiaFont : YukiBaseHooker() {
     private const val TAG = "NubiaFont"
-    private val lockScreenFonPath by lazy {
+    private val lockScreenFonPath get() =
         Prefs.getString(Pref.Key.SystemUI.FontWeight.FONT_PATH, "/system/fonts/AndroidClock.ttf")
-    }
 
-    private val lockScreenFontZoom by lazy {
+    private val lockScreenFontZoom get() =
         Prefs.getFloat(Pref.Key.SystemUI.FontWeight.LOCK_SCREEN_FONT_SIZE_ZOOM, -1f)
-    }
 
 
     override fun onHook() {
 //        lockScreenClockFontHooker()
 //        keyGuardShow()
-        hasEnable(Pref.Key.SystemUI.FontWeight.LOCKSCREEN_CLOCK){
-            defaultLockScreenSetting()
-            hookAllLockScreenClockFonts()
-        }
+        defaultLockScreenSetting()
+        hookAllLockScreenClockFonts()
     }
+
+    /** 锁屏时钟字体开关（回调内实时读取，切换即时生效） */
+    private val lockScreenClockEnabled get() =
+        Prefs.getBoolean(Pref.Key.SystemUI.FontWeight.LOCKSCREEN_CLOCK, false)
 
 
     //   private fun keyGuardShow(){
@@ -67,6 +66,7 @@ object NubiaFont : YukiBaseHooker() {
             param("com.zte.mifavor.keyguard.personalclock.MyClockStyleModel\$StyleData".toClass())
         }.hook {
             after {
+                if (!lockScreenClockEnabled) return@after
                 try {
                     // 使用 Java 反射获取 mClockView 字段
                     val clazz = instance.javaClass
@@ -125,6 +125,7 @@ object NubiaFont : YukiBaseHooker() {
                         param("com.zte.mifavor.keyguard.personalclock.MyClockStyleModel\$StyleData".toClass())
                     }.hook {
                         after {
+                            if (!lockScreenClockEnabled) return@after
                             try {
                                 applyLockScreenFontSettings(instance, className)
                             } catch (e: Exception) {

@@ -14,51 +14,43 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
 import dev.lackluster.redmagichelper.utils.factory.getResID
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 
 object QSCustom : YukiBaseHooker() {
     private const val TAG = "NubiaQSCustom"
 
-    private val mSwitch by lazy {
+    private val mSwitch get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.QS_CUSTOM_ROW_COLUMN_SWITCH, false)
-    }
 
-    private val mRows by lazy {
+    private val mRows get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.QS_CUSTOM_ROW, 4)
-    }
-    private val mRowsLandscape by lazy {
+    private val mRowsLandscape get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.QS_CUSTOM_ROW_LANDSCAPE, 1)
-    }
 
     // 列
-    private val mColumns by lazy {
+    private val mColumns get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.QS_CUSTOM_COLUMN, 5)
-    }
 
     // 列（横屏）
-    private val mColumnsLandscape by lazy {
+    private val mColumnsLandscape get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.QS_CUSTOM_COLUMN_LANDSCAPE, 7)
-    }
-    private val mColumnsEditor by lazy {
+    private val mColumnsEditor get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.QS_CUSTOM_COLUMN_EDIT, 5)
-    }
-    private val mColumnsLandscapeEditor by lazy {
+    private val mColumnsLandscapeEditor get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.QS_CUSTOM_COLUMN_EDIT_LANDSCAPE, 6)
-    }
 
     override fun onHook() {
 
-        hasEnable(Pref.Key.SystemUI.StatusBar.QS_CUSTOM_ROW_COLUMN_SWITCH) {
-            val mfvTileLayoutAdaptClazz =
-                "com.zte.adapt.mifavor.qs.MfvTileLayoutAdapt".toClassOrNull()
-            val mfvTileLayoutClazz = "com.zte.mifavor.qs.MfvTileLayout".toClassOrNull()
-            val mfvTileLayoutClazz2 = "com.android.systemui.qs.SideLabelTileLayout".toClassOrNull()
+        val mfvTileLayoutAdaptClazz =
+            "com.zte.adapt.mifavor.qs.MfvTileLayoutAdapt".toClassOrNull()
+        val mfvTileLayoutClazz = "com.zte.mifavor.qs.MfvTileLayout".toClassOrNull()
+        val mfvTileLayoutClazz2 = "com.android.systemui.qs.SideLabelTileLayout".toClassOrNull()
             val getTileColumnsMe = "com.zte.utils.QsDimenUtils\$Companion".toClassOrNull()?.method {
                 name = "getTileColumns"
             }
             // 设置列数(整体下拉)
             getTileColumnsMe?.hook {
                 before {
+                    if (!mSwitch) return@before
                     /**
                      * 获取当前应用程序的屏幕方向。
                      *
@@ -93,6 +85,7 @@ object QSCustom : YukiBaseHooker() {
                     name = "getColumns"
                 }?.hook {
                     before {
+                        if (!mSwitch) return@before
                         val orientation =
                             (appContext ?: return@before).resources.configuration.orientation
 //                        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -110,6 +103,7 @@ object QSCustom : YukiBaseHooker() {
                 param(IntType)
             }?.hook{
                 before {
+                    if (!mSwitch) return@before
                     val orientation =
                         (appContext ?: return@before).resources.configuration.orientation
                     result = if (orientation == Configuration.ORIENTATION_PORTRAIT) mColumns else mColumnsLandscape
@@ -142,6 +136,7 @@ object QSCustom : YukiBaseHooker() {
                     param(IntType)
                 }?.hook {
                     before {
+                        if (!mSwitch) return@before
                         val orientation =
                             (appContext ?: return@before).resources.configuration.orientation
                         result =
@@ -154,6 +149,7 @@ object QSCustom : YukiBaseHooker() {
                 param(IntType, IntType)
             }?.hook{
                 after {
+                    if (!mSwitch) return@after
                     val viewGroup = instance as ViewGroup
                     val orientation = viewGroup.context.resources.configuration.orientation
 
@@ -173,7 +169,6 @@ object QSCustom : YukiBaseHooker() {
             }
             // 左右下拉（行和列）
             hookControlCenterTileLayoutOnMeasure()
-        }
 
     }
     // 左右下拉（控制中心，磁贴的行和列）
@@ -184,6 +179,7 @@ object QSCustom : YukiBaseHooker() {
             param(IntType,IntType)
         }?.hook{
             before {
+                if (!mSwitch) return@before
                 YLog.debug("QSCustom: ControlCenterTileLayout.onMeasure - mSwitch: $mSwitch")
                 try {
                     val orientation = (instance as ViewGroup).context.resources.configuration.orientation

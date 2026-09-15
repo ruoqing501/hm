@@ -8,23 +8,21 @@ import dev.lackluster.redmagichelper.utils.Prefs
 
 object StatusBarIgnoreSysHideIcon : YukiBaseHooker() {
     private const val  TAG = "StatusBarIgnoreSysHideIcon"
-    private val ignoreSystem = Prefs.getBoolean(IconTurner.NUBIA_IGNORE_SYS_HIDE, false)
+    private val ignoreSystem get() = Prefs.getBoolean(IconTurner.NUBIA_IGNORE_SYS_HIDE, false)
 
     override fun onHook() {
         //小米的默认的方法
-        if (ignoreSystem) {
-          val statusBarIconView =  "com.android.systemui.statusbar.StatusBarIconView".toClassOrNull()?.apply {
-                method {
-                    name = "isIconBlocked"
-                }.hook {
-                    before {
-
-                        result = true
+        "com.android.systemui.statusbar.StatusBarIconView".toClassOrNull()?.apply {
+            method {
+                name = "isIconBlocked"
+            }.hook {
+                before {
+                    if (!ignoreSystem) return@before
+                    result = true
 //                        YLog.debug("$TAG StatusBarIconView.isIconBlocked")
-                    }
                 }
-
             }
+
         }
 
     }

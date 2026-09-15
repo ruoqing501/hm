@@ -5,7 +5,7 @@ import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 import dev.lackluster.redmagichelper.utils.nubia.Deoptimizer
 
 object AllowUntrustedTouches : YukiBaseHooker() {
@@ -13,32 +13,33 @@ object AllowUntrustedTouches : YukiBaseHooker() {
 
     @SuppressLint("PrivateApi")
     override fun onHook() {
-        hasEnable(Pref.Key.Android.ANDROID_ALLOW_UNTRUSTED_TOUCHES) {
-            YLog.debug("$TAG 开始Hook")
-            val windowStateClass = "com.android.server.wm.WindowState".toClassOrNull()
-                ?: run {
-                    YLog.error("$TAG 无法找到 WindowState 类")
-                    return@hasEnable
-                }
-            YLog.debug("$TAG 找到 WindowState 类")
-            val classInputMonitor = "com.android.server.wm.InputMonitor".toClassOrNull()
-                ?: run {
-                    YLog.error("$TAG 无法找到 InputMonitor 类")
-                    return@hasEnable
-                }
-            YLog.debug("$TAG 找到 InputMonitor 类")
-
-            // Hook WindowState 的 getTouchOcclusionMode 方法
-            windowStateClass.apply {
-                method {
-                    name = "getTouchOcclusionMode"
-                }.hook {
-                    replaceTo(2) // 直接返回2 (ALLOW)
-                }
-                YLog.debug("$TAG Hook WindowState.getTouchOcclusionMode 成功")
+        YLog.debug("$TAG 开始Hook")
+        val windowStateClass = "com.android.server.wm.WindowState".toClassOrNull()
+            ?: run {
+                YLog.error("$TAG 无法找到 WindowState 类")
+                return
             }
+        YLog.debug("$TAG 找到 WindowState 类")
+        val classInputMonitor = "com.android.server.wm.InputMonitor".toClassOrNull()
+            ?: run {
+                YLog.error("$TAG 无法找到 InputMonitor 类")
+                return
+            }
+        YLog.debug("$TAG 找到 InputMonitor 类")
 
-            Deoptimizer.deoptimizeMethods(TAG,classInputMonitor, "populateOverlayInputInfo","populateInputWindowHandle")
+        // Hook WindowState 的 getTouchOcclusionMode 方法
+        windowStateClass.apply {
+            method {
+                name = "getTouchOcclusionMode"
+            }.hook {
+                before {
+                    if (!Prefs.getBoolean(Pref.Key.Android.ANDROID_ALLOW_UNTRUSTED_TOUCHES, false)) return@before
+                    result = 2 // 直接返回2 (ALLOW)
+                }
+            }
+            YLog.debug("$TAG Hook WindowState.getTouchOcclusionMode 成功")
         }
+
+        Deoptimizer.deoptimizeMethods(TAG,classInputMonitor, "populateOverlayInputInfo","populateInputWindowHandle")
     }
 }

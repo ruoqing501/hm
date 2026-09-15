@@ -9,16 +9,8 @@ import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
 
 object SkipApkScan : YukiBaseHooker() {
-    private val skipPkgScan by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaPackageInstaller.SKIP_PKG_INSTALLER_SCAN, false)
-    }
     @SuppressLint("PrivateApi")
     override fun onHook() {
-        if (!skipPkgScan){
-            YLog.debug("[SkipApkScan] 跳过APK扫描功能已关闭")
-            return
-        }
-
         YLog.debug("[SkipApkScan] 开始Hook跳过APK扫描功能")
         try {
             // Hook InstallStaging.StagingAsyncTask 的 onPostExecute 方法
@@ -28,6 +20,7 @@ object SkipApkScan : YukiBaseHooker() {
                     paramCount = 1
                 }.hook {
                     before {
+                        if (!Prefs.getBoolean(Pref.Key.NubiaPackageInstaller.SKIP_PKG_INSTALLER_SCAN, false)) return@before
                         YLog.debug("[SkipApkScan] 尝试跳过APK扫描")
 
                         // 设置 PackageUtil 中的 ZTE_FEATURE_ODM_VERTU 字段为 true

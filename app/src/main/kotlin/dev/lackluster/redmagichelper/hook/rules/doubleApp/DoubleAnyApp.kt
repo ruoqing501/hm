@@ -7,20 +7,21 @@ import dev.lackluster.redmagichelper.hook.compat.factory.current
 import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 // 双开任意应用
 object DoubleAnyApp : YukiBaseHooker() {
 
     private const val TAG = "NubiaDoubleApp"
 
     @SuppressLint("PrivateApi")
-    override fun onHook() = hasEnable(Pref.Key.Other.DOUBLE_ANY_APP) {
+    override fun onHook() {
         val updateUtilsClass = "com.zte.cn.doubleapp.common.UpdateUtils".toClass()
 
         updateUtilsClass.method {
             name = "getSupportApps"
         }.hook {
             before {
+                if (!Prefs.getBoolean(Pref.Key.Other.DOUBLE_ANY_APP, false)) return@before
                 val context = instance.current().field {
                     name = "mContext"
                 }.cast<Context>() ?: return@before

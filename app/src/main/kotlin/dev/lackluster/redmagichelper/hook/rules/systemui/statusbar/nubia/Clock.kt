@@ -43,93 +43,74 @@ class Clock: YukiBaseHooker() {
     private val statusBarPrefs by lazy { prefs("systemui\\status_bar\\status_bar_clock") }
 //    private val clockEnabled by lazy { statusBarPrefs.getBoolean("status_bar_clock", false) }
 
-    private val clockEnabled by lazy {
+    private val clockEnabled get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.TIME_INDICATOR, false)
-    }
     //    private val clockStyleSelectedOption by lazy { statusBarPrefs.getInt("ClockStyleSelectedOption", 0) }
-    private val clockStyleSelectedOption by lazy {
+    private val clockStyleSelectedOption get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.CLOCK_GEEK, false)
-    }
 //    private val showYears by lazy { statusBarPrefs.getBoolean("ShowYears", false) }
 
-    private val showYears by lazy {
+    private val showYears get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.SHOW_YEARS, false)
-    }
     //    private val showMonth by lazy { statusBarPrefs.getBoolean("ShowMonth", false) }
-    private val showMonth by lazy {
+    private val showMonth get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.SHOW_MONTH, false)
-    }
     //    private val showDay by lazy { statusBarPrefs.getBoolean("ShowDay", false) }
-    private val showDay by lazy {
+    private val showDay get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.SHOW_DAY, false)
-    }
 //    private val showWeek by lazy { statusBarPrefs.getBoolean("ShowWeek", false) }
 
-    private val showWeek by lazy {
+    private val showWeek get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.SHOW_WEEK, false)
-    }
 //    private val showCNHour by lazy { statusBarPrefs.getBoolean("ShowCNHour", false) }
 
-    private val showCNHour by lazy {
+    private val showCNHour get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.SHOW_CN_HOUR, false)
-    }
     //    private val showtimePeriod by lazy { statusBarPrefs.getBoolean("Showtime_period", false) }
-    private val showtimePeriod by lazy {
+    private val showtimePeriod get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.SHOW_PERIOD, false)
-    }
 //    private val showSeconds by lazy { statusBarPrefs.getBoolean("ShowSeconds", false) }
 
-    private val showSeconds by lazy {
+    private val showSeconds get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.SHOW_SECONDS, false)
-    }
 //    private val showMillisecond by lazy { statusBarPrefs.getBoolean("ShowMillisecond", false) }
 
-    private val showMillisecond by lazy {
+    private val showMillisecond get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.SHOW_MILLISECOND, false)
-    }
 //    private val hideSpace by lazy { statusBarPrefs.getBoolean("HideSpace", false) }
 
-    private val hideSpace by lazy {
+    private val hideSpace get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.HIDE_SPACE, false)
-    }
     //    private val dualRow by lazy { statusBarPrefs.getBoolean("DualRow", false) }
-    private val dualRow by lazy {
+    private val dualRow get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.DUAL_ROW, false)
-    }
 //    private val fontSize by lazy { statusBarPrefs.getFloat("ClockSize", 0f) }
 
-    private val fontSize by lazy {
+    private val fontSize get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.CLOCK_SIZE, 0).toFloat()
-    }
 
     private val updateSpeed by lazy { statusBarPrefs.getFloat("ClockUpdateSpeed", 0f) } //一般未实现.默认为0则不跟新，前端无开关
 //    private val customClockStyle by lazy { statusBarPrefs.getString("CustomClockStyle", "HH:mm") }
 
-    private val customClockStyle by lazy {
+    private val customClockStyle get() =
         Prefs.getString(Pref.Key.SystemUI.StatusBar.CLOCK_GEEK_FORMAT, "HH:mm").toString()
-    }
 //    private val customAlignment by lazy { statusBarPrefs.getInt("alignment", 0) }
 
-    private val customAlignment by lazy {
+    private val customAlignment get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.ALIGNMENT,  0)
-    }
 //    private val clockLeftPadding by lazy { statusBarPrefs.getFloat("LeftPadding", 0f) }
 
-    private val clockLeftPadding by lazy {
+    private val clockLeftPadding get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.NUBIA_CLOCK_PADDING_LEFT, 0).toFloat()
-    }
     //    private val clockRightPadding by lazy { statusBarPrefs.getFloat("RightPadding", 0f) }
-    private val clockRightPadding by lazy {
+    private val clockRightPadding get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.NUBIA_CLOCK_PADDING_RIGHT, 0).toFloat()
-    }
     //    private val clockTopPadding by lazy { statusBarPrefs.getFloat("TopPadding", 0f) }
-    private val clockTopPadding by lazy {
+    private val clockTopPadding get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.NUBIA_CLOCK_PADDING_TOP, 0).toFloat()
-    }
     //    private val clockBottomPadding by lazy { statusBarPrefs.getFloat("BottomPadding", 0f) }
-    private val clockBottomPadding by lazy {
+    private val clockBottomPadding get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.NUBIA_CLOCK_PADDING_DOWN, 0).toFloat()
-    }
 
     private lateinit var hookContext: Context
     private val sdfCache = mutableMapOf<String, SimpleDateFormat>()
@@ -138,8 +119,6 @@ class Clock: YukiBaseHooker() {
 
 //    @SuppressLint("SetTextI18n")
     override fun onHook() {
-        if (!clockEnabled) return
-
         loadApp("com.android.systemui") {
             val clockClass = "com.android.systemui.statusbar.policy.Clock".toClass()
 
@@ -161,6 +140,7 @@ class Clock: YukiBaseHooker() {
                 val isTargetClock = clockView.resources.getResourceEntryName(clockView.id) == "clock"
 //                        && isPhoneStatusBarClock(clockView)
                 if (!isTargetClock) return@after
+                if (!clockEnabled) return@after
 
                 setupClockView(clockView)
                 clockViewRef = WeakReference(clockView)
@@ -212,6 +192,7 @@ class Clock: YukiBaseHooker() {
         }.hook {
             before {
                 val clockView = instance<TextView>()
+                if (!clockEnabled) return@before
                 val isTargetClock = clockView.resources.getResourceEntryName(clockView.id) == "clock" &&
                         isPhoneStatusBarClock(clockView)
                 if(isTargetClock && showSeconds){
@@ -227,6 +208,7 @@ class Clock: YukiBaseHooker() {
             }
             after {
                 val clockView = instance<TextView>()
+                if (!clockEnabled) return@after
                 // 关键修改：同时判断id和父视图链（仅处理PhoneStatusBarView下的Clock）
                 val isTargetClock = clockView.resources.getResourceEntryName(clockView.id) == "clock"
                         && isPhoneStatusBarClock(clockView)

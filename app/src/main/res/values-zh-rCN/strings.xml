@@ -290,6 +290,7 @@
     <string name="systemui_others_monet_color_msg">以 # 开头的十六进制颜色代码\n（如 #FF123456 #FF00FF）</string>
     <string name="ui_title_systemui_control_center">控制中心</string>
     <string name="ui_title_systemui_status_bar">状态栏</string>
+    <string name="ui_title_status_bar">状态栏</string>
     <string name="ui_title_systemui_status_bar_network_speed">状态栏网络速度</string>
     <string name="status_bar_icon">状态栏图标</string>
     <string name="systemui_notif_disable_whitelist">禁用通知白名单</string>
@@ -777,6 +778,7 @@
     <string name="refresh_rate_unlock_165hz">解锁165hz选项</string>
     <string name="refresh_rate_unlock_165hz_tips">实际刷新率还是144hz，只是多个选项</string>
     <string name="ui_title_android_screenshot">截图</string>
+    <string name="ui_title_android_rercord_screen">录屏</string>
     <string name="ui_title_android_notification">通知</string>
     <string name="ui_title_android_remove_intent_hijack">意图劫持</string>
     <string name="android_remove_intent_hijack_content">意图劫持</string>

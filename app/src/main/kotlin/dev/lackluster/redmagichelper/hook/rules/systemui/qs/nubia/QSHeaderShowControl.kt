@@ -18,13 +18,11 @@ import dev.lackluster.redmagichelper.utils.factory.hasEnable
 object QSHeaderShowControl : YukiBaseHooker() {
     private const val TAG = "QSHeaderShowControl"
     // 配置项：快速设置显示运营商
-    private val qs_show_carrier by lazy {
+    private val qs_show_carrier get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.QS_SHOW_CARRIER, false)
-    }
     // 配置项：快速设置显示搜索按钮
-    private val qs_show_search by lazy {
+    private val qs_show_search get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.QS_SHOW_SEARCH, false)
-    }
 
     override fun onHook() {
       val ccHeaderClazz =  "com.zte.controlcenter.widget.CCHeaderView".toClassOrNull()

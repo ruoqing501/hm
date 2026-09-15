@@ -14,7 +14,7 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.BooleanType
 import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 import java.util.concurrent.atomic.AtomicBoolean
 
 //破坏神模式点击时，isOpenSuperResolution 被 Hook 返回 false。
@@ -33,35 +33,47 @@ object NubiaSuperResolution : YukiBaseHooker() {
 //        disableBiabloSuperResolutionCheck()
 //        disableSuperResolutionBiabloCheck()
 //        preventAutoDisableBiabloWhenSuperResOn()
-        hasEnable(Pref.Key.GameSpace.GAME_SPACE_ENABLE_SUPER_RESOLUTION_LOW){
-            // 新增：阻止超竞画质在节能/均衡模式下被自动关闭
-            preventAutoCloseSuperResolutionOnPowerSaving()
+        // 新增：阻止超竞画质在节能/均衡模式下被自动关闭
+        preventAutoCloseSuperResolutionOnPowerSaving()
 
-            // 新增：允许在节能/均衡模式下点击开启超竞画质时不弹窗
-            allowSuperResolutionInPowerSavingMode()
+        // 新增：允许在节能/均衡模式下点击开启超竞画质时不弹窗
+        allowSuperResolutionInPowerSavingMode()
 
-            // 移植自 LS_Augment SR-01: 点击超境画质磁贴时伪造低电量检测结果
-            fakeLowPowerOnSuperResolutionClick()
+        // 移植自 LS_Augment SR-01: 点击超境画质磁贴时伪造低电量检测结果
+        fakeLowPowerOnSuperResolutionClick()
 
-            // 移植自 LS_Augment SR-03: 新 OTA 混淆名 L(String,boolean)/i 的自动关闭拦截
-            preventAutoCloseSuperResolutionObfuscated()
-        }
+        // 移植自 LS_Augment SR-03: 新 OTA 混淆名 L(String,boolean)/i 的自动关闭拦截
+        preventAutoCloseSuperResolutionObfuscated()
+
         // 移植自 LS_Augment SuperMirrorDiabloHook: 超境画质与破坏神模式共存
-        hasEnable(Pref.Key.GameSpace.GAME_SPACE_SUPER_RESOLUTION_DIABLO_COEXIST){
-            // SR-02 共存分支: 点击超境画质时忽略破坏神模式开启状态 (mode 5 -> 3)
-            allowSuperResolutionWhenDiabloOn()
+        // SR-02 共存分支: 点击超境画质时忽略破坏神模式开启状态 (mode 5 -> 3)
+        allowSuperResolutionWhenDiabloOn()
 
-            // DB-01: 破坏神开启时忽略超境画质状态 (a0 / isOpenSuperResolution)
-            disableDiabloSuperResolutionGate()
+        // DB-01: 破坏神开启时忽略超境画质状态 (a0 / isOpenSuperResolution)
+        disableDiabloSuperResolutionGate()
 
-            // DB-02: 阻断因超境画质开启而自动关闭破坏神 (C0 / setBiabloModeEnable)
-            blockDiabloAutoReset()
-        }
+        // DB-02: 阻断因超境画质开启而自动关闭破坏神 (C0 / setBiabloModeEnable)
+        blockDiabloAutoReset()
 //        //隐藏在节能、均衡模式下超境模式弹窗提示
 //        hasEnable(Pref.Key.GameSpace.GAME_SPACE_DEVIL_MODE_ENABLE_SUPER_RESOLUTION_LOW_PROP_PROMPT){
 //            hideSuperResolutionLowPowerDialog()
 //        }
     }
+
+    private fun superResolutionSwitchEnabled() =
+        Prefs.getBoolean(Pref.Key.GameSpace.GAME_SPACE_SUPER_RESOLUTION_SWITCH, false)
+
+    private fun superResolutionLowEnabled() =
+        superResolutionSwitchEnabled() &&
+                Prefs.getBoolean(Pref.Key.GameSpace.GAME_SPACE_ENABLE_SUPER_RESOLUTION_LOW, false)
+
+    private fun diabloCoexistEnabled() =
+        superResolutionSwitchEnabled() &&
+                Prefs.getBoolean(Pref.Key.GameSpace.GAME_SPACE_SUPER_RESOLUTION_DIABLO_COEXIST, false)
+
+    private fun devilSuperResolutionEnabled() =
+        superResolutionSwitchEnabled() &&
+                Prefs.getBoolean(Pref.Key.GameSpace.GAME_SPACE_DEVIL_MODE_ENABLE_SUPER_RESOLUTION, false)
 
     /**
      * 阻止在节能/均衡模式下点击“超境画质”时弹出确认对话框
@@ -94,6 +106,7 @@ object NubiaSuperResolution : YukiBaseHooker() {
                 returnType = BooleanType
             }.hook {
                 after {
+                    if (!devilSuperResolutionEnabled()) return@after
                     // 检查调用栈：是否由 BiabloTile.handleClick 触发
                     val stackTrace = Thread.currentThread().stackTrace
                     val isCalledByBiabloHandle = stackTrace.any {
@@ -123,6 +136,7 @@ object NubiaSuperResolution : YukiBaseHooker() {
                 returnType = IntType
             }.hook {
                 after {
+                    if (!devilSuperResolutionEnabled()) return@after
                     val stackTrace = Thread.currentThread().stackTrace
                     val isCalledBySuperResHandle = stackTrace.any {
                         it.className == "cn.nubia.gameassist.plugin.tiles.SuperResolutionTile" &&
@@ -153,6 +167,7 @@ object NubiaSuperResolution : YukiBaseHooker() {
                 param(StringClass, BooleanType, BooleanType)
             }.hook {
                 before {
+                    if (!devilSuperResolutionEnabled()) return@before
                     val enable = args[1] as Boolean
                     val showDialog = args[2] as Boolean
                     // 拦截自动关闭（enable = false, showDialog = false）
@@ -185,6 +200,7 @@ object NubiaSuperResolution : YukiBaseHooker() {
                 param(StringClass, BooleanType)
             }.hook {
                 before {
+                    if (!superResolutionLowEnabled()) return@before
                     val enable = args[1] as? Boolean ?: return@before
                     if (!enable) {
                         // 检查调用栈，仅当来自 checkGameMode 时才拦截
@@ -215,6 +231,7 @@ object NubiaSuperResolution : YukiBaseHooker() {
                 returnType = IntType
             }.hook {
                 after {
+                    if (!superResolutionLowEnabled()) return@after
                     val stackTrace = Thread.currentThread().stackTrace
                     val isCalledBySuperResHandle = stackTrace.any {
                         it.className == "cn.nubia.gameassist.plugin.tiles.SuperResolutionTile" &&
@@ -252,6 +269,7 @@ object NubiaSuperResolution : YukiBaseHooker() {
             returnType = IntType
         }.hook {
             after {
+                if (!superResolutionLowEnabled()) return@after
                 if (args[1] != "low_power") return@after
                 val isTileClick = calledFrom(
                     "cn.nubia.gameassist.plugin.tiles.SuperResolutionTile",
@@ -276,6 +294,7 @@ object NubiaSuperResolution : YukiBaseHooker() {
                 param(StringClass, BooleanType)
             }.hook {
                 before {
+                    if (!superResolutionLowEnabled()) return@before
                     val enable = args[1] as? Boolean ?: return@before
                     if (!enable && calledFrom(
                             "cn.nubia.plugin.superresolution.SuperResolutionViewController", "i"
@@ -301,6 +320,7 @@ object NubiaSuperResolution : YukiBaseHooker() {
                 returnType = IntType
             }.hook {
                 after {
+                    if (!diabloCoexistEnabled()) return@after
                     val isTileClick = calledFrom(
                         "cn.nubia.gameassist.plugin.tiles.SuperResolutionTile",
                         "handleClick", "T"
@@ -327,6 +347,7 @@ object NubiaSuperResolution : YukiBaseHooker() {
                 returnType = BooleanType
             }.hook {
                 after {
+                    if (!diabloCoexistEnabled()) return@after
                     val isDiabloPath = calledFrom(
                         "cn.nubia.gameassist.plugin.tiles.BiabloTile",
                         "handleClick", "T"
@@ -353,6 +374,7 @@ object NubiaSuperResolution : YukiBaseHooker() {
                 param(StringClass, BooleanType, BooleanType)
             }.hook {
                 before {
+                    if (!diabloCoexistEnabled()) return@before
                     val enable = args[1] as? Boolean ?: return@before
                     val userAction = args[2] as? Boolean ?: return@before
                     if (!enable && !userAction && calledFrom(

@@ -44,55 +44,43 @@ object RecentTasksHook : YukiBaseHooker() {
     //private val displayStyle = 1  // 你可以根据需要修改此值，或接入配置
 
     // 总开关
-    private val enabled by lazy {
+    private fun enabled() =
         Prefs.getBoolean(Pref.Key.SystemDesktop.SYSTEM_DESKTOP_RECENT_TASK_DISPLAY_MEMORY, false)
-    }
+
     // 显示风格：0 = 简洁单行 (xx.xxG/xx.xxG)，1 = 三行详细（含百分比）
-    private val displayStyle by lazy {
-        Prefs.getInt( Pref.Key.SystemDesktop.DISPLAY_STYLE, 0)
-    }
+    private val displayStyle get() = Prefs.getInt(Pref.Key.SystemDesktop.DISPLAY_STYLE, 0)
 
     // 如果displayStyle = 1 则根据 它的索引值来决定显示的内容
     // 0 表示：  剩余内存+已用内存+总内存
     // 1 表示：  剩余内存+已用内存
     // 2 表示：  剩余内存
-    private val memoryDisplayStyle by lazy {
-        Prefs.getInt( Pref.Key.SystemDesktop.MEMORY_DISPLAY_STYLE, 0)
-    }
+    private val memoryDisplayStyle get() = Prefs.getInt(Pref.Key.SystemDesktop.MEMORY_DISPLAY_STYLE, 0)
 
 
 
     // 简约风格的布局
     // 横竖屏模式下的字体大小
-    private val portraitscreenMemoryFontSize by lazy {
-        Prefs.getFloat( Pref.Key.SystemDesktop.SIMPLE_PORTRAITSCREEN_MEMORY_FONT_SIZE, 10f)
-    }
-    private val landsacpeMemoryFontSize by lazy {
-        Prefs.getFloat( Pref.Key.SystemDesktop.SIMPLE_LANDSACPE_MEMORY_FONT_SIZE, 8f)
-    }
+    private val portraitscreenMemoryFontSize get() =
+        Prefs.getFloat(Pref.Key.SystemDesktop.SIMPLE_PORTRAITSCREEN_MEMORY_FONT_SIZE, 10f)
+    private val landsacpeMemoryFontSize get() =
+        Prefs.getFloat(Pref.Key.SystemDesktop.SIMPLE_LANDSACPE_MEMORY_FONT_SIZE, 8f)
     // 横竖屏模式下的高度
-    private val landsacpe_component_height by lazy {
-        Prefs.getInt( Pref.Key.SystemDesktop.SIMPLE_LANDSACPE_COMPONENT_HEIGHT, 80)
-    }
-    private val portraitscreen_component_height by lazy {
+    private val landsacpe_component_height get() =
+        Prefs.getInt(Pref.Key.SystemDesktop.SIMPLE_LANDSACPE_COMPONENT_HEIGHT, 80)
+    private val portraitscreen_component_height get() =
         Prefs.getInt(Pref.Key.SystemDesktop.SIMPLE_PORTRAITSCREEN_COMPONENT_HEIGHT, 85)
-    }
 
     // 经典风格的布局
     // 横竖屏模式下的字体大小
-    private val portraitscreenMemoryFontSize2 by lazy {
-        Prefs.getFloat( Pref.Key.SystemDesktop.CLASSICS_PORTRAITSCREEN_MEMORY_FONT_SIZE, 10f)
-    }
-    private val landsacpeMemoryFontSize2 by lazy {
-        Prefs.getFloat( Pref.Key.SystemDesktop.CLASSICS_LANDSACPE_MEMORY_FONT_SIZE, 8f)
-    }
+    private val portraitscreenMemoryFontSize2 get() =
+        Prefs.getFloat(Pref.Key.SystemDesktop.CLASSICS_PORTRAITSCREEN_MEMORY_FONT_SIZE, 10f)
+    private val landsacpeMemoryFontSize2 get() =
+        Prefs.getFloat(Pref.Key.SystemDesktop.CLASSICS_LANDSACPE_MEMORY_FONT_SIZE, 8f)
     // 横竖屏模式下的高度
-    private val landsacpe_component_height2 by lazy {
-        Prefs.getInt( Pref.Key.SystemDesktop.CLASSICS_LANDSACPE_COMPONENT_HEIGHT, 80)
-    }
-    private val portraitscreen_component_height2 by lazy {
+    private val landsacpe_component_height2 get() =
+        Prefs.getInt(Pref.Key.SystemDesktop.CLASSICS_LANDSACPE_COMPONENT_HEIGHT, 80)
+    private val portraitscreen_component_height2 get() =
         Prefs.getInt(Pref.Key.SystemDesktop.CLASSICS_PORTRAITSCREEN_COMPONENT_HEIGHT, 85)
-    }
 
 
 
@@ -125,12 +113,11 @@ object RecentTasksHook : YukiBaseHooker() {
 
     @SuppressLint("ResourceType", "RtlHardcoded")
     override fun onHook() {
-        // 总开关
-        if (!enabled) return
         "com.android.quickstep.views.OverviewActionsView".toClass().method {
             name = "onFinishInflate"
         }.hook {
             after {
+                if (!enabled()) return@after
                 val view = instance<View>()
                 val context = view.context
 
@@ -219,6 +206,7 @@ object RecentTasksHook : YukiBaseHooker() {
             param(IntType, IntType)
         }.hook {
             after {
+                if (!enabled()) return@after
                 val touchRotation = args[0] as Int
                 val displayRotation = args[1] as Int
                 YLog.debug(tag = TAG, msg = "Orientation update: touchRotation=$touchRotation, displayRotation=$displayRotation")
@@ -394,6 +382,14 @@ object RecentTasksHook : YukiBaseHooker() {
         val textView = memoryTextView?.get() ?: return
         val am = activityManager ?: return
 
+        // 开关关闭时隐藏已添加的内存视图（视图要等下次界面重建才会真正移除）
+        if (!enabled()) {
+            activityRef?.get()?.runOnUiThread {
+                if (textView.visibility != View.GONE) textView.visibility = View.GONE
+            }
+            return
+        }
+
         // 根据显示风格选择格式化方法
         val text = when (displayStyle) {
             //0 -> getMemoryTextSimple(am)      // 简洁单行-手动计算
@@ -404,6 +400,7 @@ object RecentTasksHook : YukiBaseHooker() {
         }
 
         activityRef?.get()?.runOnUiThread {
+            if (textView.visibility != View.VISIBLE) textView.visibility = View.VISIBLE
             textView.text = text
         }
     }

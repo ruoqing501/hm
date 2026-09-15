@@ -8,7 +8,7 @@ import dev.lackluster.redmagichelper.hook.compat.factory.field
 import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 import java.util.Calendar
 
 object TimeTitlePeriod : YukiBaseHooker() {
@@ -17,40 +17,38 @@ object TimeTitlePeriod : YukiBaseHooker() {
 
     @SuppressLint("PrivateApi")
     override fun onHook() {
-        // 显示时段开关
-        hasEnable(Pref.Key.NubiaSystemSettings.TIME_PICKER_PERIOD) {
-            YLog.debug("[WooBox-TimeTitlePeriod] 开始Hook时间选择器时段显示功能")
+        YLog.debug("[WooBox-TimeTitlePeriod] 开始Hook时间选择器时段显示功能")
 
-            try {
-                // Hook TimePreferenceController 的 getSummary 方法
-                "com.android.settings.datetime.TimePreferenceController".toClass().apply {
-                    method {
-                        name = "getSummary"
-                    }.hook {
-                        after {
-                            val originalSummary = result as? String ?: return@after
+        try {
+            // Hook TimePreferenceController 的 getSummary 方法
+            "com.android.settings.datetime.TimePreferenceController".toClass().apply {
+                method {
+                    name = "getSummary"
+                }.hook {
+                    after {
+                        if (!Prefs.getBoolean(Pref.Key.NubiaSystemSettings.TIME_PICKER_PERIOD, false)) return@after
+                        val originalSummary = result as? String ?: return@after
 
-                            // 获取当前时间
-                            val calendar = Calendar.getInstance()
-                            val hour = calendar.get(Calendar.HOUR_OF_DAY)
-                            val minute = calendar.get(Calendar.MINUTE)
+                        // 获取当前时间
+                        val calendar = Calendar.getInstance()
+                        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                        val minute = calendar.get(Calendar.MINUTE)
 
-                            // 获取时段描述
-                            val timePeriod = getTimePeriodDescription(hour, minute)
+                        // 获取时段描述
+                        val timePeriod = getTimePeriodDescription(hour, minute)
 
-                            // 格式化时间（移除AM/PM，添加时段）
-                            val formattedTime = formatTimeWithPeriod(originalSummary, timePeriod, hour, minute)
+                        // 格式化时间（移除AM/PM，添加时段）
+                        val formattedTime = formatTimeWithPeriod(originalSummary, timePeriod, hour, minute)
 
-                            result = formattedTime
+                        result = formattedTime
 
-                            YLog.debug("[WooBox-TimeTitlePeriod] 更新时间显示: $originalSummary -> $formattedTime")
-                        }
+                        YLog.debug("[WooBox-TimeTitlePeriod] 更新时间显示: $originalSummary -> $formattedTime")
                     }
                 }
-                YLog.debug("[WooBox-TimeTitlePeriod] Hook时间选择器时段显示功能完成")
-            } catch (e: Exception) {
-                YLog.debug("[WooBox-TimeTitlePeriod] Hook时间选择器时段显示时出错: ${e.message}", e)
             }
+            YLog.debug("[WooBox-TimeTitlePeriod] Hook时间选择器时段显示功能完成")
+        } catch (e: Exception) {
+            YLog.debug("[WooBox-TimeTitlePeriod] Hook时间选择器时段显示时出错: ${e.message}", e)
         }
     }
 

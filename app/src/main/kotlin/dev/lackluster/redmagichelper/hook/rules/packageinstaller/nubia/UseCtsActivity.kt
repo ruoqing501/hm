@@ -6,49 +6,47 @@ import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 
 object UseCtsActivity : YukiBaseHooker() {
     @SuppressLint("PrivateApi")
     override fun onHook() {
-        // 检测是否启用CTS测试安装
-        hasEnable(Pref.Key.NubiaPackageInstaller.CTS_TEST_INSTALLER){
-            YLog.debug("[UseCtsActivity] 开始 Hook CTS Activity 功能")
+        YLog.debug("[UseCtsActivity] 开始 Hook CTS Activity 功能")
 
-            val targetClass = "com.android.packageinstaller.InstallStart".toClassOrNull()
+        val targetClass = "com.android.packageinstaller.InstallStart".toClassOrNull()
 
-            if (targetClass == null) {
-                YLog.error("[UseCtsActivity] 无法加载 InstallStart 类")
-                return@hasEnable
-            }
-
-            YLog.debug("[UseCtsActivity] 成功加载 InstallStart 类")
-
-            // 使用 method 查找方法，指定参数类型
-            val targetMethod = targetClass.method {
-                name = "getCallingPackageNameForUid"
-                paramCount = 1
-                param(IntType)
-            }.ignored()  // 使用 ignored() 以防找不到方法
-
-            targetMethod.hook {
-                before {
-                    YLog.debug("[UseCtsActivity] getCallingPackageNameForUid 方法被调用，参数: uid=${this.args(0).int()}")
-
-                    // 设置固定返回值
-//                    this.result = "u9521.cts"
-                    this.result = "zuji.cts"
-
-                    YLog.debug("[UseCtsActivity] 已修改返回值为: zuji.cts")
-                }
-
-                after {
-                    YLog.debug("[UseCtsActivity] getCallingPackageNameForUid 方法执行完成，返回值: ${this.result}")
-                }
-            }
-
-            YLog.debug("[UseCtsActivity] CTS Activity Hook 设置完成")
+        if (targetClass == null) {
+            YLog.error("[UseCtsActivity] 无法加载 InstallStart 类")
+            return
         }
 
+        YLog.debug("[UseCtsActivity] 成功加载 InstallStart 类")
+
+        // 使用 method 查找方法，指定参数类型
+        val targetMethod = targetClass.method {
+            name = "getCallingPackageNameForUid"
+            paramCount = 1
+            param(IntType)
+        }.ignored()  // 使用 ignored() 以防找不到方法
+
+        targetMethod.hook {
+            before {
+                if (!Prefs.getBoolean(Pref.Key.NubiaPackageInstaller.CTS_TEST_INSTALLER, false)) return@before
+                YLog.debug("[UseCtsActivity] getCallingPackageNameForUid 方法被调用，参数: uid=${this.args(0).int()}")
+
+                // 设置固定返回值
+//                this.result = "u9521.cts"
+                this.result = "zuji.cts"
+
+                YLog.debug("[UseCtsActivity] 已修改返回值为: zuji.cts")
+            }
+
+            after {
+                if (!Prefs.getBoolean(Pref.Key.NubiaPackageInstaller.CTS_TEST_INSTALLER, false)) return@after
+                YLog.debug("[UseCtsActivity] getCallingPackageNameForUid 方法执行完成，返回值: ${this.result}")
+            }
+        }
+
+        YLog.debug("[UseCtsActivity] CTS Activity Hook 设置完成")
     }
 }

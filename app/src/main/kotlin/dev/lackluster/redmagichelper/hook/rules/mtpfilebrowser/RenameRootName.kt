@@ -7,12 +7,11 @@ import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 //重命名路径浏览名称
 object RenameRootName : YukiBaseHooker() {
     private const val TAG = "NubiaMtpFileBrowser"
 
-    override fun onHook() = hasEnable(Pref.Key.Other.MTP_RENAME_ROOT_NAME_SWITCH) {
+    override fun onHook() {
         val nubiaMtpStorage = "cn.nubia.filebrowser.mtpserver.mtp.MtpStorage".toClass()
 
         val mDescription = nubiaMtpStorage.getDeclaredField("mDescription").apply { isAccessible=true }
@@ -23,6 +22,7 @@ object RenameRootName : YukiBaseHooker() {
             param("cn.nubia.filebrowser.mtpserver.mtp.MtpStorage".toClass())
         }.hook {
             before {
+                if (!Prefs.getBoolean(Pref.Key.Other.MTP_RENAME_ROOT_NAME_SWITCH, false)) return@before
                 val volume = nubiaMtpStorage.cast(args[0])
 
                 if (mStorageId.getInt(volume) > 65537) {

@@ -16,7 +16,6 @@ import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.utils.AudioGainPolicy
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 import java.lang.ref.WeakReference
 import java.util.WeakHashMap
 import kotlin.math.roundToInt
@@ -32,11 +31,12 @@ object AudioGainPanelHook : YukiBaseHooker() {
 
     private val badges = WeakHashMap<View, GainBadge>()
 
+    /** 功能开关（回调内实时读取，切换即时生效） */
+    private val enabled get() = Prefs.getBoolean(Pref.Key.AudioGain.ENABLE, false)
+
     override fun onHook() {
-        hasEnable(Pref.Key.AudioGain.ENABLE) {
-            hookPanelRange()
-            hookPanelPercent()
-        }
+        hookPanelRange()
+        hookPanelPercent()
     }
 
     /** 每次音量变化时，把音量条量程同步为扩展后的最大值。 */
@@ -51,6 +51,7 @@ object AudioGainPanelHook : YukiBaseHooker() {
             paramCount = 2
         }.hook {
             after {
+                if (!enabled) return@after
                 val streamType = args(0).int()
                 if (!AudioGainPolicy.streamSupported(streamType)) return@after
                 runCatching {

@@ -13,7 +13,6 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.BooleanType
 import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 
 object BatteryLevelColorController : YukiBaseHooker() {
     private const val TAG = "BatteryLevelColorController"
@@ -21,32 +20,26 @@ object BatteryLevelColorController : YukiBaseHooker() {
         Prefs.getInt(Pref.Key.SystemUI.IconTurner.BATTERY_STYLE, 0)
     }
 
-    private val battery_alpha by lazy {
+    private val battery_alpha get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.BATTERY_STYLE_ALPHA, 100)
-    }
 
-    private val battery_color_switch by lazy {
+    private val battery_color_switch get() =
         Prefs.getBoolean(Pref.Key.SystemUI.IconTurner.BATTERY_ICON_COLOR_SWITCH, false)
-    }
 
     // 值为0 -> 0xFF388E3C
     // 值为 1 -> 0xFF4CAF50
     // 值为 2 -> 0xFFFF9500
     // 值为 3 -> 0xFFFF3B30
 
-    private val battery_color_phase1 by lazy {
+    private val battery_color_phase1 get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.BATTERY_COLOR_Phase1, 0)
-    }
 
-    private val battery_color_phase2 by lazy {
+    private val battery_color_phase2 get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.BATTERY_COLOR_Phase2, 1)
-    }
-    private val battery_color_phase3 by lazy {
+    private val battery_color_phase3 get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.BATTERY_COLOR_Phase3, 2)
-    }
-    private val battery_color_phase4 by lazy {
+    private val battery_color_phase4 get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.BATTERY_COLOR_Phase4, 3)
-    }
 
 
 
@@ -67,20 +60,20 @@ object BatteryLevelColorController : YukiBaseHooker() {
 
 
     override fun onHook() {
-        hasEnable(Pref.Key.SystemUI.IconTurner.BATTERY_ICON_COLOR_SWITCH) {
-            val batteryViewClz = "com.zte.mifavor.views.MFVBatteryMeterView".toClass()
-            val systemUIApplication = "com.android.systemui.SystemUIApplication".toClass()
-            val setImageDrawable = batteryViewClz.method {
-                name = "setImageDrawable"
-                superClass()
-            }
+        val batteryViewClz = "com.zte.mifavor.views.MFVBatteryMeterView".toClass()
+        val systemUIApplication = "com.android.systemui.SystemUIApplication".toClass()
+        val setImageDrawable = batteryViewClz.method {
+            name = "setImageDrawable"
+            superClass()
+        }
 
-            // Hook updateBattery 方法，在原始逻辑完成后修改颜色
-            batteryViewClz.method {
-                name = "updateBattery"
-            }.hook {
-                after {
-                    try {
+        // Hook updateBattery 方法，在原始逻辑完成后修改颜色
+        batteryViewClz.method {
+            name = "updateBattery"
+        }.hook {
+            after {
+                if (!battery_color_switch) return@after
+                try {
                         // 直接转换为 ImageView 获取当前显示的 Drawable（已通过 mutate 隔离）
                         val currentDrawable = (instance as? ImageView)?.drawable ?: return@after
 
@@ -180,17 +173,17 @@ object BatteryLevelColorController : YukiBaseHooker() {
                     }
                 }
             }
-            // 监听电量变化
-            batteryViewClz.method {
-                name = "onBatteryLevelChanged"
-                param(IntType, BooleanType,BooleanType,BooleanType,IntType)
-            }.hook{
-                after {
-                     batteryViewClz.method {
-                         name = "updateBattery"
-                     }.get(instance).call()
-                    YLog.debug(tag = TAG, msg = "Battery level changed")
-                }
+        // 监听电量变化
+        batteryViewClz.method {
+            name = "onBatteryLevelChanged"
+            param(IntType, BooleanType,BooleanType,BooleanType,IntType)
+        }.hook{
+            after {
+                if (!battery_color_switch) return@after
+                batteryViewClz.method {
+                    name = "updateBattery"
+                }.get(instance).call()
+                YLog.debug(tag = TAG, msg = "Battery level changed")
             }
         }
     }

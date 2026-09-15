@@ -32,45 +32,37 @@ object LockScreenBatteryMsg : YukiBaseHooker() {
     private const val TAG = "LockScreenBatteryMsg"
 
     // 开关
-    private val enable by lazy {
+    private val enable get() =
         Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.SHOW_CHARGING_INFO, false)
-    }
 
     // 显示电流
-    private val showCurrent by lazy {
+    private val showCurrent get() =
         Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.SHOW_CHARGING_C_MORE, false)
-    }
     // 显示电压
-    private val showVoltage by lazy {
+    private val showVoltage get() =
         Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.SHOW_CHARGING_V_MORE, false)
-    }
     // 显示功率
-    private val showPower by lazy {
+    private val showPower get() =
         Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.SHOW_CHARGING_P_MORE, false)
-    }
 
     // 显示温度
-    private val showTemperature by lazy {
+    private val showTemperature get() =
         Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.SHOW_BATTERY_TEMPERATURE, false)
-    }
 
     // 温度单位（℃/℉），此处固定为℃
     private val tempUnit = "℃"
 
     // 字体大小（dp）
-    private val fontSizeDp by lazy {
+    private val fontSizeDp get() =
         Prefs.getInt(Pref.Key.SystemUI.LockScreen.LOCK_SCREEN_BATTERY_DETAIL_FONT_SIZE, 12)
-    }
 
     // 上排与下排间距（dp）
-    private val lineSpacingDp by lazy {
+    private val lineSpacingDp get() =
         Prefs.getInt(Pref.Key.SystemUI.LockScreen.LOCK_SCREEN_BATTERY_DETAIL_LINE_SPACING, 2)
-    }
 
     // 更新间隔单位是秒
-    private val UPDATE_INTERVAL_SEC by lazy {
+    private val UPDATE_INTERVAL_SEC get() =
         Prefs.getInt(Pref.Key.SystemUI.LockScreen.SHOW_REFRESH_INTERVAL_TIME, 1)
-    }
     //private const val UPDATE_INTERVAL = 1000L
     // 转换为毫秒
     private val UPDATE_INTERVAL_MS get() = UPDATE_INTERVAL_SEC * 1000L
@@ -82,14 +74,13 @@ object LockScreenBatteryMsg : YukiBaseHooker() {
     private val TAG_CUSTOM_BATTERY_DETAIL = 0x7F100100
 
     override fun onHook() {
-        if (!enable) return
-
         // Hook KeyguardIndicationController 的 setIndicationArea 方法，在布局加载后添加自定义视图
         "com.android.systemui.statusbar.KeyguardIndicationController".toClass().method {
             name = "setIndicationArea"
             param(ViewGroupClass)
         }.hook {
             after {
+                if (!enable) return@after
                 val indicationArea = args[0] as ViewGroup
                 val controller = instance
                 // 检查是否已经添加过，避免重复
@@ -162,8 +153,8 @@ object LockScreenBatteryMsg : YukiBaseHooker() {
                 val status = uevent["POWER_SUPPLY_STATUS"]
                 val isCharging = status == "Charging" || status == "Full"
 
-                // 决定是否显示：锁屏且充电时显示
-                val shouldShow = isLocked && isCharging
+                // 决定是否显示：锁屏、充电且功能开启时显示
+                val shouldShow = enable && isLocked && isCharging
                 container.visibility = if (shouldShow) View.VISIBLE else View.GONE
 
                 if (shouldShow) {

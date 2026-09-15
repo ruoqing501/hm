@@ -21,59 +21,48 @@ import dev.lackluster.redmagichelper.utils.factory.hasEnable
 
 object StatusBarHideWifiActivityIcon : YukiBaseHooker() {
     private const val TAG = "StatusBarHideWifiActivityIcon"
-    private val hideWifiActivity = Prefs.getBoolean(Pref.Key.SystemUI.IconTurner.NUBIA_HIDE_WIFI_ACTIVITY, false)
-    private val hideWifiStandard = Prefs.getBoolean(Pref.Key.SystemUI.IconTurner.NUBIA_ICON_TUNER_WIFI_HIDE_WIFI_TYPE, false)
+    private val hideWifiActivity get() = Prefs.getBoolean(Pref.Key.SystemUI.IconTurner.NUBIA_HIDE_WIFI_ACTIVITY, false)
+    private val hideWifiStandard get() = Prefs.getBoolean(Pref.Key.SystemUI.IconTurner.NUBIA_ICON_TUNER_WIFI_HIDE_WIFI_TYPE, false)
     private val connectivityConstantsClass by lazy {
         "com.android.systemui.statusbar.pipeline.shared.ConnectivityConstants".toClassOrNull()
     }
 
     override fun onHook() {
-        if (hideWifiActivity || hideWifiStandard) {
-            "com.android.systemui.statusbar.pipeline.wifi.ui.viewmodel.WifiViewModel".toClassOrNull()?.apply {
-                constructor().hookAll {
-                    // 隐藏wifi活动图标
-                    if (hideWifiActivity ) {
-                        YLog.debug("$TAG：hideWifiActivity")
-                        before {
-                            this.args.firstOrNull {
-                                connectivityConstantsClass?.isInstance(it) == true
-                            }?.current()?.field {
-                                name = "shouldShowActivityConfig"
-                            }?.setFalse()
-                        }
-                    }
-                    // 隐藏wifi标准图标
-                    if (hideWifiStandard) {
-//                        after {
-//                            this.instance.current().field {
-//                                name = "wifiStandard"
-//                            }.set(
-//                                ReadonlyStateFlow(0 as Int?)
-//                            )
-//                        }
-                        "com.zte.feature.signal.WifiUtils\$Companion".toClass()
-                            .method {
-                                name = "getWifiSignalStrengthIconId"
-                                paramCount = 6
-                                param(
-                                    IntType,   // wifiStandard
-                                    BooleanType, // isValidated
-                                    BooleanType, // metered
-                                    BooleanType, // mloLink
-                                    IntType,   // level
-                                    IntType    // defaultIconId
-                                )
-                                returnType = IntType
-                            }.hook {
-                                before {
-                                    // 直接返回第六个参数 defaultIconId
-                                    result = args[5] as Int
-                                }
-                            }
-                    }
+        "com.android.systemui.statusbar.pipeline.wifi.ui.viewmodel.WifiViewModel".toClassOrNull()?.apply {
+            constructor().hookAll {
+                // 隐藏wifi活动图标
+                before {
+                    if (!hideWifiActivity) return@before
+                    YLog.debug("$TAG：hideWifiActivity")
+                    this.args.firstOrNull {
+                        connectivityConstantsClass?.isInstance(it) == true
+                    }?.current()?.field {
+                        name = "shouldShowActivityConfig"
+                    }?.setFalse()
                 }
             }
         }
+        // 隐藏wifi标准图标
+        "com.zte.feature.signal.WifiUtils\$Companion".toClassOrNull()
+            ?.method {
+                name = "getWifiSignalStrengthIconId"
+                paramCount = 6
+                param(
+                    IntType,   // wifiStandard
+                    BooleanType, // isValidated
+                    BooleanType, // metered
+                    BooleanType, // mloLink
+                    IntType,   // level
+                    IntType    // defaultIconId
+                )
+                returnType = IntType
+            }?.hook {
+                before {
+                    if (!hideWifiStandard) return@before
+                    // 直接返回第六个参数 defaultIconId
+                    result = args[5] as Int
+                }
+            }
     }
 
 }

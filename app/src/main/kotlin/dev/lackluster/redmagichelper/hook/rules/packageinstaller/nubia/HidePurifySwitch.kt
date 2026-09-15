@@ -15,17 +15,8 @@ import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
 
 object HidePurifySwitch : YukiBaseHooker() {
-    private val isHidePurifySwitch by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaPackageInstaller.HIDE_EVOLUTION_MODE_TOGGLE, false)
-    }
-
     @SuppressLint("PrivateApi")
     override fun onHook() {
-        if (!isHidePurifySwitch) {
-            YLog.debug("[HidePurifySwitch] 净化模式功能未开启")
-            return
-        }
-
         try {
             // 尝试获取UICookTool类
             val uICookToolClass = runCatching {
@@ -45,6 +36,7 @@ object HidePurifySwitch : YukiBaseHooker() {
                     param(IntType, IntType, IntType, BooleanType, StringType, StringType)
                 }.hook {
                     after {
+                        if (!Prefs.getBoolean(Pref.Key.NubiaPackageInstaller.HIDE_EVOLUTION_MODE_TOGGLE, false)) return@after
                         YLog.debug("[HidePurifySwitch] getCookUI方法被调用，参数数量: ${this.args.size}")
 
                         val result = this.result ?: return@after

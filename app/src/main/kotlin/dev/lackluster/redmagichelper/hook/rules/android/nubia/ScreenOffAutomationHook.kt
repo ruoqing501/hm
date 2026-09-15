@@ -14,7 +14,6 @@ import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.utils.Prefs
 import dev.lackluster.redmagichelper.utils.ScreenOffHideExecutor
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 
 /**
  * 熄屏自动隐藏应用(移植自 LS_Augment 的 hook/ScreenOffAutomationHook.java)。
@@ -36,9 +35,7 @@ object ScreenOffAutomationHook : YukiBaseHooker() {
     private var controller: Controller? = null
 
     override fun onHook() {
-        hasEnable(Pref.Key.Other.SCREEN_OFF_HIDE_ENABLED) {
-            attach()
-        }
+        attach()
     }
 
     @Synchronized

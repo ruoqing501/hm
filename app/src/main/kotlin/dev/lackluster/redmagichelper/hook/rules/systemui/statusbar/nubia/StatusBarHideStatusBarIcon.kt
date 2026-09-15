@@ -45,11 +45,11 @@ object StatusBarHideStatusBarIcon : YukiBaseHooker() {
     // 读取配置（扩展配置值，覆盖5类场景）
     // 配置值映射：
     // 0: 不隐藏 | 1: 主屏状态栏 | 2: 锁屏状态栏 | 3: 通知栏头部 | 4: 通知栏内CC | 5: 独立控制中心 | 6: 全部隐藏
-    private val hideWiFi = Prefs.getInt(Pref.Key.SystemUI.IconTurner.NUBIA_WIFI, 0)
-    private val hideHotspot = Prefs.getInt(Pref.Key.SystemUI.IconTurner.NUBIA_HOTSPOT, 0)
+    private val hideWiFi get() = Prefs.getInt(Pref.Key.SystemUI.IconTurner.NUBIA_WIFI, 0)
+    private val hideHotspot get() = Prefs.getInt(Pref.Key.SystemUI.IconTurner.NUBIA_HOTSPOT, 0)
 
 
-    private val hideMobile = Prefs.getInt(Pref.Key.SystemUI.IconTurner.NUBIA_MOBILE, 0)
+    private val hideMobile get() = Prefs.getInt(Pref.Key.SystemUI.IconTurner.NUBIA_MOBILE, 0)
 
     /**
      * 各视图类型对应的「视图链特征」（从日志中提取的关键节点序列）
@@ -69,14 +69,10 @@ object StatusBarHideStatusBarIcon : YukiBaseHooker() {
     )
 
     override fun onHook() {
-        YLog.debug("$TAG onHook, hideWiFi=$hideWiFi, hideHotspot=$hideHotspot")
         // Hook IconManager的addHolder，打印槽位信息（辅助调试）
         hookIconManagerAddHolder()
 
-        // 无隐藏配置则直接返回
-        if (hideWiFi == 0 && hideHotspot == 0 && hideMobile == 0) return
-
-        // 核心Hook：拦截视图添加 + 拦截可见性修改
+        // 核心Hook：拦截视图添加 + 拦截可见性修改（开关在回调内实时读取）
         hookViewGroupAddView()
         hookViewVisibility()
     }
@@ -90,6 +86,8 @@ object StatusBarHideStatusBarIcon : YukiBaseHooker() {
             param(View::class.java, IntType, ViewGroup.LayoutParams::class.java)
         }.hook {
             after {
+                // 所有隐藏配置都为 0 时直接放行，避免无意义的视图链遍历
+                if (hideWiFi == 0 && hideHotspot == 0 && hideMobile == 0) return@after
                 val parent = this.instance as? ViewGroup ?: return@after
                 val child = args[0] as? View ?: return@after
 
@@ -140,11 +138,11 @@ object StatusBarHideStatusBarIcon : YukiBaseHooker() {
                 val view = this.instance as? View ?: return@before
                 val newVisibility = args[0] as Int
 
-                // 拦截隐藏集合中的视图，强制设为GONE
-                // 拦截隐藏集合中的视图，强制设为GONE
-                if ((hiddenWifiViews.contains(view) ||
-                            hiddenMobileViews.contains(view) ||
-                            hiddenHotspotViews.contains(view)) && newVisibility != View.GONE) {
+                // 拦截隐藏集合中的视图，强制设为GONE（对应开关关闭时放行）
+                val forceHide = (hiddenWifiViews.contains(view) && hideWiFi != 0) ||
+                        (hiddenMobileViews.contains(view) && hideMobile != 0) ||
+                        (hiddenHotspotViews.contains(view) && hideHotspot != 0)
+                if (forceHide && newVisibility != View.GONE) {
 //                    YLog.debug("$TAG 拦截视图显示 - 视图哈希：${view.hashCode()} | 原可见性：$newVisibility")
                     args[0] = View.GONE
                 }

@@ -16,21 +16,15 @@ object QSHeaderShortcut : YukiBaseHooker() {
     private const val TAG = "QSHeaderShortcut"
 
     // 配置项：点击日期跳转日历
-    private val qsShortcutRedirCalendar by lazy {
+    private val qsShortcutRedirCalendar get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.QS_SHORTCUT_REDIR_CALENDAR, false)
-    }
     // 配置项：点击搜索打开浏览器
-    private val qsShortcutRedirSearch by lazy {
+    private val qsShortcutRedirSearch get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.QS_SHORTCUT_REDIR_SEARCH, false)
-    }
-    private val customBrowserPackage by lazy {
+    private val customBrowserPackage get() =
         Prefs.getString(Pref.Key.SystemUI.StatusBar.QS_CUSTOM_BROWSER_PACKAGE, "cn.nubia.browser")
-    }
 
     override fun onHook() {
-        // 如果两个功能都关闭，则直接返回
-        if (!qsShortcutRedirCalendar && !qsShortcutRedirSearch) return
-
         // 获取 CCHeaderView 类
         val ccHeaderClass = "com.zte.controlcenter.widget.CCHeaderView".toClassOrNull()
 
@@ -43,21 +37,20 @@ object QSHeaderShortcut : YukiBaseHooker() {
 
 
         // 1. 点击日期跳转日历
-        if (qsShortcutRedirCalendar) {
-            ccHeaderClass?.method {
-                name = "handleClickDate"
-            }?.hook {
-                before {
-                    YLog.debug("$TAG： 拦截 handleClickDate，跳转日历")
-                    // 构建日历 Intent
-                    val intent = Intent(Intent.ACTION_VIEW,
-                        "content://com.android.calendar/time".toUri())
-                    // 调用原类的 postStartActivityDismissingKeyguard 方法
-                    postStartMethod?.get( instance)?.call(intent)
-                    // 阻止原方法执行
-                    result = null
-                    YLog.debug("$TAG： 跳转日历完成")
-                }
+        ccHeaderClass?.method {
+            name = "handleClickDate"
+        }?.hook {
+            before {
+                if (!qsShortcutRedirCalendar) return@before
+                YLog.debug("$TAG： 拦截 handleClickDate，跳转日历")
+                // 构建日历 Intent
+                val intent = Intent(Intent.ACTION_VIEW,
+                    "content://com.android.calendar/time".toUri())
+                // 调用原类的 postStartActivityDismissingKeyguard 方法
+                postStartMethod?.get( instance)?.call(intent)
+                // 阻止原方法执行
+                result = null
+                YLog.debug("$TAG： 跳转日历完成")
             }
         }
 //        if (qsShortcutRedirSearch) {
@@ -92,12 +85,12 @@ object QSHeaderShortcut : YukiBaseHooker() {
 //        }
 
 
-        if (qsShortcutRedirSearch) {
-            ccHeaderClass?.method {
-                name = "handleClickSearch"
-            }?.hook {
-                before {
-                    YLog.debug("$TAG：拦截 handleClickSearch，尝试打开自定义浏览器：$customBrowserPackage")
+        ccHeaderClass?.method {
+            name = "handleClickSearch"
+        }?.hook {
+            before {
+                if (!qsShortcutRedirSearch) return@before
+                YLog.debug("$TAG：拦截 handleClickSearch，尝试打开自定义浏览器：$customBrowserPackage")
 
                     val context = (instance as RelativeLayout).context
 //                    val intent = Intent(Intent.ACTION_VIEW, "http://".toUri()).apply {
@@ -126,9 +119,8 @@ object QSHeaderShortcut : YukiBaseHooker() {
 //                        // Toast.makeText(context, "浏览器未安装", Toast.LENGTH_SHORT).show()
 //                    }
 
-                    result = null  // 阻止原方法执行
-                    YLog.debug("$TAG：处理完成")
-                }
+                result = null  // 阻止原方法执行
+                YLog.debug("$TAG：处理完成")
             }
         }
 

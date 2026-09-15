@@ -15,7 +15,6 @@ import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.type.java.BooleanType
 import dev.lackluster.redmagichelper.utils.AudioGainPolicy
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.abs
 import kotlin.math.max
@@ -46,7 +45,7 @@ object AudioGainHook : YukiBaseHooker() {
     }
 
     override fun onHook() {
-        hasEnable(Pref.Key.AudioGain.ENABLE) { install() }
+        install()
     }
 
     private fun install() {

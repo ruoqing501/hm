@@ -11,23 +11,20 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
 import dev.lackluster.redmagichelper.utils.factory.getResID
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 
 object UnHideClipBoardOverlay : YukiBaseHooker() {
     private const val TAG = "UnHideClipBoardOverlay"
 
 
     override fun onHook() {
-        hasEnable(Pref.Key.SystemUI.StatusBar.UNHIDE_CLIPBOARD_OVERLAY) {
-            YLog.debug("$TAG 功能开启已开启")
-            "com.android.systemui.clipboardoverlay.ClipboardListener".toClassOrNull()?.method {
-                name = "forceSuppressOverlay"
-                modifiers { isStatic }
-            }?.hook {
-                before {
-                    result = false
-                    YLog.debug("$TAG forceSuppressOverlay")
-                }
+        "com.android.systemui.clipboardoverlay.ClipboardListener".toClassOrNull()?.method {
+            name = "forceSuppressOverlay"
+            modifiers { isStatic }
+        }?.hook {
+            before {
+                if (!Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.UNHIDE_CLIPBOARD_OVERLAY, false)) return@before
+                result = false
+                YLog.debug("$TAG forceSuppressOverlay")
             }
         }
     }

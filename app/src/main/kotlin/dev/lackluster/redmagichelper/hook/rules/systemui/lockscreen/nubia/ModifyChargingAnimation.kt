@@ -17,33 +17,29 @@ object ModifyChargingAnimation : YukiBaseHooker() {
 
 
     // 锁屏充电动画总开关
-    private val lockScreenChargingAnimationSwitch by lazy {
+    private val lockScreenChargingAnimationSwitch get() =
         Prefs.getBoolean(  Pref.Key.SystemUI.LockScreen.LOCK_SCREEN_CHARGING_ANIMATION_SWITCH, false)
-    }
 
 
     // 每次进入锁屏界面都显示充电动画
-    private val lockScreenChargingAnimation by lazy {
+    private val lockScreenChargingAnimation get() =
         Prefs.getBoolean(  Pref.Key.SystemUI.LockScreen.LOCK_SCREEN_CHARGING_ANIMATION, false)
-    }
 
 
 
 
 
     //  充电动画持续时间(单位：秒)
-    private val UPDATE_INTERVAL_SEC by lazy {
+    private val UPDATE_INTERVAL_SEC get() =
         Prefs.getInt(Pref.Key.SystemUI.LockScreen.LOCK_SCREEN_DISPLAY_ANIMATION_DURATION, 6)
-    }
     //  充电动画持续时间(毫秒)
     private val UPDATE_INTERVAL_MS get() = UPDATE_INTERVAL_SEC * 1000L
 
 
     // 延迟指定秒后才开始显示充电动画(单位：秒)
 
-    private val UPDATE_INTERVAL_SEC_Delay by lazy {
+    private val UPDATE_INTERVAL_SEC_Delay get() =
         Prefs.getInt(Pref.Key.SystemUI.LockScreen.LOCK_SCREEN_DISPLAY_DELAY_TIME, 0)
-    }
 
     // 延迟指定秒后才开始显示充电动画(单位：毫秒)
     private val UPDATE_INTERVAL_MS_Delay get() = UPDATE_INTERVAL_SEC_Delay * 1000L
@@ -51,14 +47,13 @@ object ModifyChargingAnimation : YukiBaseHooker() {
 
 
     override fun onHook() {
-        // 锁屏充电动画总开关
-        if (!lockScreenChargingAnimationSwitch) return
         // 1. 修改隐藏延迟（延长充电动画显示时间）
         "com.zte.feature.charging.ChargingFeature".toClass().method {
             name = "hideChargingViewDelayed"
             paramCount = 0
         }.hook {
             before {
+                if (!lockScreenChargingAnimationSwitch) return@before
                 val instance = this.instance
                 val handlerField = instance.javaClass.getDeclaredField("mHandler")
                 handlerField.isAccessible = true
@@ -78,6 +73,7 @@ object ModifyChargingAnimation : YukiBaseHooker() {
             param(Long::class.java)
         }.hook {
             before {
+                if (!lockScreenChargingAnimationSwitch) return@before
                 //args[0] = 1000L
                 args[0] = UPDATE_INTERVAL_MS_Delay
                 YLog.debug(tag = TAG, msg = "startChargingAnimation delay set to ${args[0]} ms")
@@ -85,12 +81,12 @@ object ModifyChargingAnimation : YukiBaseHooker() {
         }
 
         // 每次进入锁屏界面都显示充电动画
-        if (!lockScreenChargingAnimation) return
         "com.android.systemui.keyguard.KeyguardViewMediator".toClass().method {
             name = "onStartedWakingUp"
             paramCount = 2
         }.hook {
             after {
+                if (!lockScreenChargingAnimationSwitch || !lockScreenChargingAnimation) return@after
                 val now = System.currentTimeMillis()
                 if (now - lastTriggerTime < 1000) {
                     YLog.debug(tag = TAG, msg = "Trigger too frequent, skip.")

@@ -8,7 +8,6 @@ import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 
 object AirplaneMode : YukiBaseHooker() {
     private const val TAG = "AirplaneMode-ManagerService"
@@ -24,24 +23,6 @@ object AirplaneMode : YukiBaseHooker() {
         "com.android.server.bluetooth.BluetoothManagerService"
     private const val WIFI_SETTINGS_TELECOM = "com.android.server.wifi.WifiCountryCode"
     private const val PIN_STA_MAC = "com.android.server.wifi.WifiNative"
-
-    private val countryCode by lazy {
-        Prefs.getString(Pref.Key.Android.TELECOM_WLAN_CC_DIALOG, "us")
-    }
-    private val isPinStaMac by lazy {
-        Prefs.getBoolean(Pref.Key.Android.PIN_STA_MAC, false)
-    }
-    private val isPinStaAP by lazy {
-        Prefs.getBoolean(Pref.Key.Android.PIN_AP_BSSID, false)
-    }
-
-    private val pin_sta_mac_dialog_content by lazy {
-        Prefs.getString(Pref.Key.Android.PIN_STA_MAC_DIALOG, "66:31:32:35:39:75")
-    }
-
-    private val pin_ap_bssid_dialog_content by lazy {
-        Prefs.getString(Pref.Key.Android.PIN_AP_BSSID_DIALOG, "b4:f3:cb:a7:b8:e7")
-    }
 
     /**
      * 钩住 SystemServiceManager.loadClassFromLoader，支持多目标类、每个类多个处理器
@@ -122,22 +103,20 @@ object AirplaneMode : YukiBaseHooker() {
      */
     @SuppressLint("PrivateApi")
     private fun installKeepBluetoothHook(classLoader: ClassLoader) {
-        hasEnable(Pref.Key.Android.ANDROID_AIRPLANE_MODE_KEEP_BLUETOOTH) {
-            YLog.debug("$TAG 🔍 蓝牙服务类功能开关已开启")
-            val serviceBluetooth =
-                classLoader.loadClass(BLUETOOTH_SERVICE_CLASS) ?: return@hasEnable
-            YLog.debug("$TAG 🔍 找到蓝牙服务类：$serviceBluetooth")
+        val serviceBluetooth =
+            classLoader.loadClass(BLUETOOTH_SERVICE_CLASS) ?: return
+        YLog.debug("$TAG 🔍 找到蓝牙服务类：$serviceBluetooth")
 
-            serviceBluetooth.method {
-                name = "onAirplaneModeChanged"
-            }.hook {
-                before {
-                    val isAirplaneOn = args[0] as Boolean
-                    YLog.debug("$TAG ✈️ 飞行模式状态：$isAirplaneOn")
-                    if (isAirplaneOn) {
-                        YLog.debug("$TAG ✈️ 飞行模式开启，阻止蓝牙关闭")
-                        result = null   // 完全跳过原方法
-                    }
+        serviceBluetooth.method {
+            name = "onAirplaneModeChanged"
+        }.hook {
+            before {
+                if (!Prefs.getBoolean(Pref.Key.Android.ANDROID_AIRPLANE_MODE_KEEP_BLUETOOTH, false)) return@before
+                val isAirplaneOn = args[0] as Boolean
+                YLog.debug("$TAG ✈️ 飞行模式状态：$isAirplaneOn")
+                if (isAirplaneOn) {
+                    YLog.debug("$TAG ✈️ 飞行模式开启，阻止蓝牙关闭")
+                    result = null   // 完全跳过原方法
                 }
             }
         }
@@ -149,21 +128,19 @@ object AirplaneMode : YukiBaseHooker() {
      */
     @SuppressLint("PrivateApi")
     private fun wifiAirplaneHooker(classLoader: ClassLoader) {
-        hasEnable(Pref.Key.Android.ANDROID_AIRPLANE_MODE_KEEP_WLAN) {
-            YLog.debug("$TAG 🔍 Wi-Fi服务类功能开关已开启")
-            val wifiSettingsStore = classLoader.loadClass(WIFI_SETTINGS_STORE) ?: return@hasEnable
-            YLog.debug("$TAG 🔍 找到Wi-Fi设置存储类：$wifiSettingsStore")
+        val wifiSettingsStore = classLoader.loadClass(WIFI_SETTINGS_STORE) ?: return
+        YLog.debug("$TAG 🔍 找到Wi-Fi设置存储类：$wifiSettingsStore")
 
-            wifiSettingsStore.method {
-                name = "isAirplaneSensitive"
-            }.hook {
-                before {
-                    result = false
-                    YLog.debug("$TAG ✈️ isAirplaneSensitive 被调用，阻止Wi-Fi/热点关闭")
-                }
+        wifiSettingsStore.method {
+            name = "isAirplaneSensitive"
+        }.hook {
+            before {
+                if (!Prefs.getBoolean(Pref.Key.Android.ANDROID_AIRPLANE_MODE_KEEP_WLAN, false)) return@before
+                result = false
+                YLog.debug("$TAG ✈️ isAirplaneSensitive 被调用，阻止Wi-Fi/热点关闭")
             }
-            YLog.debug("$TAG ✅ hook isAirplaneSensitive success")
         }
+        YLog.debug("$TAG ✅ hook isAirplaneSensitive success")
     }
 
     /*
@@ -172,24 +149,23 @@ object AirplaneMode : YukiBaseHooker() {
      */
     @SuppressLint("PrivateApi")
     private fun wlanTelecomCCHooker(classLoader: ClassLoader) {
-        hasEnable(Pref.Key.Android.TELECOM_WLAN_CC) {
-            YLog.debug("$TAG 🔍 设置WIFI国家码开关已开启")
-            val wifiSettingsTelecom =
-                classLoader.loadClass(WIFI_SETTINGS_TELECOM) ?: return@hasEnable
-            YLog.debug("$TAG 🔍 找到WIFI国家码类：$wifiSettingsTelecom")
+        val wifiSettingsTelecom =
+            classLoader.loadClass(WIFI_SETTINGS_TELECOM) ?: return
+        YLog.debug("$TAG 🔍 找到WIFI国家码类：$wifiSettingsTelecom")
 
-            wifiSettingsTelecom.method {
-                name = "setTelephonyCountryCode"
-                param(StringClass)
-            }.hook {
-                before {
-                    if (isValidCC(countryCode)) {
-                        YLog.debug("$TAG 🌍 set country Code ${args[0] as String?} to $countryCode")
-                        args[0] = countryCode
-                        YLog.debug("$TAG 🌍 设置WIFI国家码为：$countryCode")
-                    } else {
-                        YLog.info("$TAG Invalid countryCode:$countryCode,please check it")
-                    }
+        wifiSettingsTelecom.method {
+            name = "setTelephonyCountryCode"
+            param(StringClass)
+        }.hook {
+            before {
+                if (!Prefs.getBoolean(Pref.Key.Android.TELECOM_WLAN_CC, false)) return@before
+                val countryCode = Prefs.getString(Pref.Key.Android.TELECOM_WLAN_CC_DIALOG, "us")
+                if (isValidCC(countryCode)) {
+                    YLog.debug("$TAG 🌍 set country Code ${args[0] as String?} to $countryCode")
+                    args[0] = countryCode
+                    YLog.debug("$TAG 🌍 设置WIFI国家码为：$countryCode")
+                } else {
+                    YLog.info("$TAG Invalid countryCode:$countryCode,please check it")
                 }
             }
         }
@@ -212,8 +188,8 @@ object AirplaneMode : YukiBaseHooker() {
             param(StringClass, MacAddress::class.java)
         }.hook {
             before {
-                if (isPinStaMac) {
-                    validMAC(pin_sta_mac_dialog_content)?.let { mac ->
+                if (Prefs.getBoolean(Pref.Key.Android.PIN_STA_MAC, false)) {
+                    validMAC(Prefs.getString(Pref.Key.Android.PIN_STA_MAC_DIALOG, "66:31:32:35:39:75"))?.let { mac ->
                         args[1] = mac
                         YLog.debug("$TAG 🌍 override sta mac address to $mac")
                     }
@@ -239,9 +215,9 @@ object AirplaneMode : YukiBaseHooker() {
             param(StringClass, MacAddress::class.java)
         }.hook {
             before {
-                if (isPinStaAP) {
+                if (Prefs.getBoolean(Pref.Key.Android.PIN_AP_BSSID, false)) {
                     YLog.debug("$TAG setApMacAddress:${args[0] as String},${args[1] as MacAddress}")
-                    validMAC(pin_ap_bssid_dialog_content)?.let { mac ->
+                    validMAC(Prefs.getString(Pref.Key.Android.PIN_AP_BSSID_DIALOG, "b4:f3:cb:a7:b8:e7"))?.let { mac ->
                         args[1] = mac
                         YLog.debug("$TAG 🌍 override AP mac address to $mac")
                     }

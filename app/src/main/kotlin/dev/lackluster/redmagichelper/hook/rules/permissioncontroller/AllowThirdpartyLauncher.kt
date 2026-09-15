@@ -5,7 +5,7 @@ import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.DexKit
 import dev.lackluster.redmagichelper.utils.DexKit.dexKitBridge
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 import org.luckypray.dexkit.DexKitBridge
 import org.luckypray.dexkit.query.enums.StringMatchType
 import java.lang.reflect.Method
@@ -14,32 +14,31 @@ object AllowThirdpartyLauncher : YukiBaseHooker() {
     private const val TAG = "AllowThirdpartyLauncher"
 
     override fun onHook() {
-        hasEnable(Pref.Key.Other.ALLOW_THIRDPARTY_LAUNCHER) {
-            val ctsMethod = findIsCtsMethod(dexKitBridge)
-            val dACFClazzName = "com.android.permissioncontroller.role.ui.DefaultAppChildFragment"
-            val meName = "onRoleChanged"
+        val ctsMethod = findIsCtsMethod(dexKitBridge)
+        val dACFClazzName = "com.android.permissioncontroller.role.ui.DefaultAppChildFragment"
+        val meName = "onRoleChanged"
 
-            ctsMethod.hook {
-                before {
-                    @Suppress("DEPRECATION")
-                    val stackWalkerClass = Class.forName("java.lang.StackWalker")
-                    val getInstanceMethod = stackWalkerClass.getMethod("getInstance")
-                    val walker = getInstanceMethod.invoke(null)
+        ctsMethod.hook {
+            before {
+                if (!Prefs.getBoolean(Pref.Key.Other.ALLOW_THIRDPARTY_LAUNCHER, false)) return@before
+                @Suppress("DEPRECATION")
+                val stackWalkerClass = Class.forName("java.lang.StackWalker")
+                val getInstanceMethod = stackWalkerClass.getMethod("getInstance")
+                val walker = getInstanceMethod.invoke(null)
 
-                    val walkMethod = stackWalkerClass.getMethod("walk", java.util.function.Function::class.java)
-                    val frames = walkMethod.invoke(walker, java.util.function.Function<java.util.stream.Stream<Any>, Any?> { stream ->
-                        stream.limit(10).filter { frame ->
-                            val className = frame.javaClass.getMethod("getClassName").invoke(frame) as String
-                            val methodName = frame.javaClass.getMethod("getMethodName").invoke(frame) as String
-                            className == dACFClazzName && methodName == meName
-                        }.findFirst().orElse(null)
-                    })
-                    if (frames == null) {
-                        return@before
-                    }
-                    result = true
-                    YLog.debug(tag = TAG, msg = "AllowThirdpartyLauncher: $frames")
+                val walkMethod = stackWalkerClass.getMethod("walk", java.util.function.Function::class.java)
+                val frames = walkMethod.invoke(walker, java.util.function.Function<java.util.stream.Stream<Any>, Any?> { stream ->
+                    stream.limit(10).filter { frame ->
+                        val className = frame.javaClass.getMethod("getClassName").invoke(frame) as String
+                        val methodName = frame.javaClass.getMethod("getMethodName").invoke(frame) as String
+                        className == dACFClazzName && methodName == meName
+                    }.findFirst().orElse(null)
+                })
+                if (frames == null) {
+                    return@before
                 }
+                result = true
+                YLog.debug(tag = TAG, msg = "AllowThirdpartyLauncher: $frames")
             }
         }
     }

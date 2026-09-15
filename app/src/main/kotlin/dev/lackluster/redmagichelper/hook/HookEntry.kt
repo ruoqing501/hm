@@ -38,6 +38,8 @@ import dev.lackluster.redmagichelper.hook.rules.gamespace.NubiaTgkHelper
 import dev.lackluster.redmagichelper.hook.rules.mtpfilebrowser.MtpFileBrowser
 import dev.lackluster.redmagichelper.hook.rules.nfc.NfcService
 import dev.lackluster.redmagichelper.hook.rules.permissioncontroller.PermissionController
+import dev.lackluster.redmagichelper.hook.rules.screenshot.RecordScreenHook
+import dev.lackluster.redmagichelper.hook.rules.screenshot.ScreenshotLoggerHook
 import dev.lackluster.redmagichelper.utils.Prefs
 
 class HookEntry : XposedModule() {
@@ -119,6 +121,7 @@ class HookEntry : XposedModule() {
             Scope.PERMISSION_CONTROLLER -> hookers += PermissionController
             Scope.DOUBLE_APP -> hookers += DoubleApp
             Scope.NUBIA_FILE_BROWSER -> hookers += MtpFileBrowser
+            Scope.ZTE_SCREENSHOT -> hookers += listOf(ScreenshotLoggerHook, RecordScreenHook)
             Scope.GAME_FLOAT -> if (gameFunctionUnfrozen) hookers += NubiaGameFloat
             Scope.REDMAGIC_MOMENT -> if (gameFunctionUnfrozen) hookers += NubiaHeightLights
             Scope.GAME_SPACE -> if (gameFunctionUnfrozen) hookers += listOf(NubiaGameSpace, NubiaTgkHelper)

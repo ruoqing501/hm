@@ -25,26 +25,18 @@ import kotlin.math.abs
 object LockScreenTimeoutHook : YukiBaseHooker() {
     private const val TAG = "LockScreenTimeoutHook"
 
-    // 开关
-    private val enable by lazy {
-        Prefs.getBoolean(Pref.Key.Android.SYSTEM_FRAMEWORK_LOCK_SCREEN_TIMEOUT, false)
-    }
-    // 自定义超时（秒）最小10秒
-    private val customTimeoutS by lazy {
-        Prefs.getInt(Pref.Key.Android.SYSTEM_FRAMEWORK_LOCK_SCREEN_TIMEOUT_VALUE, 10)
-    }
-
-    // 自定义超时（毫秒）
-    private val customTimeoutMs = customTimeoutS * 1000L
-
     override fun onHook() {
-        if (!enable) return
         "com.android.server.power.PowerManagerService".toClass().method {
             name = "getScreenOffTimeoutLocked"
             param(LongType, LongType)
             returnType = LongType
         }.hook {
             after {
+                // 开关
+                if (!Prefs.getBoolean(Pref.Key.Android.SYSTEM_FRAMEWORK_LOCK_SCREEN_TIMEOUT, false)) return@after
+                // 自定义超时（秒）最小10秒
+                val customTimeoutMs =
+                    Prefs.getInt(Pref.Key.Android.SYSTEM_FRAMEWORK_LOCK_SCREEN_TIMEOUT_VALUE, 10) * 1000L
                 val original = result as Long
                 // 获取 PowerManagerService 的 Context 字段
                 val context = instance.current().field {

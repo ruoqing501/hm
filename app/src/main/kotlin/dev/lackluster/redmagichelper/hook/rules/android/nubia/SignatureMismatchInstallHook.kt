@@ -4,7 +4,7 @@ import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.hook.compat.XposedEnv
 import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 import io.github.libxposed.api.XposedInterface
 import java.lang.reflect.Method
 
@@ -46,17 +46,18 @@ object SignatureMismatchInstallHook : YukiBaseHooker() {
     }
 
     override fun onHook() {
-        hasEnable(Pref.Key.Android.ANDROID_ALLOW_SIGNATURE_MISMATCH_INSTALL) {
-            runCatching { hookVerifySignatures() }
-                .onFailure { YLog.error("$TAG: hook verifySignatures failed", it) }
-            runCatching { hookDoesSignatureMatchForPermissions() }
-                .onFailure { YLog.error("$TAG: hook doesSignatureMatchForPermissions failed", it) }
-            runCatching { hookPreparePackage() }
-                .onFailure { YLog.error("$TAG: hook preparePackage failed", it) }
-            runCatching { hookCheckCapability() }
-                .onFailure { YLog.error("$TAG: hook checkCapability failed", it) }
-        }
+        runCatching { hookVerifySignatures() }
+            .onFailure { YLog.error("$TAG: hook verifySignatures failed", it) }
+        runCatching { hookDoesSignatureMatchForPermissions() }
+            .onFailure { YLog.error("$TAG: hook doesSignatureMatchForPermissions failed", it) }
+        runCatching { hookPreparePackage() }
+            .onFailure { YLog.error("$TAG: hook preparePackage failed", it) }
+        runCatching { hookCheckCapability() }
+            .onFailure { YLog.error("$TAG: hook checkCapability failed", it) }
     }
+
+    private fun isHookEnabled() =
+        Prefs.getBoolean(Pref.Key.Android.ANDROID_ALLOW_SIGNATURE_MISMATCH_INSTALL, false)
 
     private fun hookVerifySignatures() {
         val verifier = findClass(PACKAGE_MANAGER_UTILS)
@@ -118,6 +119,7 @@ object SignatureMismatchInstallHook : YukiBaseHooker() {
     }
 
     private fun interceptVerify(chain: XposedInterface.Chain): Any? {
+        if (!isHookEnabled()) return chain.proceed()
         val packageName = packageNameOf(chain.getArg(0))
         val attempt = currentInstall.get()
         val hasSharedUser = chain.getArg(1) != null || hasSharedUser(chain.getArg(0))
@@ -153,6 +155,7 @@ object SignatureMismatchInstallHook : YukiBaseHooker() {
      * 内联做第二次签名校验。把包名记录在本线程上，使 capability Hook 只影响这一次更新。
      */
     private fun interceptPreparePackage(chain: XposedInterface.Chain): Any? {
+        if (!isHookEnabled()) return chain.proceed()
         val previous = currentInstall.get()
         currentInstall.set(newInstallAttempt(packageNameFromInstallRequest(chain.getArg(0))))
         try {
@@ -168,7 +171,7 @@ object SignatureMismatchInstallHook : YukiBaseHooker() {
      */
     private fun interceptCheckCapability(chain: XposedInterface.Chain): Any? {
         val result = chain.proceed()
-        if (result == true) return result
+        if (!isHookEnabled() || result == true) return result
 
         val attempt = currentInstall.get() ?: return result
         if (attempt.verifying) return result
@@ -187,7 +190,7 @@ object SignatureMismatchInstallHook : YukiBaseHooker() {
 
     private fun interceptOwnPermissionDeclarations(chain: XposedInterface.Chain): Any? {
         val result = chain.proceed()
-        if (result == true) return result
+        if (!isHookEnabled() || result == true) return result
 
         val ownerPackage = chain.getArg(0) as? String
         val incomingPackage = packageNameOf(chain.getArg(1))

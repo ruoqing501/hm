@@ -21,13 +21,11 @@ import kotlin.collections.HashSet
 
 object ScreenOffPeriodModifier : YukiBaseHooker() {
     // 时段（开关的状态）
-    private val screenOffShowPeriod by lazy {
+    private val screenOffShowPeriod get() =
         Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.SCREEN_OFF_PERIOD, false)
-    }
     // 时段字体大小
-    private val screenOffShowPeriodFontSize by lazy {
+    private val screenOffShowPeriodFontSize get() =
         Prefs.getFloat(Pref.Key.SystemUI.ScreenOff.SCREEN_OFF_PERIOD_FONT_SIZE_SETTINGS, 0.6f)
-    }
 
     // 存储创建的时段TextView，避免重复创建
     private val periodTextViews = WeakHashMap<TextClock, TextView>()
@@ -38,8 +36,6 @@ object ScreenOffPeriodModifier : YukiBaseHooker() {
     @SuppressLint("PrivateApi", "SimpleDateFormat")
     override fun onHook() {
         // 熄屏显秒由 AodSecondUpdate 实现，这里只管时段
-        if (!screenOffShowPeriod) return
-
         YLog.debug("[ScreenOffClockShowSeconds] 开始Hook锁屏时钟和日期显示功能")
         try {
             // Hook TextClock类
@@ -146,8 +142,10 @@ object ScreenOffPeriodModifier : YukiBaseHooker() {
         val isZh = isZh(context)
 
         //每秒记录一次日志，并记录显示的时间精确到秒
-        val currentTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().time)
-        YLog.debug("[ScreenOffClockShowSeconds] TextClock更新: 时间=$currentTime, 资源ID=$resourceIdName, 24小时制=$is24Hour, 中文环境=$isZh")
+        if (screenOffShowPeriod) {
+            val currentTime = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().time)
+            YLog.debug("[ScreenOffClockShowSeconds] TextClock更新: 时间=$currentTime, 资源ID=$resourceIdName, 24小时制=$is24Hour, 中文环境=$isZh")
+        }
 
 
         // 处理时段显示（创建独立的TextView）

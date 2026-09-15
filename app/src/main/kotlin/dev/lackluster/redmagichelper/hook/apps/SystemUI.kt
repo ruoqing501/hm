@@ -3,6 +3,7 @@ package dev.lackluster.redmagichelper.hook.apps
 import android.annotation.SuppressLint
 import dev.lackluster.redmagichelper.hook.compat.entity.YukiBaseHooker
 import dev.lackluster.redmagichelper.hook.rules.android.nubia.UsbDebuggingHooker
+import dev.lackluster.redmagichelper.hook.rules.screenshot.StatusBarBroadcastController
 import dev.lackluster.redmagichelper.hook.rules.systemui.batteryicon.nubia.BatteryIconAdjuster
 import dev.lackluster.redmagichelper.hook.rules.systemui.batteryicon.nubia.BatteryLevelColorController
 import dev.lackluster.redmagichelper.hook.rules.systemui.features.AOSPSingleHandModeAdjust
@@ -42,6 +43,8 @@ import dev.lackluster.redmagichelper.hook.rules.systemui.volume.VolumeDialogHook
 object SystemUI : YukiBaseHooker() {
     @SuppressLint("UseCompatLoadingForDrawables", "UseKtx")
     override fun onHook() {
+        // 状态栏广播控制器（跨进程控制，截图/录屏隐藏状态栏）
+        loadHooker(StatusBarBroadcastController)
         // 去除音量弹窗警告
         loadHooker(VolumeDialogHook)
         // 横竖屏检测

@@ -15,7 +15,6 @@ import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.hook.compat.type.java.StringClass
 import dev.lackluster.redmagichelper.hook.compat.type.java.UnitType
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 import dev.lackluster.redmagichelper.utils.nubia.Deoptimizer
 import java.lang.reflect.Field
 import java.util.IdentityHashMap
@@ -73,17 +72,19 @@ object FreeformEnhanceHook : YukiBaseHooker() {
     private val pendingResizeTx = ThreadLocal<ResizeMetadataTransaction?>()
 
     override fun onHook() {
-        hasEnable(Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW_NUMBER) {
-            hookUnlimitedCount()
-        }
-        hasEnable(Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW) {
-            if (verifyAllAppsCompatibility()) {
-                hookAllApps()
-            } else {
-                YLog.error("$TAG 当前系统缺少全应用小窗所需的框架标识，跳过安装（fail-closed）")
-            }
+        hookUnlimitedCount()
+        if (verifyAllAppsCompatibility()) {
+            hookAllApps()
+        } else {
+            YLog.error("$TAG 当前系统缺少全应用小窗所需的框架标识，跳过安装（fail-closed）")
         }
     }
+
+    private fun windowNumberEnabled() =
+        Prefs.getBoolean(Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW_NUMBER, false)
+
+    private fun allAppsEnabled() =
+        Prefs.getBoolean(Pref.Key.Android.REMOVE_RESTRICTIONS_WINDOW, false)
 
     // ---------------- 数量上限解除 ----------------
 
@@ -98,7 +99,10 @@ object FreeformEnhanceHook : YukiBaseHooker() {
                 emptyParam()
                 returnType = IntType
             }.ignored().give()?.hook {
-                before { result = 0 }
+                before {
+                    if (!windowNumberEnabled()) return@before
+                    result = 0
+                }
             } ?: YLog.warn("$TAG 未找到 windowReplySizeForMulti，跳过")
 
             // 可见小窗根任务列表：返回空列表，绕过基于列表数量的拦截
@@ -106,7 +110,10 @@ object FreeformEnhanceHook : YukiBaseHooker() {
                 name = "getFreeformRootTasksVisibleListWrForMulti"
                 emptyParam()
             }.ignored().give()?.hook {
-                before { result = ArrayList<Any?>() }
+                before {
+                    if (!windowNumberEnabled()) return@before
+                    result = ArrayList<Any?>()
+                }
             } ?: YLog.warn("$TAG 未找到 getFreeformRootTasksVisibleListWrForMulti，跳过")
 
             Deoptimizer.deoptimizeMethod(TAG, atmClass, "windowReplySizeForMulti")
@@ -122,7 +129,10 @@ object FreeformEnhanceHook : YukiBaseHooker() {
                 param(ATM_SERVICE)
                 returnType = UnitType
             }.ignored().give()?.hook {
-                replaceToNull()
+                before {
+                    if (!windowNumberEnabled()) return@before
+                    result = null
+                }
             } ?: YLog.warn("$TAG 未找到 alertMessageForReachMultiWrMaxSizeWr，跳过")
         }
 
@@ -153,6 +163,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
             returnType = IntType
         }.ignored().give()?.hook {
             after {
+                if (!windowNumberEnabled()) return@after
                 if ((result as? Int) != 102) return@after
                 val fallback = fallbackMethod ?: return@after
                 runCatching {
@@ -199,6 +210,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
             returnType = BooleanType
         }.ignored().give()?.hook {
             before {
+                if (!allAppsEnabled()) return@before
                 val component = args[1] as? ComponentName
                 if (isEligibleComponent(component)) result = true
             }
@@ -210,6 +222,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
             returnType = BooleanType
         }.ignored().give()?.hook {
             before {
+                if (!allAppsEnabled()) return@before
                 if (isEligiblePackage(packageFromTask(args[1]))) result = true
             }
         } ?: YLog.warn("$TAG 未找到 checkTaskSupportWr，跳过")
@@ -222,12 +235,14 @@ object FreeformEnhanceHook : YukiBaseHooker() {
             returnType = IntType
         }.ignored().give()?.hook {
             before {
+                if (!allAppsEnabled()) return@before
                 val activity = args[0]
                 if (isEligibleActivity(activity)) {
                     pendingResizeTx.set(ResizeMetadataTransaction.begin(activity))
                 }
             }
             after {
+                if (!allAppsEnabled()) return@after
                 pendingResizeTx.get()?.restore()
                 pendingResizeTx.remove()
                 if (isEligibleActivity(args[0]) && (result as? Int) != 0) result = 0
@@ -241,12 +256,14 @@ object FreeformEnhanceHook : YukiBaseHooker() {
             returnType = TASK_NOT_SUPPORT_WINDOW_REPLY_STATE
         }.ignored().give()?.hook {
             before {
+                if (!allAppsEnabled()) return@before
                 val task = args[0]
                 if (isEligibleTask(task)) {
                     pendingResizeTx.set(ResizeMetadataTransaction.begin(task))
                 }
             }
             after {
+                if (!allAppsEnabled()) return@after
                 pendingResizeTx.get()?.restore()
                 pendingResizeTx.remove()
                 if (isEligibleTask(args[0]) && result != null) result = null
@@ -259,12 +276,14 @@ object FreeformEnhanceHook : YukiBaseHooker() {
             returnType = IntType
         }.ignored().give()?.hook {
             before {
+                if (!allAppsEnabled()) return@before
                 val task = args[0]
                 if (isEligibleTask(task)) {
                     pendingResizeTx.set(ResizeMetadataTransaction.begin(task))
                 }
             }
             after {
+                if (!allAppsEnabled()) return@after
                 pendingResizeTx.get()?.restore()
                 pendingResizeTx.remove()
                 if (isEligibleTask(args[0]) && (result as? Int) != 0) result = 0
@@ -277,6 +296,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
             returnType = BooleanType
         }.ignored().give()?.hook {
             before {
+                if (!allAppsEnabled()) return@before
                 if (isEligibleActivity(args[0])) result = true
             }
         } ?: YLog.warn("$TAG 未找到 isResizeable，跳过")
@@ -287,6 +307,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
             returnType = BooleanType
         }.ignored().give()?.hook {
             before {
+                if (!allAppsEnabled()) return@before
                 val component = args[1] as? ComponentName
                 if (isEligibleComponent(component)) result = true
             }
@@ -310,6 +331,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
             returnType = BooleanType
         }.ignored().give()?.hook {
             before {
+                if (!allAppsEnabled()) return@before
                 val component = args[0] as? ComponentName
                 if (isEligibleComponent(component)) result = true
             }
@@ -321,6 +343,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
             returnType = BooleanType
         }.ignored().give()?.hook {
             before {
+                if (!allAppsEnabled()) return@before
                 if (isEligiblePackage(args[0] as? String)) result = true
             }
         } ?: YLog.warn("$TAG 未找到 ACC.checkTaskSupportForPkgWr，跳过")
@@ -341,6 +364,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
                     returnType = BooleanType
                 }.ignored().give()?.hook {
                     before {
+                        if (!allAppsEnabled()) return@before
                         if (isEligibleActivity(instanceOrNull)) result = true
                     }
                 } ?: YLog.warn("$TAG 未找到 ActivityRecord.supportsFreeformInDisplayArea，跳过")
@@ -351,6 +375,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
                 returnType = BooleanType
             }.ignored().give()?.hook {
                 before {
+                    if (!allAppsEnabled()) return@before
                     if (isEligibleActivity(instanceOrNull)) result = true
                 }
             } ?: YLog.warn("$TAG 未找到 ActivityRecord.supportsMultiWindow，跳过")
@@ -361,6 +386,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
                     returnType = BooleanType
                 }.ignored().give()?.hook {
                     before {
+                        if (!allAppsEnabled()) return@before
                         if (isEligibleActivity(instanceOrNull)) result = true
                     }
                 } ?: YLog.warn("$TAG 未找到 ActivityRecord.supportsMultiWindowInDisplayArea，跳过")
@@ -375,6 +401,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
                     returnType = BooleanType
                 }.ignored().give()?.hook {
                     before {
+                        if (!allAppsEnabled()) return@before
                         if (isEligibleTask(instanceOrNull)) result = true
                     }
                 } ?: YLog.warn("$TAG 未找到 Task.supportsFreeformInDisplayArea，跳过")
@@ -389,6 +416,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
                     returnType = BooleanType
                 }.ignored().give()?.hook {
                     before {
+                        if (!allAppsEnabled()) return@before
                         if (isEligibleTaskFragment(instanceOrNull)) result = true
                     }
                 } ?: YLog.warn("$TAG 未找到 TaskFragment.$methodName，跳过")
@@ -404,6 +432,7 @@ object FreeformEnhanceHook : YukiBaseHooker() {
                         returnType = BooleanType
                     }.ignored().give()?.hook {
                         before {
+                            if (!allAppsEnabled()) return@before
                             if (isEligibleTaskFragment(instanceOrNull)) result = true
                         }
                     } ?: YLog.warn("$TAG 未找到 TaskFragment.$methodName，跳过")

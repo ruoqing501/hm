@@ -65,6 +65,6 @@ dependencies {
     api("androidx.activity:activity-compose:1.12.3")
     api("androidx.navigation:navigation-compose:2.9.7")
     api("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
-    implementation("com.github.promeg:tinypinyin:2.0.3")
+    api("com.github.promeg:tinypinyin:2.0.3")
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
 }

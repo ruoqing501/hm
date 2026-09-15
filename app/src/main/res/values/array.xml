@@ -25,6 +25,8 @@
         <item>com.android.nfc</item>
         <item>com.zte.cn.doubleapp</item>
         <item>cn.nubia.filebrowser</item>
+        <!--截屏和录屏-->
+        <item>com.android.ztescreenshot</item>
 <!--        <item>zte.com.cn.alarmclock</item>-->
 <!--        <item>com.android.thememanager</item>-->
 <!--        <item>com.android.updater</item>-->

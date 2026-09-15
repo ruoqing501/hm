@@ -19,17 +19,14 @@ import java.util.*
 
 object StatusBarClockHooker : YukiBaseHooker() {
     // 状态栏时钟相关设置
-    private val isWeek by lazy {
+    private val isWeek get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_WEEK, false)
-    }
-    private val isMonthDay by lazy {
+    private val isMonthDay get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_MONTH_DAY, false)
-    }
 
     // 下拉状态栏时段设置
-    private val statusBarPullDownPeriodTextType by lazy {
+    private val statusBarPullDownPeriodTextType get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN_PERIOD, 0)
-    }
 
     // 存储创建的下拉状态栏时段TextView，避免重复创建
     private val pullDownPeriodTextViews = mutableMapOf<View, TextView>()
@@ -43,12 +40,6 @@ object StatusBarClockHooker : YukiBaseHooker() {
     private const val TIME_WITH_AMPM_PATTERN = "^\\d{1,2}:\\d{2}(:\\d{2})?\\s*[AP]M$"
 
     override fun onHook() {
-        // 如果所有功能都关闭，则不Hook
-        if (!isWeek && !isMonthDay && statusBarPullDownPeriodTextType == 0) {
-            YLog.debug("[StatusBarClockHooker] 所有功能都已关闭，跳过Hook")
-            return
-        }
-
         YLog.debug("[StatusBarClockHooker] 开始Hook Clock类")
 
         "com.android.systemui.statusbar.policy.Clock".toClassOrNull()?.apply {

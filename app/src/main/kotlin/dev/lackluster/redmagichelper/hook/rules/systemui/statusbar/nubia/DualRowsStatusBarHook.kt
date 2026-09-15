@@ -25,61 +25,50 @@ object DualRowsStatusBarHook : YukiBaseHooker() {
     private const val TAG = "DualRowsStatusBarHook"
 
     // 时间对齐方式
-    private val statusBarHorizontalAlignment = Prefs.getInt( Pref.Key.SystemUI.StatusBar.STATUS_BAR_HORIZONTAL_ALIGNMENT, 0)
+    private val statusBarHorizontalAlignment get() = Prefs.getInt( Pref.Key.SystemUI.StatusBar.STATUS_BAR_HORIZONTAL_ALIGNMENT, 0)
     // 是否双排
-    private val isStatusBarDual = Prefs.getBoolean( Pref.Key.SystemUI.StatusBar.STATUS_BAR_DUAL_ROW, false)
+    private val isStatusBarDual get() = Prefs.getBoolean( Pref.Key.SystemUI.StatusBar.STATUS_BAR_DUAL_ROW, false)
     // 是否时钟独自一行显示
-    private val isDualClockAcross = Prefs.getBoolean( Pref.Key.SystemUI.StatusBar.STATUS_BAR_DUAL_CLOCK_ACROSS, false)
+    private val isDualClockAcross get() = Prefs.getBoolean( Pref.Key.SystemUI.StatusBar.STATUS_BAR_DUAL_CLOCK_ACROSS, false)
     // 左侧双排
-    private val isLeftSide = Prefs.getBoolean( Pref.Key.SystemUI.StatusBar.STATUS_BAR_DUAL_ROW_LEFT, false)
+    private val isLeftSide get() = Prefs.getBoolean( Pref.Key.SystemUI.StatusBar.STATUS_BAR_DUAL_ROW_LEFT, false)
     // 右侧双排
-    private val isRightSide = Prefs.getBoolean( Pref.Key.SystemUI.StatusBar.STATUS_BAR_DUAL_ROW_RIGHT, false)
+    private val isRightSide get() = Prefs.getBoolean( Pref.Key.SystemUI.StatusBar.STATUS_BAR_DUAL_ROW_RIGHT, false)
 
-    private val statusBarHeight  = Prefs.getFloat( Pref.Key.SystemUI.StatusBar.STATUS_BAR_HEIGHT, -1.0f)
-    private val status_bar_system_icon_height by lazy {
+    private val statusBarHeight get() = Prefs.getFloat( Pref.Key.SystemUI.StatusBar.STATUS_BAR_HEIGHT, -1.0f)
+    private val status_bar_system_icon_height get() =
         Prefs.getFloat(Pref.Key.SystemUI.StatusBar.STATUS_BAR_SYSTEM_ICON_HEIGHT, -1.0f)
-    }
 
-    private val status_bar_left_container_top_margin by lazy {
+    private val status_bar_left_container_top_margin get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.STATUS_BAR_LEFT_CONTAINER_TOP_MARGIN, -1)
-    }
-    private val status_bar_left_container_down_margin by lazy {
+    private val status_bar_left_container_down_margin get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.STATUS_BAR_LEFT_CONTAINER_DOWN_MARGIN, -1)
-    }
-    private val status_bar_left_container_left_margin by lazy {
+    private val status_bar_left_container_left_margin get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.STATUS_BAR_LEFT_CONTAINER_LEFT_MARGIN, -1)
-    }
 
-    private val status_bar_left_container_right_margin by lazy {
+    private val status_bar_left_container_right_margin get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.STATUS_BAR_LEFT_CONTAINER_RIGHT_MARGIN, -1)
-    }
 
-    private val status_bar_right_container_top_margin by lazy {
+    private val status_bar_right_container_top_margin get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.STATUS_BAR_RIGHT_CONTAINER_TOP_MARGIN, -1)
-    }
-    private val status_bar_right_container_down_margin by lazy {
+    private val status_bar_right_container_down_margin get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.STATUS_BAR_RIGHT_CONTAINER_DOWN_MARGIN, -1)
-    }
-    private val status_bar_right_container_left_margin by lazy {
+    private val status_bar_right_container_left_margin get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.STATUS_BAR_RIGHT_CONTAINER_LEFT_MARGIN, -1)
-    }
 
-    private val status_bar_right_container_right_margin by lazy {
+    private val status_bar_right_container_right_margin get() =
         Prefs.getInt( Pref.Key.SystemUI.StatusBar.STATUS_BAR_RIGHT_CONTAINER_RIGHT_MARGIN, -1)
-    }
 
 
 
     // 设备温度位置  0 左侧容器 1 右侧容器
-    private val status_bar_temperature_location by lazy {
+    private val status_bar_temperature_location get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_TEMPERATURE_LOCATION, 0)
-    }
 
     // 电池信息-> 0 左侧容器 1 右侧容器
 
-    private val status_bar_battery_info_location by lazy {
+    private val status_bar_battery_info_location get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.STATUS_BAR_BATTERY_INFO_LOCATION, 0)
-    }
 
 
 
@@ -87,18 +76,15 @@ object DualRowsStatusBarHook : YukiBaseHooker() {
 
 
     // 电池信息-值为false的时候，则为单排模式，值为true的时候，则为双排模式
-    private val status_bar_display_battery_info_layout by lazy {
+    private val status_bar_display_battery_info_layout get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_DISPLAY_BATTERY_INFO_LAYOUT, false)
-    }
     // 状态栏布局总开关
-    private val enableStatusBarLayout by lazy {
+    private val enableStatusBarLayout get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.STATUS_BAR_LAYOUT_SWITCH,false)
-    }
 
     // 网格重排开启时，双排/时钟对齐/边距由 StatusBarGridHook 接管，避免结构性冲突
-    private val gridLayoutEnabled by lazy {
+    private val gridLayoutEnabled get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBarGrid.SWITCH, false)
-    }
 
     // 使用整数作为标记键（避免与系统资源 ID 冲突，使用大于 0x00FFFFFF 的值或自定义范围）
     private val TAG_MODIFIED_LEFT = 0x7F000001
@@ -341,10 +327,8 @@ object DualRowsStatusBarHook : YukiBaseHooker() {
 //                printViewInfo(sbView)
             }
         }
-        if(enableStatusBarLayout){
-            updateStatusBarHeight() //更新状态栏高度
-            updateSystemIconsContainerHeight() // 更新右侧系统图标容器宽度
-        }
+        updateStatusBarHeight() //更新状态栏高度
+        updateSystemIconsContainerHeight() // 更新右侧系统图标容器宽度
     }
 
     private fun updateSystemIconsContainerHeight() {
@@ -352,6 +336,7 @@ object DualRowsStatusBarHook : YukiBaseHooker() {
             name = "updateSystemIconsContainerHeight"
         }.hook {
             after {
+                if (!enableStatusBarLayout) return@after
                 if(status_bar_system_icon_height ==-1.0f) {
                     YLog.debug(tag = TAG, msg = "status_bar_system_icon_height use system default")
                     return@after
@@ -398,6 +383,7 @@ object DualRowsStatusBarHook : YukiBaseHooker() {
             param(Context::class.java)
         }.hook {
             after {
+                if (!enableStatusBarLayout) return@after
                 val original = result<Int>() ?: return@after
                 val context = args[0] as Context
                 val metrics = context.resources.displayMetrics

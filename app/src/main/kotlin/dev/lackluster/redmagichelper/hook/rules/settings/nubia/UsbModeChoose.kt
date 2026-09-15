@@ -15,14 +15,12 @@ object UsbModeChoose : YukiBaseHooker() {
     private const val TAG = "UsbModeChoose"
 
     // 接入 USB时不弹窗
-    private val system_settings_usb_mode by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaSystemSettings.SYSTEM_SETTINGS_USB_MODE, false)
-    }
+    private val system_settings_usb_mode
+        get() = Prefs.getBoolean(Pref.Key.NubiaSystemSettings.SYSTEM_SETTINGS_USB_MODE, false)
 
     // USB默认选项（UI选择的值）
-    private val system_settings_usb_mode_choose by lazy {
-        Prefs.getInt(Pref.Key.NubiaSystemSettings.SYSTEM_SETTINGS_USB_MODE_CHOOSE, 0)
-    }
+    private val system_settings_usb_mode_choose
+        get() = Prefs.getInt(Pref.Key.NubiaSystemSettings.SYSTEM_SETTINGS_USB_MODE_CHOOSE, 0)
 
     // 模式名称映射（仅用于日志）
     private val modeNames = mapOf(
@@ -34,21 +32,6 @@ object UsbModeChoose : YukiBaseHooker() {
     )
 
     override fun onHook() {
-        // 读取用户设置
-        val uiMode = system_settings_usb_mode_choose
-        val skipShowWindow = system_settings_usb_mode
-
-        // 将UI模式转换为内部实际模式值
-        val internalMode = when (uiMode) {
-            1 -> 0   // 仅限充电 → 仅充电
-            2 -> 2   // 传输文件 → 传输文件
-            3 -> 3   // 传输照片 → 图片传输
-            4 -> 4   // 多屏投屏 → 多屏投屏
-            else -> -1  // 默认或无效值，表示不干预
-        }
-
-        YLog.info(tag = TAG, msg = "uiMode=$uiMode, internalMode=$internalMode (${modeNames[internalMode]}), skipShowWindow=$skipShowWindow")
-
         // 记录模式设置（仅用于日志）
         "com.zte.settings.connecteddevice.UsbModeUtils".toClass().method {
             name = "setCurrentMode"
@@ -72,6 +55,18 @@ object UsbModeChoose : YukiBaseHooker() {
             after {
                 val activity = instance as? Activity ?: return@after
                 YLog.info(tag = TAG, msg = "UsbModeChooserActivity created")
+
+                // 读取用户设置
+                val skipShowWindow = system_settings_usb_mode
+
+                // 将UI模式转换为内部实际模式值
+                val internalMode = when (system_settings_usb_mode_choose) {
+                    1 -> 0   // 仅限充电 → 仅充电
+                    2 -> 2   // 传输文件 → 传输文件
+                    3 -> 3   // 传输照片 → 图片传输
+                    4 -> 4   // 多屏投屏 → 多屏投屏
+                    else -> -1  // 默认或无效值，表示不干预
+                }
 
                 // 读取新开关：通知栏点击时总是显示弹窗
                 val notificationAlwaysShow = Prefs.getBoolean(

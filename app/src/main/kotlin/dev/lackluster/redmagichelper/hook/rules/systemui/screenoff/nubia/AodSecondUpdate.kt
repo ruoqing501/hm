@@ -11,7 +11,7 @@ import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.type.java.LongType
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.DexKit
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 import org.luckypray.dexkit.DexKitBridge
 import org.luckypray.dexkit.result.ClassData
 import org.luckypray.dexkit.result.MethodData
@@ -33,26 +33,27 @@ object AodSecondUpdate : YukiBaseHooker() {
     )
 
     override fun onHook() {
-        hasEnable(Pref.Key.SystemUI.LockScreen.SCREEN_OFF_SHOW_SECONDS) {
-            YLog.info("$TAG hooking...")
+        YLog.info("$TAG hooking...")
 
-            // 1. 处理包含 mScreenOffClock 的时钟控件
-            handleScreenOffClockClasses()
+        // 1. 处理包含 mScreenOffClock 的时钟控件
+        handleScreenOffClockClasses()
 
-            // 2. 处理包含 mTimeView 的时钟控件
-            handleTimeViewClasses()
+        // 2. 处理包含 mTimeView 的时钟控件
+        handleTimeViewClasses()
 
-            // 3. 处理 AodTextStyle 的 mDataView
-            handleAodTextStyle()
+        // 3. 处理 AodTextStyle 的 mDataView
+        handleAodTextStyle()
 
-            // 4. 处理通过 AodClockViewContainer 加载的时钟（数字人、旅行者等）
-            handleAodClockViewContainer()
+        // 4. 处理通过 AodClockViewContainer 加载的时钟（数字人、旅行者等）
+        handleAodClockViewContainer()
 
-            // 5. 修改 DozeUi 的 roundToNextMinute 以实现每秒刷新
-            hookDozeUiMethods()
-
-        }
+        // 5. 修改 DozeUi 的 roundToNextMinute 以实现每秒刷新
+        hookDozeUiMethods()
     }
+
+    /** 熄屏显秒开关（回调内实时读取，切换即时生效） */
+    private val showSeconds get() =
+        Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.SCREEN_OFF_SHOW_SECONDS, false)
 
     /**
      * 为 TextClock 开启秒显示
@@ -101,6 +102,7 @@ object AodSecondUpdate : YukiBaseHooker() {
             onFinishInflateMethod?.let { method ->
                 method.hook {
                     after {
+                        if (!showSeconds) return@after
                         val clock = clazz.field {
                             name = "mScreenOffClock"
                         }.get(instance).any() as? TextClock
@@ -124,6 +126,7 @@ object AodSecondUpdate : YukiBaseHooker() {
             refreshAmPmMethod?.let { method ->
                 method.hook {
                     after {
+                        if (!showSeconds) return@after
                         val clock = clazz.field {
                             name = "mScreenOffClock"
                         }.get(instance).any() as? TextClock
@@ -189,6 +192,7 @@ object AodSecondUpdate : YukiBaseHooker() {
                 emptyParam()
             }.hook {
                 after {
+                    if (!showSeconds) return@after
                     val clock = clazz.field {
                         name = "mTimeView"
                     }.get(instance).any() as? TextClock
@@ -223,6 +227,7 @@ object AodSecondUpdate : YukiBaseHooker() {
             emptyParam()
         }.hook {
             after {
+                if (!showSeconds) return@after
                 val clock = clazz.field {
                     name = "mDataView"
                 }.get(instance).any() as? TextClock
@@ -249,6 +254,7 @@ object AodSecondUpdate : YukiBaseHooker() {
             emptyParam()
         }.hook {
             after {
+                if (!showSeconds) return@after
                 val container = instance<ViewGroup>() // AodClockViewContainer 继承自 LinearLayout
                 enableSecondsInViewGroup(container)
                 YLog.debug("$TAG AodClockViewContainer.inflateView: enabled seconds for all TextClock inside")
@@ -272,6 +278,7 @@ object AodSecondUpdate : YukiBaseHooker() {
             param(LongType)
         }.hook {
             before {
+                if (!showSeconds) return@before
                 val currentTime = args[0] as Long
                 val calendar = Calendar.getInstance()
                 calendar.timeInMillis = currentTime
@@ -288,6 +295,7 @@ object AodSecondUpdate : YukiBaseHooker() {
             emptyParam()
         }.hook {
             after {
+                if (!showSeconds) return@after
                 val shortDateFormat = SimpleDateFormat("MM-dd HH:mm:ss", Locale.getDefault())
                 val currentTime = shortDateFormat.format(Date())
                 YLog.debug("$TAG DozeUi.onTimeTick | Time = $currentTime")

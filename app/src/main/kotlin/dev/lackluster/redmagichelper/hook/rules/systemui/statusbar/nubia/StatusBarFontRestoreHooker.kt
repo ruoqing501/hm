@@ -11,31 +11,33 @@ import dev.lackluster.redmagichelper.hook.compat.factory.field
 import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 
 object StatusBarFontRestoreHooker : YukiBaseHooker() {
 
     override fun onHook() {
-        hasEnable(Pref.Key.SystemUI.StatusBar.RESTORE_THE_FONT_OF_THE_CLOCK_DATE_ICON) {
-            YLog.debug("[SBFontRestore] 开始Hook状态栏字体恢复功能")
+        YLog.debug("[SBFontRestore] 开始Hook状态栏字体恢复功能")
 
-            // Hook时钟字体恢复 - 无效果（已注释）
-            // hookClockFontRestore()
+        // Hook时钟字体恢复 - 无效果（已注释）
+        // hookClockFontRestore()
 
-            // Hook网速字体恢复
-            hookNetSpeedFontRestore()
+        // Hook网速字体恢复
+        hookNetSpeedFontRestore()
 
-            // Hook电池百分比字体恢复
-            hookBatteryFontRestore()
+        // Hook电池百分比字体恢复
+        hookBatteryFontRestore()
 
-            // Hook锁屏状态栏字体恢复
-            hookKeyguardStatusBarFontRestore()
+        // Hook锁屏状态栏字体恢复
+        hookKeyguardStatusBarFontRestore()
 
 //            hookCCHeaderView()
 
-            YLog.debug("[SBFontRestore] Hook状态栏字体恢复功能完成")
-        }
+        YLog.debug("[SBFontRestore] Hook状态栏字体恢复功能完成")
     }
+
+    /** 字体恢复开关（回调内实时读取，切换即时生效） */
+    private val fontRestoreEnabled get() =
+        Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.RESTORE_THE_FONT_OF_THE_CLOCK_DATE_ICON, false)
 
     /**
      * Hook时钟字体恢复
@@ -96,6 +98,7 @@ object StatusBarFontRestoreHooker : YukiBaseHooker() {
                 name = "init"
             }.hook {
                 after {
+                    if (!fontRestoreEnabled) return@after
                     try {
                         val speedTextView = this.instance.current().field {
                             name = "mSpeedText"
@@ -144,6 +147,7 @@ object StatusBarFontRestoreHooker : YukiBaseHooker() {
                 name = "onFinishInflate"
             }.hook {
                 after {
+                    if (!fontRestoreEnabled) return@after
                     try {
                         val batteryLevelInsideView = this.instance.current().field {
                             name = "mBatteryLevelInsideView"
@@ -191,6 +195,7 @@ object StatusBarFontRestoreHooker : YukiBaseHooker() {
                     name = "onFinishInflate"
                 }.hook {
                     after {
+                        if (!fontRestoreEnabled) return@after
                         try {
                             // 获取 mCarrierLabel 字段
                             val carrierTextView = this.instance.current().field {

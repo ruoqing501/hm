@@ -17,9 +17,6 @@ object ScopeThemeUpdate : YukiBaseHooker() {
     private const val TAG = "ScopeThemeUpdate"
 
     override fun onHook() {
-        if (!Prefs.getBoolean(Pref.Key.NubiaTheme.CANCEL_TRIAL_LOGIN, false)) return
-        YLog.debug("$TAG: 试用免登录开关已开启，开始Hook")
-
         // 统一处理主题下载（包括付费试用和免费主题）——可根据需要启用
          hookThemeDownloadUnified()
 
@@ -56,6 +53,7 @@ object ScopeThemeUpdate : YukiBaseHooker() {
             returnType = BooleanType
         }.hook {
             before {
+                if (!Prefs.getBoolean(Pref.Key.NubiaTheme.CANCEL_TRIAL_LOGIN, false)) return@before
                 val accountInstance = accountManagerClass.method {
                     name = "getInstance"
                     returnType = accountManagerClass
@@ -190,6 +188,7 @@ object ScopeThemeUpdate : YukiBaseHooker() {
             returnType = BooleanType
         }.hook {
             before {
+                if (!Prefs.getBoolean(Pref.Key.NubiaTheme.CANCEL_TRIAL_LOGIN, false)) return@before
                 val isTrial = args[0] as Boolean
 
                 // 获取当前资源 Bean
@@ -289,6 +288,7 @@ object ScopeThemeUpdate : YukiBaseHooker() {
             returnType = BooleanType
         }.hook {
             after {
+                if (!Prefs.getBoolean(Pref.Key.NubiaTheme.CANCEL_TRIAL_LOGIN, false)) return@after
                 val original = result as Boolean
                 if (!original) {
                     val fromType = beanClass.method {
@@ -326,6 +326,7 @@ object ScopeThemeUpdate : YukiBaseHooker() {
             param(BooleanType)
         }.hook {
             before {
+                if (!Prefs.getBoolean(Pref.Key.NubiaTheme.CANCEL_TRIAL_LOGIN, false)) return@before
                 val isTrial = args[0] as Boolean
 
                 // 获取 mBean

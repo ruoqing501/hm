@@ -14,21 +14,16 @@ import dev.lackluster.redmagichelper.utils.nubia.KotlinFlowHelper
 
 object StatusBarHideCellularIcon : YukiBaseHooker() {
     private const val TAG = "StatusBarHideCellularIcon"
-    private val hideSimOne by lazy {
+    private val hideSimOne get() =
         Prefs.getBoolean(Pref.Key.SystemUI.IconTurner.HIDE_SIM_ONE, false)
-    }
-    private val hideSimTwo by lazy {
+    private val hideSimTwo get() =
         Prefs.getBoolean(Pref.Key.SystemUI.IconTurner.HIDE_SIM_TWO, false)
-    }
-    private val hideMobileActivity by lazy {
+    private val hideMobileActivity get() =
         Prefs.getBoolean(Pref.Key.SystemUI.IconTurner.HIDE_MOBILE_ACTIVITY, false)
-    }
-    private val hideMobileType by lazy {
+    private val hideMobileType get() =
         Prefs.getBoolean(Pref.Key.SystemUI.IconTurner.HIDE_MOBILE_TYPE, false)
-    }
-    private val hideHDNew by lazy {
+    private val hideHDNew get() =
         Prefs.getBoolean(Pref.Key.SystemUI.IconTurner.HIDE_HD_SMALL, false)
-    }
 
 
 
@@ -71,8 +66,7 @@ object StatusBarHideCellularIcon : YukiBaseHooker() {
 //        }
 
 
-        // 无隐藏需求时直接返回，避免无效 Hook
-        if (!hideSimOne && !hideSimTwo && !hideMobileActivity && !hideMobileType) return
+        // 开关在回调内实时读取，未开启任何隐藏时回调直接放行
 
 
 

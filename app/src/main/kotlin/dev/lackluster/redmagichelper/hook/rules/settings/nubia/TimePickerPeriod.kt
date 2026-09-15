@@ -8,7 +8,7 @@ import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.hook.compat.type.java.ArrayClass
 import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.data.Pref
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
+import dev.lackluster.redmagichelper.utils.Prefs
 
 object TimePickerPeriod : YukiBaseHooker() {
 
@@ -20,14 +20,11 @@ object TimePickerPeriod : YukiBaseHooker() {
 
     @SuppressLint("PrivateApi")
     override fun onHook() {
-        hasEnable(Pref.Key.NubiaSystemSettings.TIME_PICKER_PERIOD) {
+        // 更新标题-显示时段
+        updateTitlePeriod()
 
-            // 更新标题-显示时段
-            updateTitlePeriod()
-
-            // 新增：安装AM/PM Spinner钩子
-            installAmPmSpinnerHook()
-        }
+        // 新增：安装AM/PM Spinner钩子
+        installAmPmSpinnerHook()
     }
 
     // 更新标题-显示时段
@@ -39,6 +36,7 @@ object TimePickerPeriod : YukiBaseHooker() {
                 param("com.zte.mifavor.widget.TimePickerZTE".toClass(), IntType, IntType)
             }.hook {
                 after {
+                    if (!Prefs.getBoolean(Pref.Key.NubiaSystemSettings.TIME_PICKER_PERIOD, false)) return@after
                     val timePicker = this.args(0).any()
                     if (timePicker != null) {
                         handleTimePickerUpdate(this.instance, timePicker, this.args(1).int(), this.args(2).int())
@@ -64,6 +62,7 @@ object TimePickerPeriod : YukiBaseHooker() {
                 param(IntType)
             }.hook {
                 before {
+                    if (!Prefs.getBoolean(Pref.Key.NubiaSystemSettings.TIME_PICKER_PERIOD, false)) return@before
                     try {
                         // 检查调用栈，判断是否来自TimePickerZTE
                         val stackTrace = Thread.currentThread().stackTrace
@@ -95,6 +94,7 @@ object TimePickerPeriod : YukiBaseHooker() {
                 param(Array<String>::class.java)
             }.hook {
                 before {
+                    if (!Prefs.getBoolean(Pref.Key.NubiaSystemSettings.TIME_PICKER_PERIOD, false)) return@before
                     try {
                         val originalValues = this.args(0).array<String>()
                         YLog.debug("[TimePickerPeriod] setDisplayedValues - 原始值: ${originalValues.contentToString()}")
@@ -125,6 +125,7 @@ object TimePickerPeriod : YukiBaseHooker() {
                 emptyParam()
             }.hook {
                 after {
+                    if (!Prefs.getBoolean(Pref.Key.NubiaSystemSettings.TIME_PICKER_PERIOD, false)) return@after
                     try {
                         val instance = this.instance
 
@@ -185,6 +186,7 @@ object TimePickerPeriod : YukiBaseHooker() {
                 paramCount = 3
             }.hook {
                 after {
+                    if (!Prefs.getBoolean(Pref.Key.NubiaSystemSettings.TIME_PICKER_PERIOD, false)) return@after
                     try {
                         val instance = this.instance
 
@@ -220,6 +222,7 @@ object TimePickerPeriod : YukiBaseHooker() {
                 param(numberPickerClass.toClass(), IntType, IntType)
             }.hook {
                 before {
+                    if (!Prefs.getBoolean(Pref.Key.NubiaSystemSettings.TIME_PICKER_PERIOD, false)) return@before
                     try {
                         val picker = this.args(0).any()
                         val oldVal = this.args(1).int()

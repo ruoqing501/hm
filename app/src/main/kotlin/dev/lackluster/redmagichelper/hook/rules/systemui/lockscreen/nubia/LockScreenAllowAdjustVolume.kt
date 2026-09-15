@@ -17,15 +17,12 @@ import java.util.*
 
 object LockScreenAllowAdjustVolume : YukiBaseHooker() {
     // 允许调节音量开关（开关的状态）
-    private val allowAdjustVolume by lazy {
+    private val allowAdjustVolume get() =
         Prefs.getBoolean(Pref.Key.SystemUI.LockScreen.ALLOW_ADJUST_VOLUME, false)
-    }
 
 
     @SuppressLint("PrivateApi", "SimpleDateFormat")
     override fun onHook() {
-        if (!allowAdjustVolume) return
-
         YLog.debug("[WooBox-LockScreenAllowAdjustVolume] 开始Hook锁屏允许调节音量功能")
 
         try {
@@ -34,7 +31,8 @@ object LockScreenAllowAdjustVolume : YukiBaseHooker() {
                     name= "shouldKeyguardHandleVolumeKeys"
                 }.hook(){
                     before {
-                       this.result = false
+                        if (!allowAdjustVolume) return@before
+                        this.result = false
                     }
                 }
             }

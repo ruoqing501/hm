@@ -162,39 +162,31 @@ import dev.lackluster.redmagichelper.hook.compat.factory.method
 import dev.lackluster.redmagichelper.hook.compat.log.YLog
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
-import dev.lackluster.redmagichelper.utils.factory.hasEnable
 import dev.lackluster.redmagichelper.hook.compat.type.java.IntType
 import dev.lackluster.redmagichelper.hook.compat.type.java.BooleanType
 
 object HideStoreHint : YukiBaseHooker() {
 
-    // 隐藏从商店安装提示开关
-    private val isHideStorePrompt by lazy {
-        Prefs.getBoolean(Pref.Key.NubiaPackageInstaller.HIDE_STORE_INSTALL_PROMPT, false)
-    }
-
     @SuppressLint("PrivateApi")
     override fun onHook() {
-        hasEnable(Pref.Key.NubiaPackageInstaller.HIDE_STORE_INSTALL_PROMPT) {
-            YLog.debug("[HideStoreHint] 开始执行隐藏商店安装提示钩子")
+        YLog.debug("[HideStoreHint] 开始执行隐藏商店安装提示钩子")
 
-            YLog.debug("[HideStoreHint] appClassLoader 获取成功")
+        YLog.debug("[HideStoreHint] appClassLoader 获取成功")
 
-            // 获取 PackageInstallerActivity 类
-            val packageInstallerActivityClass = "com.android.packageinstaller.PackageInstallerActivity".toClassOrNull(appClassLoader)
-                ?: run {
-                    YLog.error("[HideStoreHint] 无法加载 PackageInstallerActivity 类")
-                    return@hasEnable
-                }
-            YLog.debug("[HideStoreHint] 成功加载 PackageInstallerActivity 类")
+        // 获取 PackageInstallerActivity 类
+        val packageInstallerActivityClass = "com.android.packageinstaller.PackageInstallerActivity".toClassOrNull(appClassLoader)
+            ?: run {
+                YLog.error("[HideStoreHint] 无法加载 PackageInstallerActivity 类")
+                return
+            }
+        YLog.debug("[HideStoreHint] 成功加载 PackageInstallerActivity 类")
 
-            // Hook 三个主要的UI绑定方法
-            hookUiMethod(packageInstallerActivityClass, "bindUi")
-            hookUiMethod(packageInstallerActivityClass, "bindUiPerm")
-            hookUiMethod(packageInstallerActivityClass, "bindUiPermRed")
+        // Hook 三个主要的UI绑定方法
+        hookUiMethod(packageInstallerActivityClass, "bindUi")
+        hookUiMethod(packageInstallerActivityClass, "bindUiPerm")
+        hookUiMethod(packageInstallerActivityClass, "bindUiPermRed")
 
-            YLog.debug("[HideStoreHint] 所有钩子设置完成")
-        }
+        YLog.debug("[HideStoreHint] 所有钩子设置完成")
     }
 
     private fun hookUiMethod(clazz: Class<*>, methodName: String) {
@@ -222,9 +214,11 @@ object HideStoreHint : YukiBaseHooker() {
                 param(IntType, BooleanType)
             }.ignored().hook {
                 before {
+                    if (!Prefs.getBoolean(Pref.Key.NubiaPackageInstaller.HIDE_STORE_INSTALL_PROMPT, false)) return@before
                     YLog.debug("[HideStoreHint] $methodName 方法被调用，参数: installFlags=${args[0]}, bindPerm=${args[1]}")
                 }
                 after {
+                    if (!Prefs.getBoolean(Pref.Key.NubiaPackageInstaller.HIDE_STORE_INSTALL_PROMPT, false)) return@after
                     YLog.debug("[HideStoreHint] $methodName 方法执行完成，开始隐藏商店相关视图")
 
                     // 尝试隐藏所有可能的商店相关视图
