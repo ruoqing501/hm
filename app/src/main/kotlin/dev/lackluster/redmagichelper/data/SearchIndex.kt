@@ -124,13 +124,8 @@ object SearchIndex {
         SearchEntry(R.string.android_remove_intent_hijack_content, R.string.android_remove_intent_hijack_content_tips, Pages.PACKAGE_INSTALLER, R.string.package_installer),
 
         // 系统桌面
-        SearchEntry(R.string.system_time_component_desktop, null, Pages.SYSTEM_DESKTOP, R.string.system_desktop),
-        SearchEntry(R.string.system_time_component_desktop_show_seconds, null, Pages.SYSTEM_DESKTOP, R.string.system_desktop),
-        SearchEntry(R.string.system_time_component_desktop_show_period, R.string.system_time_component_desktop_show_period_summary, Pages.SYSTEM_DESKTOP, R.string.system_desktop),
         SearchEntry(R.string.system_desktop_recent_task_Interface, null, Pages.SYSTEM_DESKTOP_RECENT_TASKS, R.string.system_desktop_recent_task_Interface),
         SearchEntry(R.string.system_desktop_recent_task_display_memory, null, Pages.SYSTEM_DESKTOP_RECENT_TASKS, R.string.system_desktop_recent_task_Interface),
-        SearchEntry(R.string.desktop_icon_custom, R.string.desktop_icon_custom_entry_summary, Pages.DESKTOP_ICON_CUSTOM, R.string.desktop_icon_custom),
-        SearchEntry(R.string.desktop_icon_custom_switch, null, Pages.DESKTOP_ICON_CUSTOM, R.string.desktop_icon_custom),
 
         // 主题
         SearchEntry(R.string.ui_title_theme_cancel_trial_login, R.string.ui_title_theme_cancel_trial_login_tips, Pages.SYSTEM_THEME, R.string.system_theme),
@@ -179,12 +174,6 @@ object SearchIndex {
         SearchEntry(R.string.fan_calibrate_start, R.string.fan_calibrate_start_tips, Pages.OTHER, R.string.page_other),
         SearchEntry(R.string.fan_manual_entry, R.string.fan_manual_entry_tips, Pages.OTHER, R.string.page_other),
         SearchEntry(R.string.battery_disable_age_reduction, R.string.battery_disable_age_reduction_tips, Pages.OTHER, R.string.page_other),
-        SearchEntry(R.string.health_steps_entry, R.string.health_steps_entry_tips, Pages.HEALTH_STEPS, R.string.page_health_steps),
-        SearchEntry(R.string.health_master_switch, null, Pages.HEALTH_STEPS, R.string.page_health_steps),
-        SearchEntry(R.string.health_multiply_switch, null, Pages.HEALTH_STEPS, R.string.page_health_steps),
-        SearchEntry(R.string.health_plan_switch, null, Pages.HEALTH_STEPS, R.string.page_health_steps),
-        SearchEntry(R.string.health_bind_account, null, Pages.HEALTH_STEPS, R.string.page_health_steps),
-        SearchEntry(R.string.health_open_app, null, Pages.HEALTH_STEPS, R.string.page_health_steps),
 
         // 模块设置
         SearchEntry(R.string.module_main_switch, null, Pages.MODULE_SETTINGS, R.string.page_module),

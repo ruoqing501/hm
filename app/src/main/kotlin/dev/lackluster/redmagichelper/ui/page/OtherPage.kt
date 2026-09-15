@@ -89,7 +89,6 @@ import dev.lackluster.redmagichelper.data.Constants
 import dev.lackluster.redmagichelper.data.Pages
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.data.Scope
-import dev.lackluster.redmagichelper.data.LauncherIconOverrides
 import dev.lackluster.redmagichelper.service.RmhTileService
 import dev.lackluster.redmagichelper.ui.component.RebootMenuItems
 import dev.lackluster.redmagichelper.utils.BatteryLifeControl
@@ -99,6 +98,7 @@ import dev.lackluster.redmagichelper.utils.ShellUtils
 import dev.lackluster.redmagichelper.utils.FanCalibrationChannel
 import dev.lackluster.redmagichelper.utils.FanCalibrationData
 import dev.lackluster.redmagichelper.utils.FanHardwareIdentity
+import dev.lackluster.redmagichelper.utils.IconCodec
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -706,18 +706,6 @@ fun OtherPage(navController: NavController, adjustPadding: PaddingValues, mode: 
         }
         //// 应用双开
         //item {
-        // 小米运动健康步数增强
-        item {
-            PreferenceGroup(
-                title = stringResource(R.string.health_steps_group),
-            ) {
-                TextPreference(
-                    title = stringResource(R.string.health_steps_entry),
-                    summary = stringResource(R.string.health_steps_entry_tips),
-                    onClick = { navController.navigateTo(Pages.HEALTH_STEPS) }
-                )
-            }
-        }
         //// 应用双开
         //item {
         //    PreferenceGroup(
@@ -746,9 +734,8 @@ fun OtherPage(navController: NavController, adjustPadding: PaddingValues, mode: 
 }
 
 /**
- * 磁贴图片选择对话框(参考 DesktopIconCustomPage 的图标处理:GetContent 选图 →
- * [LauncherIconOverrides.encodeIcon] 居中方形裁剪缩放为 192px WebP → Base64 存入 Prefs)。
- * 保存后立即请求系统刷新磁贴监听状态,使新图片即时生效。
+ * 磁贴图片选择对话框:GetContent 选图 → [IconCodec.encodeIcon] 居中方形裁剪缩放为
+ * 192px WebP → Base64 存入 Prefs。保存后立即请求系统刷新磁贴监听状态,使新图片即时生效。
  */
 @Composable
 private fun TileImageDialog(show: MutableState<Boolean>) {
@@ -759,7 +746,7 @@ private fun TileImageDialog(show: MutableState<Boolean>) {
     val preview by produceState<ImageBitmap?>(initialValue = null, iconBase64) {
         value = withContext(Dispatchers.IO) {
             iconBase64.takeIf { it.isNotEmpty() }
-                ?.let { LauncherIconOverrides.decodeIcon(it) }
+                ?.let { IconCodec.decodeIcon(it) }
                 ?.asImageBitmap()
         }
     }
@@ -772,7 +759,7 @@ private fun TileImageDialog(show: MutableState<Boolean>) {
                     val source = context.contentResolver.openInputStream(uri)?.use {
                         BitmapFactory.decodeStream(it)
                     } ?: return@runCatching null
-                    LauncherIconOverrides.encodeIcon(source)
+                    IconCodec.encodeIcon(source)
                 }.getOrNull()
             }
             if (encoded != null) {
@@ -781,7 +768,7 @@ private fun TileImageDialog(show: MutableState<Boolean>) {
                 RmhTileService.requestRefresh(context)
                 makeText(context, R.string.tile_image_saved, LENGTH_SHORT).show()
             } else {
-                makeText(context, R.string.desktop_icon_custom_image_failed, LENGTH_LONG).show()
+                makeText(context, R.string.tile_image_failed, LENGTH_LONG).show()
             }
         }
     }
@@ -814,13 +801,13 @@ private fun TileImageDialog(show: MutableState<Boolean>) {
             Row {
                 TextButton(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.desktop_icon_custom_choose_image),
+                    text = stringResource(R.string.tile_image_choose),
                     onClick = { pickImage.launch("image/*") }
                 )
                 Spacer(Modifier.width(12.dp))
                 TextButton(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.desktop_icon_custom_reset_icon),
+                    text = stringResource(R.string.tile_image_reset),
                     enabled = iconBase64.isNotEmpty(),
                     onClick = {
                         iconBase64 = ""

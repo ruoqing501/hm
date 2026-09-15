@@ -28,10 +28,8 @@ object Pages {
     const val OTHER_MENU = "OtherMenuPage"
     const val NUBIA_ICON_TUNER = "NubiaIconTunerPage"
     const val SYSTEM_DESKTOP_RECENT_TASKS = "SystemDesktopRecentTasksPage"
-    const val DESKTOP_ICON_CUSTOM = "DesktopIconCustomPage"
     const val SCREEN_OFF_HIDE_APPS = "ScreenOffHideAppsPage"
     const val MEDIA_CONTROL = "MediaControlPage"
-    const val HEALTH_STEPS = "HealthStepsPage"
 
     const val DEV_UI_TEST = "DevUITestPage"
     const val DEV_UI_TEST2 = "DevUITestPage2"

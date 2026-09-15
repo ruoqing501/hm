@@ -17,7 +17,6 @@ import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaGameAssist
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaGameAssist2
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaGameFloat
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaGameLab
-import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaMiHealth
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaNeoStore
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaPackageInstaller
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaPluginTrigger
@@ -128,7 +127,6 @@ class HookEntry : XposedModule() {
             Scope.ZTE_RECOMMEND -> hookers += NubiaRecommend
             Scope.NUBIA_FAN -> hookers += NubiaFan
             Scope.BAIDU_IME -> hookers += NubiaBaiduIme
-            Scope.MI_HEALTH -> hookers += NubiaMiHealth
         }
         if (hookers.isEmpty()) return
         loadHookers(PackageParam(packageName, classLoader, applicationInfo), *hookers.toTypedArray())

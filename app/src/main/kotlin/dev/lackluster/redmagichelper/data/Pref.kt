@@ -487,26 +487,6 @@ object Pref {
             const val STORE_DOWNLOAD_ENABLED = "neostore_download_enabled"
             const val STORE_DOWNLOAD_COUNT = "neostore_download_count"
         }
-        object MiHealth {
-            // 步数增强总开关(hook 侧运行时重读,见 hook/rules/mihealth/MiHealthHook.kt)
-            const val ENABLED = "mi_health_enabled"
-            const val MULTIPLY_ENABLED = "mi_health_multiply_enabled"
-            // 倍率 1~10(倍),hook 侧 *100 换算为百分比;LS_Augment 存的是 100~2000 的百分比
-            const val MULTIPLIER = "mi_health_multiplier"
-            // 绑定账户散列(64 位小写 hex,空串=未绑定)
-            const val ACCOUNT = "mi_health_account"
-            const val PLAN_ENABLED = "mi_health_plan_enabled"
-            // 序列化计划(SP1/SP2 格式,与 LS_Augment StepPlan 兼容)
-            const val PLAN = "mi_health_plan"
-            // 倍率生效起始时间(epoch 秒字符串),启用倍率/换绑账户时由 UI 刷新
-            const val SINCE = "mi_health_since"
-            // 以下为计划草稿(UI 分项编辑,保存时合成 PLAN)
-            const val PLAN_FROM = "mi_health_plan_from"
-            const val PLAN_TO = "mi_health_plan_to"
-            const val PLAN_EXECUTIONS = "mi_health_plan_executions"
-            const val PLAN_STEPS = "mi_health_plan_steps"
-            const val PLAN_WEEKDAYS = "mi_health_plan_weekdays"
-        }
         object NubiaSystemSettings{
             const val DISABLE_USB_INSTALLATION_AND_SWITCH_ACCOUNT_VERIFICATION = "disable_usb_installation_and_switch_account_verification"
             const val TIME_PICKER_PERIOD = "time_picker_period"
@@ -523,7 +503,6 @@ object Pref {
 
         }
         object SystemDesktop{
-            const val SYSTEM_TIME_COMPONENT_DESKTOP_SWITCH= "system_time_component_desktop_switch"
             const val LIGHT_THEME_COLOR= "light_theme_color"
             const val DARK_THEME_COLOR= "dark_theme_color"
             const val MEMORY_FONT_COLOR_OPTION= "memory_font_color_option"
@@ -540,12 +519,6 @@ object Pref {
             const val SIMPLE_LANDSACPE_COMPONENT_HEIGHT= "simple_landsacpe_component_height"
             const val SYSTEM_DESKTOP_RECENT_TASK_DISPLAY_MEMORY= "system_desktop_recent_task_display_memory"
             const val DISPLAY_STYLE= "DISPLAY_STYLE"
-            const val SYSTEM_TIME_COMPONENT_DESKTOP_SHOW_SECONDS = "system_time_component_desktop_show_seconds"
-            const val SYSTEM_TIME_COMPONENT_DESKTOP_SHOW_PERIOD = "system_time_component_desktop_show_period"
-            // 桌面个性化:自定义应用图标与名称(总开关)
-            const val APP_ICON_CUSTOMIZE_SWITCH = "desktop_app_icon_customize_switch"
-            // 覆盖数据 JSON:包名→自定义名称/Base64 WebP 图标(单应用控制在几十 KB 内)
-            const val APP_ICON_OVERRIDES = "desktop_app_icon_overrides"
         }
         object NubiaSystemUpdate{
             const val DISABLE_SYSTEM_UPDATE = "disable_system_update"

@@ -125,10 +125,6 @@
     <string name="light_theme_color" >Light Theme Color</string>
     <string name="dark_theme_color" >Dark Theme Color</string>
     <string name="system_desktop_recent_task_display_memory" >Display memory information</string>
-    <string name="system_time_component_desktop" >Desktop Time Component</string>
-    <string name="system_time_component_desktop_show_seconds" >Display seconds</string>
-    <string name="system_time_component_desktop_show_period" >Display period</string>
-    <string name="system_time_component_desktop_show_period_summary" >Morning, dawn, morning, noon, afternoon, evening, night</string>
     <string name="ui_title_theme_cancel_trial_login" >Free trial without registration</string>
     <string name="ui_title_theme_cancel_trial_login_tips" >There is no limit to the time for the trial. You can download and try it without logging in.</string>
     <string name="system_update" >System Update</string>

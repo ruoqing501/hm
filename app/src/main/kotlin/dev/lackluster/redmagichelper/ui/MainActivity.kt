@@ -25,7 +25,6 @@ import dev.lackluster.hyperx.compose.base.HyperXApp
 import dev.lackluster.hyperx.compose.navigation.miuixComposable
 import dev.lackluster.redmagichelper.R
 import dev.lackluster.redmagichelper.ui.page.AboutPage
-import dev.lackluster.redmagichelper.ui.page.DesktopIconCustomPage
 import dev.lackluster.redmagichelper.ui.page.MainPage
 import dev.lackluster.redmagichelper.ui.page.MediaControlPage
 import dev.lackluster.redmagichelper.ui.page.MenuPage
@@ -41,7 +40,6 @@ import dev.lackluster.redmagichelper.ui.dialog.MarketFilterTabDialog
 import dev.lackluster.redmagichelper.ui.dialog.FreeformExcludedAppsDialog
 import dev.lackluster.redmagichelper.ui.page.GameSpaceMenuPage
 import dev.lackluster.redmagichelper.ui.page.GameSpacePage
-import dev.lackluster.redmagichelper.ui.page.HealthStepsPage
 import dev.lackluster.redmagichelper.ui.page.MediaActionResizePage
 import dev.lackluster.redmagichelper.ui.page.NubiaIconTunerPage
 import dev.lackluster.redmagichelper.ui.page.OtherMenuPage
@@ -157,9 +155,7 @@ class MainActivity : HyperXActivity() {
                 miuixComposable(Pages.GAME_SPACE) { GameSpacePage(navController, adjustPadding, mode) }
 
                 miuixComposable(Pages.SYSTEM_DESKTOP_RECENT_TASKS) { SystemDesktopRecentTasksPage(navController, adjustPadding, mode) }
-                miuixComposable(Pages.DESKTOP_ICON_CUSTOM) { DesktopIconCustomPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.SCREEN_OFF_HIDE_APPS) { ScreenOffHideAppsPage(navController, adjustPadding, mode) }
-                miuixComposable(Pages.HEALTH_STEPS) { HealthStepsPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.OTHER_MENU) { OtherMenuPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.MENU) { MenuPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.GAMESPACE_MENU) { GameSpaceMenuPage(navController, adjustPadding, mode) }

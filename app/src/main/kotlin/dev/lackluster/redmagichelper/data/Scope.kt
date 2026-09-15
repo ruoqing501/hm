@@ -42,7 +42,6 @@ object Scope {
     const val CLOCK_COMPONENT = "zte.com.cn.alarmclock"
     const val REDMAGIC_PACKAGE_INSTALLER = "com.android.packageinstaller"
     const val NEO_STORE = "cn.nubia.neostore"
-    const val MI_HEALTH = "com.mi.health"
     const val NUBIA_FAN = "cn.nubia.fan"
     const val PLUGIN_TRIGGER = "com.zte.game.plugintrigger"
     const val GAME_LAB = "cn.nubia.gamelab"

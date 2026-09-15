@@ -11,9 +11,6 @@ import java.util.Date
 object NubiaWeather : YukiBaseHooker() {
     private const val TAG = "NubiaWeather"
     // 显示时段
-//    private val showTimePeriod by lazy {
-//        Prefs.getBoolean(Pref.Key.SystemDesktop.SYSTEM_TIME_COMPONENT_DESKTOP_SHOW_PERIOD, false)
-//    }
     private val  showTimePeriod = true
     // 可能的时段控件 ID（用于显示中文时段）
     private val targetPeriodIds = listOf(

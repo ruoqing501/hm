@@ -9,7 +9,7 @@ import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.util.Log
 import dev.lackluster.redmagichelper.R
-import dev.lackluster.redmagichelper.data.LauncherIconOverrides
+import dev.lackluster.redmagichelper.utils.IconCodec
 import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
 import dev.lackluster.redmagichelper.utils.ScreenOffHideExecutor
@@ -126,7 +126,7 @@ class RmhTileService : TileService() {
             val encoded = Prefs.getString(Pref.Key.Module.TILE_ICON, "") ?: ""
             if (encoded.isNotEmpty()) {
                 runCatching {
-                    LauncherIconOverrides.decodeIcon(encoded)?.let { return Icon.createWithBitmap(it) }
+                    IconCodec.decodeIcon(encoded)?.let { return Icon.createWithBitmap(it) }
                 }
             }
             return Icon.createWithResource(context, R.drawable.ic_tile_restore)

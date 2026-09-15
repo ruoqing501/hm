@@ -100,10 +100,6 @@
     <string name="light_theme_color" >テーマカラーを明るくします</string>
     <string name="dark_theme_color" >ダークカラーのテーマカラーです</string>
     <string name="system_desktop_recent_task_display_memory" >メモリー情報を表示します</string>
-    <string name="system_time_component_desktop" >デスクトップの時間部品です</string>
-    <string name="system_time_component_desktop_show_seconds" >秒を表示します</string>
-    <string name="system_time_component_desktop_show_period" >複数の期間が表示されます</string>
-    <string name="system_time_component_desktop_show_period_summary" >早朝、朝、午前、昼、午後、夕方、夜です</string>
     <string name="ui_title_theme_cancel_trial_login" >お試し登録は無料です</string>
     <string name="ui_title_theme_cancel_trial_login_tips" >時間制限なくお試しテーマに登録せずダウンロードおよびお試しができます。</string>
     <string name="system_update" >システム更新</string>
