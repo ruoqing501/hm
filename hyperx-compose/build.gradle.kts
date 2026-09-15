@@ -56,7 +56,11 @@ dependencies {
     api("top.yukonga.miuix.kmp:miuix:0.5.2")
     api("dev.chrisbanes.haze:haze:1.7.1")
     // 液态玻璃引擎（酷安 16.6 底部菜单栏同款）
-    api("io.github.kyant0:backdrop:1.0.6")
+    // 注：2.0.0+ 正式版基于 Compose 1.12 构建，要求 compileSdk 37 / AGP 9.1；
+    // 2.0.0-alpha03 基于 Compose 1.10.1，与当前 AGP 8.12.3 / compileSdk 36 兼容且 API 完整
+    api("io.github.kyant0:backdrop:2.0.0-alpha03")
+    // drawBackdrop 的 Capsule 形状来自 shapes 库（backdrop 运行时也会传递依赖，此处显式声明以供编译期使用）
+    api("io.github.kyant0:shapes:1.2.0")
     api("androidx.compose.foundation:foundation:1.10.2")
     api("androidx.activity:activity-compose:1.12.3")
     api("androidx.navigation:navigation-compose:2.9.7")
