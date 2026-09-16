@@ -212,11 +212,6 @@ fun SystemUIStatusBarPage(
                         max = 15
                     )
                 }
-                // 双击息屏
-                SwitchPreference(
-                    title = stringResource(R.string.systemui_statusbar_tap_to_sleep),
-                    key = Pref.Key.SystemUI.StatusBar.DOUBLE_TAP_TO_SLEEP
-                )
                 // 禁用智能深色
                 SwitchPreference(
                     title = stringResource(R.string.systemui_statusbar_disable_smart_dark),

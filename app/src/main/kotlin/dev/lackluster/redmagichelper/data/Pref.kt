@@ -275,7 +275,6 @@ object Pref {
 
                 const val NOTIFICATION_COUNT = "statusbar_notif_max"
                 const val NOTIFICATION_COUNT_ICON = "statusbar_notif_icon_max"
-                const val DOUBLE_TAP_TO_SLEEP = "statusbar_double_tap_sleep"
                 const val DISABLE_SMART_DARK = "systemui_disable_smart_dark"
             }
             // 状态栏网格重排（移植自 LS_Augment：区域/顺序/大小/可见性 + 指标文本摆放）

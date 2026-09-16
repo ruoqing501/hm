@@ -330,7 +330,6 @@
     <string name="systemui_statusbar_notif_count">Customize the maximum number of notifications to display</string>
     <string name="systemui_statusbar_notif_count_icon">Maximum number of status bar notification icons</string>
     <string name="systemui_statusbar_icon" translatable="false">@string/page_status_bar_icon_tuner</string>
-    <string name="systemui_statusbar_tap_to_sleep" translatable="false">@string/common_tap_sleep</string>
     <string name="systemui_statusbar_disable_smart_dark">Disable Smart dark</string>
     <string name="systemui_statusbar_disable_smart_dark_tips">The Smart dark feature makes the status bar ignore the colors specified by the app and allows the sampling of the area to change color automatically when in Dark mode. Disable this feature to restore the default behavior of Android.</string>
     <string name="ui_title_systemui_screen_off">Screen off</string>
