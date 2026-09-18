@@ -254,18 +254,22 @@
     <string name="ui_title_about_developer">Developer</string>
     <string name="about_author" translatable="false">HowieHChen</string>
     <string name="about_author_custom" translatable="false">酷安@卒迹</string>
+    <string name="about_author_custom2" translatable="false">情若相惜 ღ</string>
     <string name="about_author_tips">No profile or signature</string>
     <string name="about_author_url" translatable="false">https://github.com/HowieHChen</string>
     <string name="ui_title_about_others" translatable="false">@string/common_others</string>
+    <string name="ui_title_about_donors">Donors</string>
+    <string name="about_donor_amount">Donated ¥%1$d</string>
     <string name="about_donate">Donate</string>
     <string name="about_donate_tips">Buy me a coffee</string>
     <string name="image_load_failed">Resource loading failed</string>
     <string name="about_donate_url" translatable="false">https://github.com/HowieHChen/XiaomiHelper/blob/master/DONATE.md</string>
     <string name="about_repository">Source code</string>
-    <string name="join_qq_group">Join QQ Group</string>
+    <string name="join_qq_group">QQ Group</string>
     <string name="about_repository_tips">GitHub repository</string>
     <string name="about_repository_url" translatable="false">https://github.com/HowieHChen/XiaomiHelper</string>
     <string name="qq_group_url" translatable="false">https://qm.qq.com/cgi-bin/qm/qr?k=8Bk6SKLu0CJ0JBQbQpwWgMBZ2f7tPf9l&amp;jump_from=webapi&amp;authKey=LcSugCEc61LVbl3tTm4TGxQN7+aFbJX0I5P5ftyGF8ZLZOV3UW7lMTn3j3vzvSgs</string>
+    <string name="qq_group_number" translatable="false">198448325</string>
     <string name="about_telegram">Telegram channel</string>
     <string name="about_telegram_tips">Join the Telegram channel to give feedback and get internal updates.</string>
     <string name="about_telegram_url" translatable="false">https://t.me/lackluster_stuff</string>
@@ -1042,26 +1046,10 @@
     <string name="status_bar_grid_comp_power">Power</string>
     <string name="status_bar_grid_comp_network">Network speed</string>
     <string name="fan_control_group">Fan control</string>
-    <string name="fan_fixed_enabled">Fixed fan speed</string>
-    <string name="fan_fixed_enabled_tips">Follows the OEM fan switch and picks the closest measured level; never starts the fan by itself. Requires calibration data first.</string>
-    <string name="fan_target_rpm">Target speed (RPM)</string>
-    <string name="fan_unlock_max">Unlock OEM max level</string>
-    <string name="fan_unlock_max_tips">Allows level 5 of the verified driver; follows the OEM extreme mode and never starts the fan by itself.</string>
-    <string name="fan_calibrate_start">Measure fan speeds of this device</string>
-    <string name="fan_calibrate_start_tips">Turn on the OEM fan first. Measures levels 1~5 (about 1 minute), then restores the OEM level.</string>
-    <string name="fan_calibrate_requested">Measurement request sent, keep the OEM fan on</string>
-    <string name="fan_calibrate_import">Import measurement result</string>
-    <string name="fan_calibrate_import_tips">Reads the result written back by the fan app after measuring</string>
-    <string name="fan_calibrate_import_none">No measurement result found yet</string>
-    <string name="fan_calibrate_import_ok">Measurement result imported</string>
-    <string name="fan_calibrate_import_stale">System changed since this measurement, please measure again</string>
-    <string name="fan_calibrate_result_none">Not measured yet</string>
-    <string name="fan_manual_entry">Enter calibration data manually</string>
-    <string name="fan_manual_entry_tips">Fallback when automatic write-back fails; read the serialized result from the module log</string>
-    <string name="fan_manual_rpm">Level %1$d speed (RPM)</string>
-    <string name="fan_manual_apply">Apply manual values</string>
-    <string name="fan_manual_apply_ok">Manual calibration values applied</string>
-    <string name="fan_manual_apply_invalid">Invalid values: 500~100000 RPM and monotonically increasing per level</string>
+    <string name="fan_level_fixed">Fixed fan level</string>
+    <string name="fan_level_fixed_tips">Writes the selected level (1~5) to /sys/kernel/fan/fan_speed_level with root; turning it off hands control back to the OEM fan service</string>
+    <string name="fan_level">Fan level</string>
+    <string name="fan_level_root_unavailable">Root unavailable; fan features are disabled</string>
     <string name="battery_group">Battery</string>
     <string name="battery_info">Cycle count and capacity</string>
     <string name="battery_info_refresh">Tap to refresh</string>

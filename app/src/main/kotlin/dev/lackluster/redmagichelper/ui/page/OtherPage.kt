@@ -6,7 +6,6 @@ import android.content.Intent
 import android.app.StatusBarManager
 import android.content.ComponentName
 import android.graphics.BitmapFactory
-import android.provider.Settings
 import android.widget.Toast.LENGTH_LONG
 import android.widget.Toast.LENGTH_SHORT
 import android.widget.Toast.makeText
@@ -93,11 +92,8 @@ import dev.lackluster.redmagichelper.service.RmhTileService
 import dev.lackluster.redmagichelper.ui.component.RebootMenuItems
 import dev.lackluster.redmagichelper.utils.BatteryLifeControl
 import dev.lackluster.redmagichelper.utils.BatteryLifePolicy
+import dev.lackluster.redmagichelper.utils.FanLevelControl
 import dev.lackluster.redmagichelper.utils.ScreenOffHideExecutor
-import dev.lackluster.redmagichelper.utils.ShellUtils
-import dev.lackluster.redmagichelper.utils.FanCalibrationChannel
-import dev.lackluster.redmagichelper.utils.FanCalibrationData
-import dev.lackluster.redmagichelper.utils.FanHardwareIdentity
 import dev.lackluster.redmagichelper.utils.IconCodec
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -114,20 +110,6 @@ import top.yukonga.miuix.kmp.extra.SuperDialog
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.icons.useful.ImmersionMore
 import kotlin.random.Random
-import java.text.DateFormat
-import java.util.Date
-import java.util.UUID
-
-/** 风扇校准结果摘要:显示测量时间与各档实测转速。 */
-private fun buildFanMeasurementSummary(context: Context): String {
-    val data = FanCalibrationData.parse(SafeSP.getString(Pref.Key.Fan.MEASUREMENT, ""))
-        ?: return context.getString(R.string.fan_calibrate_result_none)
-    val time = DateFormat.getDateTimeInstance().format(Date(data.measuredAt))
-    val stale = if (data.currentFor(FanHardwareIdentity.current())) ""
-    else "\n" + context.getString(R.string.fan_calibrate_import_stale)
-    val levels = (1..FanCalibrationData.LEVELS).joinToString("\n") { i -> "$i: ${data.rpm(i)} RPM" }
-    return "$time$stale\n$levels"
-}
 
 /** 电池信息来源路径显示为短名,避免 sysfs 全路径过长。 */
 private fun batterySourceName(path: String): String = when (path) {
@@ -191,19 +173,10 @@ fun OtherPage(navController: NavController, adjustPadding: PaddingValues, mode: 
             SafeSP.getBoolean(Pref.Key.NeoStore.STORE_DOWNLOAD_ENABLED)
         )
     }
-    var fanFixedEnabled by remember {
-        mutableStateOf(
-            SafeSP.getBoolean(Pref.Key.Fan.FIXED_ENABLED)
-        )
+    val fanLevelFixedEnabled = remember {
+        mutableStateOf(SafeSP.getBoolean(Pref.Key.Fan.LEVEL_FIXED_ENABLED, false))
     }
-    var fanMeasurementSummary by remember {
-        mutableStateOf(buildFanMeasurementSummary(context))
-    }
-    var fanManualEntryEnabled by remember {
-        mutableStateOf(
-            SafeSP.getBoolean(Pref.Key.Fan.MANUAL_ENTRY_ENABLED)
-        )
-    }
+    var fanBusy by remember { mutableStateOf(false) }
     val rootGranted = MainActivity.rootGranted.value
     var batteryInfoSummary by remember {
         mutableStateOf(context.getString(R.string.battery_info_refresh))
@@ -516,122 +489,77 @@ fun OtherPage(navController: NavController, adjustPadding: PaddingValues, mode: 
                 )
             }
         }
-        // 风扇控制
+        // 风扇
         item {
             PreferenceGroup(
                 title = stringResource(R.string.fan_control_group),
             ) {
-                // 固定风扇转速
-                SwitchPreference(
-                    title = stringResource(R.string.fan_fixed_enabled),
-                    summary = stringResource(R.string.fan_fixed_enabled_tips),
-                    key = Pref.Key.Fan.FIXED_ENABLED,
-                    defValue = false,
-                    onCheckedChange = { newValue ->
-                        fanFixedEnabled = newValue
-                    }
-                )
-                AnimatedVisibility(fanFixedEnabled) {
-                    Column {
-                        // 目标转速
-                        SeekBarPreference(
-                            title = stringResource(R.string.fan_target_rpm),
-                            key = Pref.Key.Fan.TARGET_RPM,
-                            defValue = 12000,
-                            min = 500,
-                            max = 30000
-                        )
-                    }
-                }
-                // 解除原厂最高档限制(第 5 档)
-                SwitchPreference(
-                    title = stringResource(R.string.fan_unlock_max),
-                    summary = stringResource(R.string.fan_unlock_max_tips),
-                    key = Pref.Key.Fan.UNLOCK_MAX
-                )
-                // 发起转速测量(经远程配置下发请求,风扇应用进程消费)
-                TextPreference(
-                    title = stringResource(R.string.fan_calibrate_start),
-                    summary = stringResource(R.string.fan_calibrate_start_tips),
-                    onClick = {
-                        val request = System.currentTimeMillis().toString() + ":" +
-                            UUID.randomUUID().toString().replace("-", "")
-                        SafeSP.putAny(Pref.Key.Fan.CALIBRATION_REQUEST, request)
-                        makeText(context, R.string.fan_calibrate_requested, LENGTH_LONG).show()
-                    }
-                )
-                // 导入测量结果(hook 侧经 Settings.System 回写)
-                TextPreference(
-                    title = stringResource(R.string.fan_calibrate_import),
-                    summary = fanMeasurementSummary,
-                    onClick = {
-                        val raw = runCatching {
-                            Settings.System.getString(
-                                context.contentResolver,
-                                FanCalibrationChannel.MEASUREMENT_KEY
-                            )
-                        }.getOrNull()
-                        val data = FanCalibrationData.parse(raw)
-                        if (data == null || raw == null) {
-                            makeText(context, R.string.fan_calibrate_import_none, LENGTH_SHORT).show()
-                        } else {
-                            SafeSP.putAny(Pref.Key.Fan.MEASUREMENT, raw)
-                            makeText(
-                                context,
-                                if (data.currentFor(FanHardwareIdentity.current()))
-                                    R.string.fan_calibrate_import_ok
-                                else R.string.fan_calibrate_import_stale,
-                                LENGTH_LONG
-                            ).show()
-                        }
-                        fanMeasurementSummary = buildFanMeasurementSummary(context)
-                    }
-                )
-                // 手动输入校准数据(自动回写不可用时的退化方案)
-                SwitchPreference(
-                    title = stringResource(R.string.fan_manual_entry),
-                    summary = stringResource(R.string.fan_manual_entry_tips),
-                    key = Pref.Key.Fan.MANUAL_ENTRY_ENABLED,
-                    defValue = false,
-                    onCheckedChange = { newValue ->
-                        fanManualEntryEnabled = newValue
-                    }
-                )
-                AnimatedVisibility(fanManualEntryEnabled) {
-                    Column {
-                        val manualKeys = listOf(
-                            Pref.Key.Fan.MANUAL_RPM_1,
-                            Pref.Key.Fan.MANUAL_RPM_2,
-                            Pref.Key.Fan.MANUAL_RPM_3,
-                            Pref.Key.Fan.MANUAL_RPM_4,
-                            Pref.Key.Fan.MANUAL_RPM_5,
-                        )
-                        manualKeys.forEachIndexed { index, manualKey ->
-                            EditTextPreference(
-                                title = stringResource(R.string.fan_manual_rpm, index + 1),
-                                key = manualKey,
-                                defValue = 0,
-                                dataType = EditTextDataType.INT
-                            )
-                        }
-                        TextPreference(
-                            title = stringResource(R.string.fan_manual_apply),
-                            onClick = {
-                                val rpm = manualKeys.map { SafeSP.getInt(it, 0) }.toIntArray()
-                                val data = FanCalibrationData.fromManual(
-                                    FanHardwareIdentity.current(),
-                                    System.currentTimeMillis(),
-                                    rpm
-                                )
-                                if (data == null) {
-                                    makeText(context, R.string.fan_manual_apply_invalid, LENGTH_LONG).show()
+                if (!rootGranted) {
+                    // Root 不可用:功能静默停用,仅给出提示
+                    TextPreference(
+                        title = stringResource(R.string.fan_level_fixed),
+                        summary = stringResource(R.string.fan_level_root_unavailable)
+                    )
+                } else {
+                    // 风扇等级固定(root 直写 /sys/kernel/fan/fan_speed_level)
+                    SwitchPreference(
+                        title = stringResource(R.string.fan_level_fixed),
+                        summary = stringResource(R.string.fan_level_fixed_tips),
+                        key = Pref.Key.Fan.LEVEL_FIXED_ENABLED,
+                        defValue = false,
+                        enabled = !fanBusy,
+                        checked = fanLevelFixedEnabled,
+                        onCheckedChange = { newValue ->
+                            fanBusy = true
+                            coroutineScope.launch {
+                                val level = SafeSP.getInt(Pref.Key.Fan.LEVEL_FIXED_LEVEL, 3)
+                                val result = withContext(Dispatchers.IO) {
+                                    if (newValue) FanLevelControl.apply(level) else null
+                                }
+                                fanBusy = false
+                                if (result == null ||
+                                    (result.isSuccess && result.output.trim().toIntOrNull() == level)
+                                ) {
+                                    fanLevelFixedEnabled.value = newValue
                                 } else {
-                                    SafeSP.putAny(Pref.Key.Fan.MEASUREMENT, data.serialize())
-                                    fanMeasurementSummary = buildFanMeasurementSummary(context)
-                                    makeText(context, R.string.fan_manual_apply_ok, LENGTH_SHORT).show()
+                                    // 写入失败:回滚开关与状态
+                                    SafeSP.putAny(Pref.Key.Fan.LEVEL_FIXED_ENABLED, false)
+                                    fanLevelFixedEnabled.value = false
+                                    makeText(
+                                        context,
+                                        context.getString(R.string.battery_apply_failed, result.publicError()),
+                                        LENGTH_LONG
+                                    ).show()
                                 }
                             }
-                        )
+                        }
+                    )
+                    AnimatedVisibility(fanLevelFixedEnabled.value) {
+                        Column {
+                            // 风扇等级(1~5)
+                            SeekBarPreference(
+                                title = stringResource(R.string.fan_level),
+                                key = Pref.Key.Fan.LEVEL_FIXED_LEVEL,
+                                defValue = 3,
+                                min = 1,
+                                max = 5,
+                                onValueChange = { level ->
+                                    if (fanBusy) return@SeekBarPreference
+                                    coroutineScope.launch {
+                                        val result = withContext(Dispatchers.IO) {
+                                            FanLevelControl.apply(level)
+                                        }
+                                        if (!result.isSuccess || result.output.trim().toIntOrNull() != level) {
+                                            makeText(
+                                                context,
+                                                context.getString(R.string.battery_apply_failed, result.publicError()),
+                                                LENGTH_LONG
+                                            ).show()
+                                        }
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }

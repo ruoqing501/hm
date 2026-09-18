@@ -22,6 +22,7 @@ object Pages {
     const val SYSTEM_UPDATE = "SystemUpdatePage"
     const val SYSTEM_FRAMEWORK = "AndroidPage"
     const val ABOUT = "AboutPage"
+    const val ABOUT_DONORS = "AboutDonorsPage"
     const val OTHER = "OtherPage"
 
     const val MENU = "MenuPage"

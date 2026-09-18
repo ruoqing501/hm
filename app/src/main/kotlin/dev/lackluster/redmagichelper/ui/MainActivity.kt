@@ -24,6 +24,7 @@ import dev.lackluster.hyperx.compose.activity.SafeSP
 import dev.lackluster.hyperx.compose.base.HyperXApp
 import dev.lackluster.hyperx.compose.navigation.miuixComposable
 import dev.lackluster.redmagichelper.R
+import dev.lackluster.redmagichelper.ui.page.AboutDonorsPage
 import dev.lackluster.redmagichelper.ui.page.AboutPage
 import dev.lackluster.redmagichelper.ui.page.MainPage
 import dev.lackluster.redmagichelper.ui.page.MediaControlPage
@@ -154,6 +155,7 @@ class MainActivity : HyperXActivity() {
                 miuixComposable(Pages.STATUS_BAR_LAYOUT) { StatusBaLayoutPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.SYSTEM_PAGE_FONT) { SystemPageFontPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.STATUS_BAR) { SystemUIStatusBarPage(navController, adjustPadding, mode) }
+                miuixComposable(Pages.ABOUT_DONORS) { AboutDonorsPage(navController, adjustPadding, mode) }
                 miuixComposable(Pages.GAME_SPACE) { GameSpacePage(navController, adjustPadding, mode) }
 
                 miuixComposable(Pages.SYSTEM_DESKTOP_RECENT_TASKS) { SystemDesktopRecentTasksPage(navController, adjustPadding, mode) }

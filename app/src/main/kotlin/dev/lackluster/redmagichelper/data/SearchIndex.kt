@@ -169,10 +169,7 @@ object SearchIndex {
         SearchEntry(R.string.screen_off_hide_restore_all, R.string.screen_off_hide_restore_all_summary, Pages.OTHER, R.string.page_other),
         SearchEntry(R.string.tile_switch, R.string.tile_switch_tips, Pages.OTHER, R.string.page_other),
         SearchEntry(R.string.tile_add, R.string.tile_add_summary, Pages.OTHER, R.string.page_other),
-        SearchEntry(R.string.fan_fixed_enabled, R.string.fan_fixed_enabled_tips, Pages.OTHER, R.string.page_other),
-        SearchEntry(R.string.fan_unlock_max, R.string.fan_unlock_max_tips, Pages.OTHER, R.string.page_other),
-        SearchEntry(R.string.fan_calibrate_start, R.string.fan_calibrate_start_tips, Pages.OTHER, R.string.page_other),
-        SearchEntry(R.string.fan_manual_entry, R.string.fan_manual_entry_tips, Pages.OTHER, R.string.page_other),
+        SearchEntry(R.string.fan_level_fixed, R.string.fan_level_fixed_tips, Pages.OTHER, R.string.page_other),
         SearchEntry(R.string.battery_disable_age_reduction, R.string.battery_disable_age_reduction_tips, Pages.OTHER, R.string.page_other),
 
         // 模块设置

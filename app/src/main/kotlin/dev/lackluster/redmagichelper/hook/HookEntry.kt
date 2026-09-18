@@ -12,7 +12,6 @@ import dev.lackluster.redmagichelper.hook.apps.Android
 import dev.lackluster.redmagichelper.hook.apps.DeskTop
 import dev.lackluster.redmagichelper.hook.apps.SystemUI
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaBaiduIme
-import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaFan
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaGameAssist
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaGameAssist2
 import dev.lackluster.redmagichelper.hook.apps.nubia.NubiaGameFloat
@@ -128,7 +127,6 @@ class HookEntry : XposedModule() {
             Scope.COMBO_ATTACK -> if (gameFunctionUnfrozen) hookers += listOf(NubiaComboAttack, NubiaComboSpeed)
             Scope.NEO_STORE -> hookers += NubiaNeoStore
             Scope.ZTE_RECOMMEND -> hookers += NubiaRecommend
-            Scope.NUBIA_FAN -> hookers += NubiaFan
             Scope.BAIDU_IME -> hookers += NubiaBaiduIme
         }
         if (hookers.isEmpty()) return

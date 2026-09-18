@@ -73,6 +73,18 @@ fun SystemUIStatusBarPage(
         )
     }
 
+    var visibilityPullDownTime by remember {
+        mutableStateOf(
+            SafeSP.getBoolean(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN_SWITCH)
+        )
+    }
+
+    var visibilityPullDownPeriod by remember {
+        mutableStateOf(
+            SafeSP.getBoolean(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN_PERIOD_SWITCH)
+        )
+    }
+
     BasePage(
         navController,
         adjustPadding,
@@ -235,17 +247,33 @@ fun SystemUIStatusBarPage(
                     key = Pref.Key.SystemUI.StatusBar.STATUS_BAR_USE_THE_NATIVE_NOTIFICATION_ICON, //唯一id
                 )
                 // 下拉状态栏时间
-                DropDownPreference(
+                SwitchPreference(
                     title = stringResource(R.string.clock_easy_pull_down_time),
-                    entries = statusBarPullDownTimelEntries, // 选项
-                    key = Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN  //唯一id
-                )
+                    key = Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN_SWITCH, //唯一id
+                ) {
+                    visibilityPullDownTime = it
+                }
+                AnimatedVisibility(visibilityPullDownTime) {
+                    DropDownPreference(
+                        title = stringResource(R.string.clock_easy_pull_down_time),
+                        entries = statusBarPullDownTimelEntries, // 选项
+                        key = Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN  //唯一id
+                    )
+                }
                 // 下拉状态栏时段
-                DropDownPreference(
+                SwitchPreference(
                     title = stringResource(R.string.clock_easy_pull_down_period),
-                    entries = statusBarPullDownPeriodlEntries, // 选项
-                    key = Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN_PERIOD  //唯一id
-                )
+                    key = Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN_PERIOD_SWITCH, //唯一id
+                ) {
+                    visibilityPullDownPeriod = it
+                }
+                AnimatedVisibility(visibilityPullDownPeriod) {
+                    DropDownPreference(
+                        title = stringResource(R.string.clock_easy_pull_down_period),
+                        entries = statusBarPullDownPeriodlEntries, // 选项
+                        key = Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN_PERIOD  //唯一id
+                    )
+                }
             }
         }
         // 红魔-状态栏网络速度

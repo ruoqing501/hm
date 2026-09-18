@@ -140,18 +140,9 @@ object Pref {
             const val AI_TRIGGER_YOLO_SCAN_MS = "ai_trigger_yolo_scan_ms"
         }
         object Fan {
-            const val FIXED_ENABLED = "fan_fixed_enabled"
-            const val UNLOCK_MAX = "fan_unlock_max"
-            const val TARGET_RPM = "fan_target_rpm"
-            const val CALIBRATION_REQUEST = "fan_calibration_request"
-            const val MEASUREMENT = "fan_measurement"
-            // 手动输入校准数据开关与各档转速(校准通道不可用时的退化方案)
-            const val MANUAL_ENTRY_ENABLED = "fan_manual_entry_enabled"
-            const val MANUAL_RPM_1 = "fan_manual_rpm_1"
-            const val MANUAL_RPM_2 = "fan_manual_rpm_2"
-            const val MANUAL_RPM_3 = "fan_manual_rpm_3"
-            const val MANUAL_RPM_4 = "fan_manual_rpm_4"
-            const val MANUAL_RPM_5 = "fan_manual_rpm_5"
+            // 风扇等级固定(root 直写 /sys/kernel/fan/fan_speed_level,1~5 级)
+            const val LEVEL_FIXED_ENABLED = "fan_level_fixed_enabled"
+            const val LEVEL_FIXED_LEVEL = "fan_level_fixed_level"
         }
         object Battery {
             // 关闭原厂「按循环降压」策略(可逆 bind 覆盖,见 utils/BatteryLifeControl.kt)
@@ -270,8 +261,10 @@ object Pref {
                 const val STATUS_BAR_USE_THE_NATIVE_NOTIFICATION_ICON = "status_bar_use_the_native_notification_icon"
                 const val CLOCK_SHOW_MONTH_DAY = "statusbar_clock_show_month_day"
                 const val CLOCK_SHOW_PULL_DOWN = "statusbar_clock_pull_down_show"
+                const val CLOCK_SHOW_PULL_DOWN_SWITCH = "statusbar_clock_pull_down_show_switch"
                 const val STATUS_BAR_DISPLAY_TEMPERATURE = "status_bar_display_temperature"
                 const val CLOCK_SHOW_PULL_DOWN_PERIOD = "statusbar_clock_pull_down_show_period"
+                const val CLOCK_SHOW_PULL_DOWN_PERIOD_SWITCH = "statusbar_clock_pull_down_show_period_switch"
 
                 const val NOTIFICATION_COUNT = "statusbar_notif_max"
                 const val NOTIFICATION_COUNT_ICON = "statusbar_notif_icon_max"

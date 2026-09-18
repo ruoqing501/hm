@@ -24,6 +24,10 @@ object StatusBarClockHooker : YukiBaseHooker() {
     private val isMonthDay get() =
         Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_MONTH_DAY, false)
 
+    // 下拉状态栏时段开关
+    private val statusBarPullDownPeriodSwitch get() =
+        Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN_PERIOD_SWITCH, false)
+
     // 下拉状态栏时段设置
     private val statusBarPullDownPeriodTextType get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN_PERIOD, 0)
@@ -93,7 +97,7 @@ object StatusBarClockHooker : YukiBaseHooker() {
      * 处理下拉状态栏时钟（添加额外TextView）
      */
     private fun handlePullDownClock(clockView: TextView, originalText: String) {
-        if (statusBarPullDownPeriodTextType == 0) {
+        if (!statusBarPullDownPeriodSwitch || statusBarPullDownPeriodTextType == 0) {
             // 如果关闭了功能，移除已创建的TextView
             removePullDownPeriodTextView(clockView)
             return

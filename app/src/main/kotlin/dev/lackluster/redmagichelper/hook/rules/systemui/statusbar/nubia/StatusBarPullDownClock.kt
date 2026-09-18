@@ -8,6 +8,10 @@ import dev.lackluster.redmagichelper.data.Pref
 import dev.lackluster.redmagichelper.utils.Prefs
 
 object StatusBarPullDownClock : YukiBaseHooker() {
+    // 下拉状态栏时间开关
+    private val statusBarPullDownClockSwitch get() =
+        Prefs.getBoolean(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN_SWITCH, false)
+
     // 下拉状态栏时间[索引0表示第1个选项]
     private val statusBarPullDownClockTextType get() =
         Prefs.getInt(Pref.Key.SystemUI.StatusBar.CLOCK_SHOW_PULL_DOWN, 0)
@@ -22,7 +26,7 @@ object StatusBarPullDownClock : YukiBaseHooker() {
         }.hook {
             after {
                 // 默认第1个选项【不显秒】时不处理
-                if (statusBarPullDownClockTextType == 0) return@after
+                if (!statusBarPullDownClockSwitch || statusBarPullDownClockTextType == 0) return@after
 
                 // 获取 ClockView 字段
                 val clockView = this.instance.current().field {

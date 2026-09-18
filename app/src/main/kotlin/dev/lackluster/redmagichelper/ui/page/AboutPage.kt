@@ -196,6 +196,15 @@ fun AboutPage(navController: NavController, adjustPadding: PaddingValues, mode: 
                 ) {
                     context.openUrl("https://www.coolapk.com/u/1044705")
                 }
+                TextPreference(
+                    icon = ImageIcon(
+                        iconRes = R.drawable.kaifa,
+                        iconSize = IconSize.App,
+                        cornerRadius = 30.dp
+                    ),
+                    title = stringResource(R.string.about_author_custom2),
+                    summary = stringResource(R.string.about_author_tips)
+                )
 //                for (contributor in Contributors.list) {
 //                    TextPreference(
 //                        icon = ImageIcon(
@@ -209,6 +218,18 @@ fun AboutPage(navController: NavController, adjustPadding: PaddingValues, mode: 
 //                        context.openUrl(contributor.link)
 //                    }
 //                }
+            }
+        }
+        item {
+            PreferenceGroup(
+                title = stringResource(R.string.ui_title_about_donors)
+            ) {
+                // 捐赠用户
+                TextPreference(
+                    title = stringResource(R.string.ui_title_about_donors)
+                ) {
+                    navController.navigateTo(Pages.ABOUT_DONORS)
+                }
             }
         }
         item {
@@ -247,7 +268,7 @@ fun AboutPage(navController: NavController, adjustPadding: PaddingValues, mode: 
                     title = stringResource(R.string.join_qq_group),
 //                    summary = stringResource(R.string.about_repository_tips)
                 ){
-                    context.openUrl(R.string.qq_group_url)
+                    context.openQqGroup(context.getString(R.string.qq_group_number))
                 }
 //                TextPreference(
 //                    title = stringResource(R.string.about_repository),
@@ -300,6 +321,19 @@ fun AboutPage(navController: NavController, adjustPadding: PaddingValues, mode: 
 
 fun Context.openUrl(urlResId: Int) {
     openUrl(getString(urlResId))
+}
+
+// 直接拉起 QQ 打开加群页面，失败（未安装 QQ 等）时回退到网页链接
+fun Context.openQqGroup(groupNumber: String) {
+    try {
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=$groupNumber&card_type=group&source=qrcode".toUri()
+        )
+        this.startActivity(intent)
+    } catch (_: Exception) {
+        openUrl(R.string.qq_group_url)
+    }
 }
 
 fun Context.openUrl(url: String) {
